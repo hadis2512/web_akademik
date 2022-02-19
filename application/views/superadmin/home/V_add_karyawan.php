@@ -14,7 +14,7 @@
                 <!-- Container Fluid-->
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Add Mahasiswa</h1>
+                        <h1 class="h3 mb-0 text-gray-800">Add Karyawan</h1>
 
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="./">Home</a></li>
@@ -30,27 +30,36 @@
                                     <h6 class="m-0 font-weight-bold text-primary"></h6>
                                 </div> -->
                                 <div class="card-body">
-                                    <form action="<?= base_url('superadmin/Master_data/save_mahasiswa'); ?>" method="post" enctype="multipart/form-data" accept-charset="utf-8">
+                                    <form action="<?= base_url('superadmin/Master_data/save_karyawan'); ?>" method="post" enctype="multipart/form-data" accept-charset="utf-8">
                                         <div class="form-group row">
-                                            <label for="nim" class="col-sm-2 col-form-label">NIM </label>
+                                            <label for="nip" class="col-sm-2 col-form-label">NIP</label>
                                             <div class="col-sm-3">
-                                                <input type="text" name="nim" class="form-control" id="nim" placeholder="Nomor Induk Mahasiswa">
+                                                <input type="text" name="nip" class="form-control" id="nip" placeholder="Nomor Induk Pegawai">
                                             </div>
 
-                                            <label for="nama_lengkap" class="col-sm-2 col-form-label ml-5">Nama Lengkap</label>
-                                            <div class="col-sm-3">
-                                                <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" placeholder="Nama Lengkap">
-                                            </div>
-
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="email" class="col-sm-2 col-form-label ">Email</label>
+                                            <label for="email" class="col-sm-2 col-form-label ml-5">Email</label>
                                             <div class="col-sm-3">
                                                 <input type="email" class="form-control" id="email" name="email" placeholder="Enter the email">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="nama_lengkap" class="col-sm-2 col-form-label">Nama Lengkap</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" placeholder="Nama Lengkap">
                                             </div>
                                             <label for="inputPassword3" class="col-sm-2 col-form-label ml-5">Password</label>
                                             <div class="col-sm-3">
                                                 <input type="password" class="form-control" name="password" id="inputPassword3" placeholder="Password">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="tempat" class="col-sm-2 col-form-label">Tempat/Tanggal lahir</label>
+                                            <div class="col-sm-5">
+                                                <input type="text" class="form-control" id="nama_lengkap" name="tempat" placeholder="Tempat">
+                                            </div>
+                                            <div class="my-auto ml-4">/</div>
+                                            <div class="col-sm-3 ml-4">
+                                                <input type="text" class="form-control" name="tgl_lahir" id="tgl" placeholder="Tanggal lahir">
                                             </div>
                                         </div>
                                         <fieldset class="form-group">
@@ -71,48 +80,23 @@
 
                                             </div>
                                         </fieldset>
-                                        <fieldset class="form-group">
-                                            <div class="row">
-                                                <legend class="col-form-label col-sm-2 pt-0">Program</legend>
-                                                <?php
-                                                foreach ($program as $a) { ?>
-                                                    <div class="col-sm-3">
-                                                        <div class="custom-control custom-radio">
-                                                            <input type="radio" id="pilihan<?= $a['id'] ?>" name="program" value="<?= $a['id'] ?>" class="custom-control-input">
-                                                            <label class="custom-control-label" for="pilihan<?= $a['id'] ?>"><?= $a['nama'] ?></label>
-                                                        </div>
-                                                    </div>
-                                                <?php }
-                                                ?>
-
-
-                                            </div>
-                                        </fieldset>
-                                        <div class="form-group row">
-                                            <label for="select_prodi" class="col-sm-2">Program Studi</label>
-                                            <div class="col-sm-8">
-                                                <select class="select2-single form-control" name="prodi" id="select_prodi">
-
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="tempat" class="col-sm-2 col-form-label">Tempat/Tanggal lahir</label>
-                                            <div class="col-sm-5">
-                                                <input type="text" class="form-control" id="nama_lengkap" name="tempat" placeholder="Tempat">
-                                            </div>
-                                            <div class="my-auto ml-4">/</div>
-                                            <div class="col-sm-3 ml-4">
-                                                <input type="text" class="form-control" name="tgl_lahir" id="tgl" placeholder="Tanggal lahir">
-                                            </div>
-                                        </div>
                                         <div class="form-group row">
                                             <label for="no_telp" class="col-sm-2 col-form-label">Nomor Telepon</label>
                                             <div class="col-sm-3">
                                                 <input type="text" class="form-control" id="no_telp" name="no_telp" placeholder="Nomor Telepon">
                                             </div>
-                                            <label for="alamat" class="col-sm-2 ml-5 col-form-label">Alamat</label>
+                                            <label for="jabatan" class="col-sm-2 ml-5 col-form-label">Jabatan</label>
                                             <div class="col-sm-3">
+                                                <select name="jabatan" class="form-control mb-3">
+                                                    <?php foreach ($jabatan as $jab) { ?>
+                                                        <option value="<?= $jab['id']; ?>"><?= $jab['nama']; ?></option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="alamat" class="col-sm-2 col-form-label">Alamat</label>
+                                            <div class="col-sm-9">
                                                 <!-- <input type="text" class="form-control" id="nama_lengkap" name="tempat" placeholder="Tempat"> -->
                                                 <textarea name="alamat" id="alamat" class="form-control" placeholder="enter your address"></textarea>
                                             </div>

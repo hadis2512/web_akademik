@@ -13,11 +13,29 @@
 
 <script>
     $(document).ready(function() {
+        let id = $('input[name="program"]:checked').val();
+
+        $('input[name="program"]').on('change', () => {
+            let id = $('input[name="program"]:checked').val();
+            $.ajax({
+                type: 'POST',
+                url: `<?= base_url('superadmin/Master_data/get_prodi/') ?>${id}`,
+                success: function(data) {
+                    let parsed = JSON.parse(data);
+                    $("#select_prodi").html(parsed);
+                }
+            });
+        });
+
+
+        $("#exampleModalCenter").modal("show");
+
         flatpickr("#tgl", {
 
         });
-        $('#dataTable').DataTable(); // ID From dataTable 
-        $('#dataTableHover').DataTable(); // ID From dataTable with Hover
+        // $('#dataTable').DataTable(); // ID From dataTable 
+        $('#dataTableHover').DataTable({}); // ID From dataTable with Hover
+
 
     });
 </script>

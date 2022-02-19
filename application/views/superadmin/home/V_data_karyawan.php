@@ -43,10 +43,10 @@
                                         <tbody>
                                             <?php
                                             $no = 0;
-                                            foreach ($data_mahasiswa as $a) {
+                                            foreach ($data_karyawan as $a) {
                                                 $no++;
                                                 $id = $a['id'];
-                                                $nim = $a['nim'];
+                                                $nip = $a['nip'];
                                                 $email = $a['email'];
                                                 $nama_lengkap = $a['nama_lengkap'];
                                                 $tempat = $a['tempat'];
@@ -54,13 +54,12 @@
                                                 $jenis_kelamin = $a['jenis_kelamin'];
                                                 $no_telp = $a['no_telp'];
                                                 $alamat = $a['alamat'];
-                                                $nama_program = $a['nama'];
-                                                $prodi = $a['program_studi'];
-
+                                                $nama_jabatan = $a['nama'];
+                                                $id_jabatan = $a['id_jabatan'];
                                             ?>
                                                 <tr>
                                                     <td><?= $no; ?></td>
-                                                    <td><?= $nim; ?></td>
+                                                    <td><?= $nip; ?></td>
                                                     <td><?= $email; ?></td>
                                                     <td><?= $nama_lengkap; ?></td>
                                                     <td><?= $tempat; ?>, <?= date('d-m-Y', strtotime($tgl_lahir)); ?></td>
@@ -90,7 +89,7 @@
                                                             <div class="modal-body">
                                                                 <p>Are you sure you want to delete data <b><?= $nama_lengkap; ?></b> ?</p>
                                                             </div>
-                                                            <form action="<?= base_url('superadmin/Master_data/delete_mahasiswa/' . $id); ?>" method="post" enctype="multipart/form-data" accept-charset="utf-8">
+                                                            <form action="<?= base_url('superadmin/Master_data/delete_karyawan/' . $id); ?>" method="post" enctype="multipart/form-data" accept-charset="utf-8">
 
                                                                 <div class="modal-footer">
                                                                     <button type="button" class="btn btn-outline-success" data-dismiss="modal">Close</button>
@@ -110,13 +109,13 @@
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
                                                             </div>
-                                                            <form action="<?= base_url('superadmin/Master_data/update_mahasiswa/' . $id); ?>" method="post" enctype="multipart/form-data" accept-charset="utf-8">
+                                                            <form action="<?= base_url('superadmin/Master_data/update_karyawan/' . $id); ?>" method="post" enctype="multipart/form-data" accept-charset="utf-8">
                                                                 <div class="modal-body">
 
                                                                     <div class="form-group row">
-                                                                        <label for="nim" class="col-sm-3 col-form-label">NIM </label>
+                                                                        <label for="nip" class="col-sm-3 col-form-label">NIP </label>
                                                                         <div class="col-sm-8">
-                                                                            <input type="text" name="nim" class="form-control" id="nim" value="<?= $nim; ?>" placeholder="Nomor Induk Mahasiswa">
+                                                                            <input type="text" name="nip" class="form-control" id="nip" value="<?= $nip; ?>" placeholder="Nomor Induk Pegawai">
                                                                         </div>
                                                                     </div>
                                                                     <div class="form-group row">
@@ -175,40 +174,18 @@
 
                                                                         </div>
                                                                     </fieldset>
-                                                                    <fieldset class="form-group">
-                                                                        <div class="row">
-                                                                            <legend class="col-form-label col-sm-3 pt-0">Program</legend>
-                                                                            <?php
-                                                                            foreach ($program as $a) { ?>
-                                                                                <div class="col-sm-1">
-                                                                                    <div class="custom-control custom-radio d-flex justify-content-around">
-                                                                                        <input type="radio" id="pilihan<?= $a['id'] ?>" name="program" value="<?= $a['id'] ?>" class="custom-control-input" <?php if ($nama_program == $a['nama']) {
-                                                                                                                                                                                                                echo "checked";
-                                                                                                                                                                                                            } ?>>
-                                                                                        <label class="custom-control-label" for="pilihan<?= $a['id'] ?>"><?= $a['nama'] ?></label>
-                                                                                    </div>
-                                                                                </div>
-                                                                            <?php }
-                                                                            ?>
-                                                                            <div class="col-sm-5">
-                                                                                <select class="select2-single form-control prodi" name="prodi" id="select_prodi">
-                                                                                    <?php if ($a['id']) {
-                                                                                        # code...
-                                                                                    } ?>
-                                                                                </select>
-                                                                            </div>
-
-
-                                                                        </div>
-                                                                    </fieldset>
-                                                                    <!-- <div class="form-group row">
-                                                                        <label for="select_prodi" class="col-sm-3">Program Studi</label>
-
-                                                                    </div> -->
                                                                     <div class="form-group row">
                                                                         <label for="no_telp" class="col-sm-3 col-form-label">Nomor Telepon</label>
-                                                                        <div class="col-sm-8">
+                                                                        <div class="col-sm-4">
                                                                             <input type="text" class="form-control" id="no_telp" value="<?= $no_telp; ?>" name="no_telp" placeholder="Nomor Telepon">
+                                                                        </div>
+                                                                        <div class="col-sm-4">
+                                                                            <select name="jabatan" class="form-control mb-3">
+                                                                                <?php foreach ($jabatan as $jab) { ?>
+                                                                                    <option value="<?= $jab['id']; ?>" <?= $jab['id'] == $id_jabatan ? 'selected="selected"' : '';
+                                                                                                                        ?>><?= $jab['nama']; ?></option>
+                                                                                <?php } ?>
+                                                                            </select>
                                                                         </div>
                                                                     </div>
                                                                     <div class="form-group row">

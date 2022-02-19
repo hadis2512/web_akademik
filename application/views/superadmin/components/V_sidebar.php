@@ -26,7 +26,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Master Add</h6>
                 <a class="collapse-item" href="<?= base_url('superadmin/Master_data/add_mahasiswa'); ?>">Add Data Mahasiswa</a>
-                <a class="collapse-item" href="<?= base_url(); ?>">Add Data Karyawan</a>
+                <a class="collapse-item" href="<?= base_url('superadmin/Master_data/add_karyawan'); ?>">Add Data Karyawan</a>
                 <a class="collapse-item" href="<?= base_url(); ?>">Add Surat</a>
             </div>
         </div>
@@ -40,8 +40,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Master Data User</h6>
                 <a class="collapse-item" href="<?= base_url('superadmin/master_data/data_mahasiswa'); ?>">Data Mahasiswa</a>
-                <a class="collapse-item" href="buttons.html">Data Dosen</a>
-                <a class="collapse-item" href="<?= base_url('supera') ?>">Data Karyawan</a>
+                <a class="collapse-item" href="<?= base_url('superadmin/master_data/data_karyawan'); ?>">Data Karyawan</a>
                 <h6 class="collapse-header">Master Data Surat</h6>
                 <a class="collapse-item" href="modals.html">Data Surat</a>
             </div>
