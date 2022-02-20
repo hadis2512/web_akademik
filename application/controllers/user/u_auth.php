@@ -13,8 +13,8 @@ class u_auth extends CI_Controller
 
     public function index()
     {
-
-        $this->load->view('user/V_uLogin');
+        $data['pageTitle'] = "Sign In";
+        $this->load->view('user/V_uLogin', $data);
     }
     public function auth()
     {
@@ -37,26 +37,26 @@ class u_auth extends CI_Controller
         }
 
         if ($this->session->userdata('masuk') == true) {
-            redirect('superadmin/Login/berhasillogin');
+            redirect('user/u_auth/berhasillogin');
         } else {
-            redirect('superadmin/Login/gagallogin');
+            redirect('user/u_auth/gagallogin');
         }
     }
 
     public function berhasilLogin()
     {
-        redirect('superadmin/Login/home');
+        redirect('user/u_auth/home');
     }
     public function gagalLogin()
     {
         echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-danger animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Incorrect <b>Username</b> or <b>Password !</b> </div>');
-        redirect('superadmin/Login');
+        redirect('user/u_auth');
     }
 
     public function logout()
     {
         $this->session->sess_destroy();
-        $url = base_url('superadmin/Login');
+        $url = base_url('user/u_auth');
         $this->session->set_flashdata('msg', '<div class="alert alert-primary alert-dismissible" role="alert">
                                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
@@ -78,6 +78,6 @@ class u_auth extends CI_Controller
             redirect('superadmin/Login');
         }
         $data['pageTitle'] = "Dashboard";
-        $this->load->view('superadmin/home/V_home', $data);
+        $this->load->view('user/home/V_home', $data);
     }
 }

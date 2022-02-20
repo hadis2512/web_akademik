@@ -6,15 +6,15 @@ class Master_data extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        // if ($this->session->userdata('masuk') != true) {
-        //     $this->session->set_flashdata('msg', '<div class="alert alert-warning alert-dismissible" role="alert">
-        //                                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        //                                                 <span aria-hidden="true">&times;</span>
-        //                                             </button>
-        //                                             <i class="fa fa-exclamation-triangle mr-2"></i> Please Login First!
-        //                                             </div>');
-        //     redirect('superadmin/Login');
-        // }
+        if ($this->session->userdata('masuk') != true) {
+            $this->session->set_flashdata('msg', '<div class="alert alert-warning alert-dismissible" role="alert">
+                                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                    <i class="fa fa-exclamation-triangle mr-2"></i> Please Login First!
+                                                    </div>');
+            redirect('superadmin/Login');
+        }
         $this->load->helper('security');
         $this->load->model('M_superadmin', 'superadmin');
         $this->load->model('M_master_data', 'master_data');
@@ -52,6 +52,14 @@ class Master_data extends CI_Controller
         // print_r($data);
         // die();
     }
+    public function add_surat()
+    {
+        $data['pageTitle'] = "Add Surat";
+        $data['program'] = $this->master_data->get_all_program();
+        $data['jenis_permohonan'] = $this->master_data->get_all_permohonan();
+
+        $this->load->view('superadmin/home/V_add_surat', $data);
+    }
 
     public function get_prodi($id)
     {
@@ -85,7 +93,8 @@ class Master_data extends CI_Controller
         $data['pageTitle'] = "Data Mahasiswa";
         $data['data_mahasiswa'] = $this->master_data->get_all_mhs();
         $data['program'] = $this->master_data->get_all_program();
-
+        // print_r($data['data_mahasiswa']);
+        // die();
         $this->load->view('superadmin/home/V_data_mahasiswa', $data);
     }
     public function testing()
@@ -96,6 +105,7 @@ class Master_data extends CI_Controller
     public function add_karyawan()
     {
         $data['pageTitle'] = "Add karyawan";
+        $data['program'] = $this->master_data->get_all_program();
         $data['jabatan'] = $this->master_data->get_all_jbtn();
         $this->load->view('superadmin/home/V_add_karyawan', $data);
     }
@@ -106,15 +116,22 @@ class Master_data extends CI_Controller
         // print_r($data);
         // die();
         $data['jabatan'] = $this->master_data->get_all_jbtn();
+        // print_r($data['data_karyawan']);
+        // die();
         $this->load->view('superadmin/home/V_data_karyawan', $data);
     }
 
     public function delete_mahasiswa($id)
     {
-        $this->master_data->delete_mahasiswa($id);
-        // $url = $this->data_mahasiswa();
+        $delete_data = $this->master_data->delete_data_mahasiswa($id);
+
         echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Data berhasil di hapus !</div>');
         redirect('superadmin/Master_data/data_mahasiswa');
+        // if ($delete_data) {
+        //     $delete_mhs = $this->master_data->delete_mahasiswa($id);
+        //     if ($delete_mhs) {
+        //     }
+        // }
     }
     public function delete_karyawan($id)
     {
@@ -143,7 +160,6 @@ class Master_data extends CI_Controller
                 $foto = "/assets/data/karyawan/" . $pic['file_name'];
 
                 $data = [
-                    'nip' => $nip,
                     'email' => str_replace("'", "", $this->security->xss_clean($this->input->post('email'))),
                     'nama_lengkap' => str_replace("'", "", $this->security->xss_clean($this->input->post('nama_lengkap'))),
                     'password' => $pw,
@@ -158,10 +174,18 @@ class Master_data extends CI_Controller
                     'created_at' => date('Y-m-d H:i:S'),
                     'updated_at' => date('Y-m-d H:i:S')
                 ];
+
                 $data1 = $this->security->xss_clean($data);
 
                 $insert = $this->master_data->save_karyawan($data1);
                 if ($insert) {
+                    $data_prodi = [
+                        'id_karyawan' => $insert,
+                        'nip' => $nip,
+                        'program_studi' => str_replace("'", "", $this->security->xss_clean($this->input->post('prodi'))),
+                    ];
+                    $data2 = $this->security->xss_clean($data_prodi);
+                    $insert_id = $this->master_data->save_data_karyawan($data2);
                     echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Data  <b>' . $data['nama_lengkap'] . '</b> Successfully added to database.</div>');
                     redirect('superadmin/Master_data/add_karyawan');
                 } else {
@@ -174,7 +198,7 @@ class Master_data extends CI_Controller
             }
         } else {
             $data = [
-                'nip' => $nip,
+
                 'email' => str_replace("'", "", $this->security->xss_clean($this->input->post('email'))),
                 'nama_lengkap' => str_replace("'", "", $this->security->xss_clean($this->input->post('nama_lengkap'))),
                 'password' => $pw,
@@ -192,9 +216,22 @@ class Master_data extends CI_Controller
 
             $data = $this->security->xss_clean($data);
 
-            $this->master_data->save_karyawan1($data);
-            echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Data <b>' . $data['nama_lengkap'] . '</b> Successfully added to database.</div>');
-            redirect('superadmin/Master_data/add_karyawan');
+            $insert2 = $this->master_data->save_karyawan1($data);
+            if ($insert2) {
+                $data_prodi = [
+                    'id_karyawan' => $insert2,
+                    'nip' => $nip,
+                    'program_studi' => str_replace("'", "", $this->security->xss_clean($this->input->post('prodi'))),
+
+                ];
+                $data2 = $this->security->xss_clean($data_prodi);
+                $insert_id = $this->master_data->save_data_karyawan($data2);
+                echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Data <b>' . $data['nama_lengkap'] . '</b> Successfully added to database.</div>');
+                redirect('superadmin/Master_data/add_karyawan');
+            } else {
+                echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button>Data <b>' . $data['nama_lengkap'] . '</b> Failed added to database.</div>');
+                redirect('superadmin/Master_data/add_karyawan');
+            }
         }
     }
     public function update_karyawan($id)
@@ -393,7 +430,7 @@ class Master_data extends CI_Controller
                 $foto = "/assets/data/mahasiswa/" . $pic['file_name'];
 
                 $data = [
-                    'nim' => $nim,
+
                     'email' => str_replace("'", "", $this->security->xss_clean($this->input->post('email'))),
                     'nama_lengkap' => str_replace("'", "", $this->security->xss_clean($this->input->post('nama_lengkap'))),
                     'password' => $pw,
@@ -406,9 +443,12 @@ class Master_data extends CI_Controller
                     'updated_at' => date('Y-m-d H:i:S')
                 ];
 
+                $data_kampus = [
+                    'nim' => $nim,
+                    'program_studi' => $this->input->post('prodi')
+                ];
                 if ($data['password'] == null) {
                     $data = [
-                        'nim' => $nim,
                         'email' => str_replace("'", "", $this->security->xss_clean($this->input->post('email'))),
                         'nama_lengkap' => str_replace("'", "", $this->security->xss_clean($this->input->post('nama_lengkap'))),
                         'tempat' => str_replace("'", "", $this->security->xss_clean($this->input->post('tempat'))),
@@ -420,12 +460,15 @@ class Master_data extends CI_Controller
                         'updated_at' => date('Y-m-d H:i:S')
                     ];
                     $data1 = $this->security->xss_clean($data);
+                    $data2 = $this->security->xss_clean($data_kampus);
                 } else {
                     $data1 = $this->security->xss_clean($data);
+                    $data2 = $this->security->xss_clean($data_kampus);
                 }
 
                 $insert = $this->master_data->update_mahasiswa($data1, $id);
                 if ($insert) {
+                    $update = $this->master_data->update_data_kampus($data2, $id);
                     echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Data  <b>' . $data['nama_lengkap'] . '</b> Successfully added to database.</div>');
                     redirect('superadmin/Master_data/data_mahasiswa');
                 } else {
@@ -438,7 +481,6 @@ class Master_data extends CI_Controller
             }
         } else {
             $data = [
-                'nim' => $nim,
                 'email' => str_replace("'", "", $this->security->xss_clean($this->input->post('email'))),
                 'nama_lengkap' => str_replace("'", "", $this->security->xss_clean($this->input->post('nama_lengkap'))),
                 'password' => $pw,
@@ -448,9 +490,15 @@ class Master_data extends CI_Controller
                 'no_telp' => str_replace("'", "", $this->security->xss_clean($this->input->post('no_telp'))),
                 'alamat' => str_replace("'", "", $this->security->xss_clean($this->input->post('alamat')))
             ];
+
+            $data_kampus = [
+                'nim' => $nim,
+                'program_studi' => $this->input->post('prodi')
+            ];
+
             if ($data['password'] == null) {
                 $data = [
-                    'nim' => $nim,
+
                     'email' => str_replace("'", "", $this->security->xss_clean($this->input->post('email'))),
                     'nama_lengkap' => str_replace("'", "", $this->security->xss_clean($this->input->post('nama_lengkap'))),
                     'tempat' => str_replace("'", "", $this->security->xss_clean($this->input->post('tempat'))),
@@ -461,13 +509,18 @@ class Master_data extends CI_Controller
                     'updated_at' => date('Y-m-d H:i:S')
                 ];
                 $data1 = $this->security->xss_clean($data);
+                $data1 = $this->security->xss_clean($data_kampus);
             } else {
                 $data1 = $this->security->xss_clean($data);
+                $data2 = $this->security->xss_clean($data_kampus);
             }
 
-            $this->master_data->update_mahasiswa1($data1, $id);
-            echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Data <b>' . $data['nama_lengkap'] . '</b> Successfully added to database.</div>');
-            redirect('superadmin/Master_data/data_mahasiswa');
+            $update1 = $this->master_data->update_mahasiswa1($data1, $id);
+            if ($update1) {
+                $this->master_data->update_data_kampus1($data2, $id);
+                echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Data <b>' . $data['nama_lengkap'] . '</b> Successfully added to database.</div>');
+                redirect('superadmin/Master_data/data_mahasiswa');
+            }
         }
     }
 }

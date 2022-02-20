@@ -14,7 +14,7 @@
                 <!-- Container Fluid-->
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Data Mahasiswa</h1>
+                        <h1 class="h3 mb-0 text-gray-800">Data Karyawan</h1>
 
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="./">Home</a></li>
@@ -31,7 +31,7 @@
                                         <thead class="thead-light">
                                             <tr class="text-center">
                                                 <th>No</th>
-                                                <th>NIM</th>
+                                                <th>NIP</th>
                                                 <th>Email</th>
                                                 <th>Nama Lengkap</th>
                                                 <th>Tempat/Tgl Lahir</th>
@@ -80,7 +80,7 @@
                                                     <div class="modal-dialog modal-dialog-scrollable " role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalCenterTitle">Delete Data </h5>
+                                                                <h5 class="modal-title" id="exampleModalCenterTitle">Delete Data</h5>
                                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>

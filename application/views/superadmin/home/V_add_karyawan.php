@@ -52,16 +52,7 @@
                                                 <input type="password" class="form-control" name="password" id="inputPassword3" placeholder="Password">
                                             </div>
                                         </div>
-                                        <div class="form-group row">
-                                            <label for="tempat" class="col-sm-2 col-form-label">Tempat/Tanggal lahir</label>
-                                            <div class="col-sm-5">
-                                                <input type="text" class="form-control" id="nama_lengkap" name="tempat" placeholder="Tempat">
-                                            </div>
-                                            <div class="my-auto ml-4">/</div>
-                                            <div class="col-sm-3 ml-4">
-                                                <input type="text" class="form-control" name="tgl_lahir" id="tgl" placeholder="Tanggal lahir">
-                                            </div>
-                                        </div>
+
                                         <fieldset class="form-group">
                                             <div class="row">
                                                 <legend class="col-form-label col-sm-2 pt-0">Jenis Kelamin</legend>
@@ -80,6 +71,39 @@
 
                                             </div>
                                         </fieldset>
+                                        <fieldset class="form-group">
+                                            <div class="row">
+                                                <legend class="col-form-label col-sm-2 pt-0">Program</legend>
+                                                <?php
+                                                foreach ($program as $a) { ?>
+                                                    <div class="col-sm-3">
+                                                        <div class="custom-control custom-radio">
+                                                            <input type="radio" id="pilihan<?= $a['id'] ?>" name="program" value="<?= $a['id'] ?>" class="custom-control-input">
+                                                            <label class="custom-control-label" for="pilihan<?= $a['id'] ?>"><?= $a['nama'] ?></label>
+                                                        </div>
+                                                    </div>
+                                                <?php }
+                                                ?>
+                                            </div>
+                                        </fieldset>
+                                        <div class="form-group row">
+                                            <label for="select_prodi" class="col-sm-2">Program Studi</label>
+                                            <div class="col-sm-8">
+                                                <select class="select2-single form-control" name="prodi" id="select_prodi">
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="tempat" class="col-sm-2 col-form-label">Tempat/Tanggal lahir</label>
+                                            <div class="col-sm-5">
+                                                <input type="text" class="form-control" id="nama_lengkap" name="tempat" placeholder="Tempat">
+                                            </div>
+                                            <div class="my-auto ml-4">/</div>
+                                            <div class="col-sm-3 ml-4">
+                                                <input type="text" class="form-control" name="tgl_lahir" id="tgl" placeholder="Tanggal lahir">
+                                            </div>
+                                        </div>
                                         <div class="form-group row">
                                             <label for="no_telp" class="col-sm-2 col-form-label">Nomor Telepon</label>
                                             <div class="col-sm-3">

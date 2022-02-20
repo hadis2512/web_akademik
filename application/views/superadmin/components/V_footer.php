@@ -13,7 +13,8 @@
 
 <script>
     $(document).ready(function() {
-        let id = $('input[name="program"]:checked').val();
+
+
 
         $('input[name="program"]').on('change', () => {
             let id = $('input[name="program"]:checked').val();
@@ -25,6 +26,11 @@
                     $("#select_prodi").html(parsed);
                 }
             });
+        });
+
+        $('input[name="jenis_permohonan"]').on('change', () => {
+            let id_permohonan = $('input[name="jenis_permohonan"]:checked').val();
+            $("p").append(" <strong>Appended text Example</strong>.");
         });
 
 

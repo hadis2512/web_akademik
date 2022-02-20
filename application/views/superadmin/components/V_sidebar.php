@@ -27,7 +27,7 @@
                 <h6 class="collapse-header">Master Add</h6>
                 <a class="collapse-item" href="<?= base_url('superadmin/Master_data/add_mahasiswa'); ?>">Add Data Mahasiswa</a>
                 <a class="collapse-item" href="<?= base_url('superadmin/Master_data/add_karyawan'); ?>">Add Data Karyawan</a>
-                <a class="collapse-item" href="<?= base_url(); ?>">Add Surat</a>
+                <a class="collapse-item" href="<?= base_url('superadmin/Master_data/add_surat'); ?>">Add Surat</a>
             </div>
         </div>
     </li>
