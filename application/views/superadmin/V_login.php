@@ -11,7 +11,7 @@
                             <div class="col-lg-12">
                                 <div class="login-form">
                                     <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Superadmin Login</h1>
+                                        <h1 class="h4 text-gray-900 mb-4">Admin Login</h1>
                                         <?= $this->session->flashdata('msg'); ?>
                                     </div>
                                     <form action="<?= base_url('superadmin/Login/auth'); ?>" method="post" enctype="multipart/form-data" accept-charset="utf-8" class="user">

@@ -13,8 +13,11 @@ class Login extends CI_Controller
 
     public function index()
     {
-
         $this->load->view('superadmin/V_login');
+    }
+    function cek_php()
+    {
+        phpinfo();
     }
     public function auth()
     {
@@ -45,18 +48,18 @@ class Login extends CI_Controller
 
     public function berhasilLogin()
     {
-        redirect('superadmin/Login/home');
+        redirect('admin-home');
     }
     public function gagalLogin()
     {
         echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-danger animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Incorrect <b>Username</b> or <b>Password !</b> </div>');
-        redirect('superadmin/Login');
+        redirect('admin-login');
     }
 
     public function logout()
     {
         $this->session->sess_destroy();
-        $url = base_url('superadmin/Login');
+        $url = base_url('admin-login');
         $this->session->set_flashdata('msg', '<div class="alert alert-primary alert-dismissible" role="alert">
                                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
@@ -75,7 +78,7 @@ class Login extends CI_Controller
                                                     </button>
                                                     <i class="fa fa-exclamation-triangle mr-2"></i> Please Login First!
                                                     </div>');
-            redirect('superadmin/Login');
+            redirect('admin-login');
         }
         $data['pageTitle'] = "Dashboard";
         $this->load->view('superadmin/home/V_home', $data);

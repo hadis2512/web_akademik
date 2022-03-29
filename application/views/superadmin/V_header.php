@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link href="<?= base_url(''); ?>assets/superadmin/images/favicon.ico" rel="icon">
-    <title>Superadmin - Login</title>
+    <title>Admin - Login</title>
     <link href="<?= base_url('') ?>assets/superadmin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="<?= base_url('') ?>assets/superadmin/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="<?= base_url('') ?>assets/superadmin/css/ruang-admin.min.css" rel="stylesheet">

@@ -24,60 +24,62 @@ class u_auth extends CI_Controller
         $p = $password;
         $u = $this->security->xss_clean($u);
         $p = $this->security->xss_clean($p);
-
-        $cadmin = $this->user->auth($u, $p);
-        if ($cadmin->num_rows() > 0) {
+        $cadmin = $this->user->login($u, $p);
+        // echo $cadmin;
+        // die();
+        if ($cadmin == 'Password Salah!!') {
+            echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-danger animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>' . $cadmin . '</b> </div>');
+            redirect('login');
+        } elseif ($cadmin == 'Username atau Password Salah!!') {
+            echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-danger animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Username atau Password Tidak Ada!!!</b> </div>');
+            redirect('login');
+        } elseif ($cadmin == null) {
+            echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-danger animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Username atau Password Salah!!!</b> </div>');
+            redirect('login');
+        } else {
             $this->session->set_userdata('masuk', true);
             $this->session->set_userdata('user', $u);
             $xcadmin = $cadmin->row_array();
             $idadmin = $xcadmin['id'];
-            $user_nama = $xcadmin['email'];
+            $email = $xcadmin['email'];
+            $user_nama = $xcadmin['nama_lengkap'];
+            $jabatan = $xcadmin['jabatan'];
             $this->session->set_userdata('idadmin', $idadmin);
+            $this->session->set_userdata('email', $email);
             $this->session->set_userdata('nama', $user_nama);
+            $this->session->set_userdata('jabatan', $jabatan);
+            if ($jabatan == "Dosen") {
+                redirect('Dosen-home');
+            } elseif ($jabatan == "Mahasiswa") {
+                redirect('Mahasiswa-home');
+            }
         }
-
-        if ($this->session->userdata('masuk') == true) {
-            redirect('user/u_auth/berhasillogin');
-        } else {
-            redirect('user/u_auth/gagallogin');
-        }
+        // if ($this->session->userdata('masuk') == true) {
+        //     if ($jab == 'Mahasiswa') {
+        //         redirect('Mahasiswa-home');
+        //     } elseif ($jab == 'Dosen') {
+        //         redirect('Dosen-home');
+        //     } else {
+        //         echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button>Akun belum terdaftar!</div>');
+        //         redirect('user/u_auth/gagallogin');
+        //     }
+        // } else {
+        //     echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button>Akun belum terdaftar!</div>');
+        //     redirect('user/u_auth/gagallogin');
+        // }
     }
 
-    public function berhasilLogin()
-    {
-        redirect('user/u_auth/home');
-    }
-    public function gagalLogin()
-    {
-        echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-danger animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Incorrect <b>Username</b> or <b>Password !</b> </div>');
-        redirect('user/u_auth');
-    }
 
     public function logout()
     {
         $this->session->sess_destroy();
-        $url = base_url('user/u_auth');
+        $url = base_url('login');
         $this->session->set_flashdata('msg', '<div class="alert alert-primary alert-dismissible" role="alert">
-                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                        <i class="fa fa-hand-peace-o mr-2"></i> Goodbye!
-                                        </div>');
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+        <i class="fa fa-hand-peace-o mr-2"></i> Goodbye!
+        </div>');
         redirect($url);
-    }
-
-    public function home()
-    {
-        if ($this->session->userdata('masuk') != true) {
-            $this->session->set_flashdata('msg', '<div class="alert alert-warning alert-dismissible" role="alert">
-                                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                    <i class="fa fa-exclamation-triangle mr-2"></i> Please Login First!
-                                                    </div>');
-            redirect('superadmin/Login');
-        }
-        $data['pageTitle'] = "Dashboard";
-        $this->load->view('user/home/V_home', $data);
     }
 }

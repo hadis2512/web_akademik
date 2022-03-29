@@ -52,4 +52,22 @@ defined('BASEPATH') or exit('No direct script access allowed');
 $route['default_controller'] = 'login';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
-$route[' '] = 'superadmin/Login/index';
+// Admin Page
+$route['admin-login'] = 'superadmin/Login/index';
+$route['admin-home'] = 'superadmin/Login/home';
+$route['admin-add-mahasiswa'] = 'superadmin/Master_data/add_mahasiswa';
+$route['admin-add-dosen'] = 'superadmin/Master_data/add_karyawan';
+$route['admin-data-mahasiswa'] = 'superadmin/master_data/data_mahasiswa';
+$route['admin-data-dosen'] = 'superadmin/master_data/data_karyawan';
+// end Admin Page
+
+// User Page
+$route['login'] = 'user/u_auth/index';
+$route['Login'] = 'user/u_auth/index';
+// Mahasiswa
+$route['Mahasiswa-home'] = 'user/User/Mahasiswa';
+$route['Pengajuan-Form'] = 'user/User/Pengajuan_form';
+
+// end Mahasiswa
+$route['Dosen-home'] = 'user/User/Dosen';
+// end User Page

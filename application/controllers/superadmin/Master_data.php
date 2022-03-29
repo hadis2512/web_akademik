@@ -13,7 +13,7 @@ class Master_data extends CI_Controller
                                                     </button>
                                                     <i class="fa fa-exclamation-triangle mr-2"></i> Please Login First!
                                                     </div>');
-            redirect('superadmin/Login');
+            redirect('admin-login');
         }
         $this->load->helper('security');
         $this->load->model('M_superadmin', 'superadmin');
@@ -106,14 +106,16 @@ class Master_data extends CI_Controller
     {
         $data['pageTitle'] = "Add karyawan";
         $data['program'] = $this->master_data->get_all_program();
-        $data['jabatan'] = $this->master_data->get_all_jbtn();
+        $data['prodi'] = $this->master_data->get_prodi();
+        // $data['jabatan'] = $this->master_data->get_all_jbtn();
         $this->load->view('superadmin/home/V_add_karyawan', $data);
     }
     public function data_karyawan()
     {
         $data['pageTitle'] = "Data Karyawan";
         $data['data_karyawan'] = $this->master_data->get_all_karyawan();
-        // print_r($data);
+
+        // print_r($data['prodi']);
         // die();
         $data['jabatan'] = $this->master_data->get_all_jbtn();
         // print_r($data['data_karyawan']);

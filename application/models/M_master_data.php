@@ -25,8 +25,11 @@ class M_master_data extends CI_Model
         // $sql = "SELECT a.*, b.id as id_jabatan,b.nama as nama from karyawan a, jabatan b where a.id_jabatan=b.id";
         // return $this->db->query($sql)->result_array();
     }
-    function get_prodi_by_id($id_program)
+    function get_prodi()
     {
+        // $this->db->distinct();
+        // $this->db->select('program_studi');
+        return $this->db->get('program_studi')->result_array();
     }
     function get_all_program()
     {
@@ -50,6 +53,9 @@ class M_master_data extends CI_Model
     function get_all_jbtn()
     {
         return $this->db->get('jabatan')->result_array();
+        // $a = $this->db->query('CALL get_jabatan');
+        // return $a->result_array();
+        // $this->db->close();
     }
 
     function save_karyawan($data)

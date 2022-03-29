@@ -71,26 +71,14 @@
 
                                             </div>
                                         </fieldset>
-                                        <fieldset class="form-group">
-                                            <div class="row">
-                                                <legend class="col-form-label col-sm-2 pt-0">Program</legend>
-                                                <?php
-                                                foreach ($program as $a) { ?>
-                                                    <div class="col-sm-3">
-                                                        <div class="custom-control custom-radio">
-                                                            <input type="radio" id="pilihan<?= $a['id'] ?>" name="program" value="<?= $a['id'] ?>" class="custom-control-input">
-                                                            <label class="custom-control-label" for="pilihan<?= $a['id'] ?>"><?= $a['nama'] ?></label>
-                                                        </div>
-                                                    </div>
-                                                <?php }
-                                                ?>
-                                            </div>
-                                        </fieldset>
+
                                         <div class="form-group row">
                                             <label for="select_prodi" class="col-sm-2">Program Studi</label>
                                             <div class="col-sm-8">
                                                 <select class="select2-single form-control" name="prodi" id="select_prodi">
-
+                                                    <?php foreach ($prodi as $a) { ?>
+                                                        <option value="<?= $a['id']; ?>"><?= $a['program_studi'] ?></option>
+                                                    <?php } ?>
                                                 </select>
                                             </div>
                                         </div>
@@ -109,19 +97,8 @@
                                             <div class="col-sm-3">
                                                 <input type="text" class="form-control" id="no_telp" name="no_telp" placeholder="Nomor Telepon">
                                             </div>
-                                            <label for="jabatan" class="col-sm-2 ml-5 col-form-label">Jabatan</label>
+                                            <label for="jabatan" class="col-sm-2 ml-5 col-form-label">Alamat</label>
                                             <div class="col-sm-3">
-                                                <select name="jabatan" class="form-control mb-3">
-                                                    <?php foreach ($jabatan as $jab) { ?>
-                                                        <option value="<?= $jab['id']; ?>"><?= $jab['nama']; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="alamat" class="col-sm-2 col-form-label">Alamat</label>
-                                            <div class="col-sm-9">
-                                                <!-- <input type="text" class="form-control" id="nama_lengkap" name="tempat" placeholder="Tempat"> -->
                                                 <textarea name="alamat" id="alamat" class="form-control" placeholder="enter your address"></textarea>
                                             </div>
                                         </div>

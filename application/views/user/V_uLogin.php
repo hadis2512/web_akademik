@@ -8,13 +8,13 @@
         <div class="card">
             <div class="body">
                 <form id="sign_in" action="<?= base_url('user/u_auth/auth'); ?>" method="POST">
-                    <div class="msg"></div>
+                    <div class="msg"><?= $this->session->flashdata('msg'); ?></div>
                     <div class="input-group">
                         <span class="input-group-addon">
                             <i class="material-icons">person</i>
                         </span>
                         <div class="form-line">
-                            <input type="text" class="form-control" name="email" placeholder="Email" required autofocus>
+                            <input type="email" class="form-control" name="email" placeholder="Email" required autofocus>
                         </div>
                     </div>
                     <div class="input-group">
@@ -40,6 +40,14 @@
                     </div>
                 </form>
             </div>
+        </div>
+
+
+    </div>
+    <div class="text-center">
+
+        <div class="w-100">
+            <h3 id="waktu"></h3>
         </div>
     </div>
     <?php $this->load->view('user/components/V_footer'); ?>

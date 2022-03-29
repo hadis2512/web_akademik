@@ -23,4 +23,11 @@
 
     <!-- Custom Css -->
     <link href="<?= base_url('assets/user/') ?>css/style.css" rel="stylesheet">
+    <!-- Morris Chart Css-->
+    <link href="<?= base_url('assets/user/') ?>plugins/morrisjs/morris.css" rel="stylesheet" />
+
+    <!-- Custom Css -->
+
+    <!-- AdminBSB Themes. You can choose a theme from css/themes instead of get all themes -->
+    <link href="<?= base_url('assets/user/') ?>css/themes/all-themes.css" rel="stylesheet" />
 </head>
