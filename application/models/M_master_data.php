@@ -14,12 +14,11 @@ class M_master_data extends CI_Model
     }
     function get_all_karyawan()
     {
-        $this->db->select('a.*,b.nip as nip,b.program_studi as prodi_id ,c.id as id_prodi,d.id as program_id,e.nama as nama');
+        $this->db->select('a.*,b.nip as nip,b.program_studi as prodi_id ,c.id as id_prodi,d.id as program_id');
         $this->db->from('karyawan a');
         $this->db->join('data_karyawan_kampus as b', 'b.id_karyawan=a.id', 'left outer');
         $this->db->join('program_studi as c', 'b.program_studi=c.id', 'left outer');
         $this->db->join('program as d', 'c.id_program=d.id', 'left outer');
-        $this->db->join('jabatan as e', 'e.id=a.id_jabatan', 'left outer');
         $query = $this->db->get();
         return $query->result_array();
         // $sql = "SELECT a.*, b.id as id_jabatan,b.nama as nama from karyawan a, jabatan b where a.id_jabatan=b.id";
@@ -257,7 +256,18 @@ class M_master_data extends CI_Model
         $this->db->from('data_formulir a');
         $this->db->join('jenispermohonan b', 'a.id_jenis_permohonan=b.id', 'left_outer');
         $this->db->limit(3);
-        $this->db->where('a.id_mahasiswa', $id_pengguna);
+        $this->db->where(['a.id_mahasiswa' => $id_pengguna,]);
+        return $this->db->get()->result_array();
+    }
+    function get_all_form_by_admin()
+    {
+        $this->db->select('a.*,b.nama as jenis_permohonan,c.nama_lengkap as nama_mahasiswa,d.nim as nim,e.program_studi as nama_prodi ');
+        $this->db->from('data_formulir a');
+        $this->db->join('jenispermohonan b', 'a.id_jenis_permohonan=b.id', 'left_outer');
+        $this->db->join('mahasiswa c', 'a.id_mahasiswa=c.id', 'left_outer');
+        $this->db->join('data_mahasiswa_kampus d', 'c.id=d.id_mahasiswa', 'left_outer');
+        $this->db->join('program_studi e', 'd.program_studi=e.id', 'left_outer');
+        $this->db->where('a.approval_admin', 0);
         return $this->db->get()->result_array();
     }
     function get_all_form_by_prodi($prodi)

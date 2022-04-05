@@ -42,8 +42,8 @@
                 <a class="collapse-item" href="<?= base_url('admin-data-mahasiswa'); ?>">Data Mahasiswa</a>
                 <a class="collapse-item" href="<?= base_url('admin-data-dosen'); ?>">Data Karyawan</a>
                 <h6 class="collapse-header">Master Data Surat</h6>
-                <a class="collapse-item" href="modals.html">Data Surat</a>
-                <a class="collapse-item" href="modals.html">Data Formulir</a>
+                <a class="collapse-item" href="<?= base_url('admin-data-formulir'); ?>">Data Formulir</a>
+                <a class="collapse-item" href="<?= base_url('admin-data-surat'); ?>">Data Surat</a>
             </div>
         </div>
     </li>

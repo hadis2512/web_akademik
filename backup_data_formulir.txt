@@ -1,0 +1,28 @@
+<tbody>
+                                            <?php
+                                            $no = 0;
+                                            foreach ($data_formulir as $a) {
+                                                $no++;
+
+                                            ?>
+                                                <tr>
+                                                    <td><?= $no; ?></td>
+                                                    <td><?= $a['no_form']; ?></td>
+                                                    <td><?= $a['nim']; ?></td>
+                                                    <td><?= $a['nama_mahasiswa']; ?></td>
+                                                    <td><?= $a['nama_prodi']; ?></td>
+                                                    <td><?= $a['jenis_permohonan']; ?></td>
+                                                    <td><?= $a['jenis_permohonan']; ?></td>
+                                                    <td>
+                                                        <div class="d-flex ">
+                                                            <a href="#" data-toggle="modal" data-target="#details" id="#modalCenter" class="btn btn-info btn-sm mr-2">
+                                                                <i class="fas fa-info-circle"></i>
+                                                            </a>
+                                                            <a href="#" data-toggle="modal" data-target="#delete" id="#modalCenter" class="btn btn-danger btn-sm"><i class="fa fa-trash " aria-hidden="true"></i></a>
+                                                        </div>
+                                                    </td>
+
+                                                </tr>
+
+                                            <?php } ?>
+                                        </tbody>

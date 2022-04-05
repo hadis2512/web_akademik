@@ -54,8 +54,7 @@
                                                 $jenis_kelamin = $a['jenis_kelamin'];
                                                 $no_telp = $a['no_telp'];
                                                 $alamat = $a['alamat'];
-                                                $nama_jabatan = $a['nama'];
-                                                $id_jabatan = $a['id_jabatan'];
+                                                $nama_jabatan = $a['jabatan'];
                                             ?>
                                                 <tr>
                                                     <td><?= $no; ?></td>
@@ -176,16 +175,8 @@
                                                                     </fieldset>
                                                                     <div class="form-group row">
                                                                         <label for="no_telp" class="col-sm-3 col-form-label">Nomor Telepon</label>
-                                                                        <div class="col-sm-4">
+                                                                        <div class="col-sm-8">
                                                                             <input type="text" class="form-control" id="no_telp" value="<?= $no_telp; ?>" name="no_telp" placeholder="Nomor Telepon">
-                                                                        </div>
-                                                                        <div class="col-sm-4">
-                                                                            <select name="jabatan" class="form-control mb-3">
-                                                                                <?php foreach ($jabatan as $jab) { ?>
-                                                                                    <option value="<?= $jab['id']; ?>" <?= $jab['id'] == $id_jabatan ? 'selected="selected"' : '';
-                                                                                                                        ?>><?= $jab['nama']; ?></option>
-                                                                                <?php } ?>
-                                                                            </select>
                                                                         </div>
                                                                     </div>
                                                                     <div class="form-group row">

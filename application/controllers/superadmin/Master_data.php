@@ -110,6 +110,16 @@ class Master_data extends CI_Controller
         // $data['jabatan'] = $this->master_data->get_all_jbtn();
         $this->load->view('superadmin/home/V_add_karyawan', $data);
     }
+    public function data_formulir()
+    {
+        $data['pageTitle'] = "Data Formulir";
+        $data['data_formulir'] = $this->master_data->get_all_form_by_admin();
+
+        // print_r($data['data_formulir']);
+        // die();
+        $this->load->view('superadmin/home/V_data_formulir', $data);
+    }
+
     public function data_karyawan()
     {
         $data['pageTitle'] = "Data Karyawan";

@@ -59,6 +59,7 @@ $route['admin-add-mahasiswa'] = 'superadmin/Master_data/add_mahasiswa';
 $route['admin-add-dosen'] = 'superadmin/Master_data/add_karyawan';
 $route['admin-data-mahasiswa'] = 'superadmin/master_data/data_mahasiswa';
 $route['admin-data-dosen'] = 'superadmin/master_data/data_karyawan';
+$route['admin-data-formulir'] = 'superadmin/master_data/data_formulir';
 // end Admin Page
 
 // User Page
