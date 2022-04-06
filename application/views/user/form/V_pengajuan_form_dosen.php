@@ -27,37 +27,9 @@
                             <div class="container">
                                 <div class="header d-flex justify-content-between">
                                     <h3 class="font-weight-light ">Latest Data</h3>
-                                    <a class="btn btn-inverse-dark" href="#" data-target="#createF" data-toggle="modal"><i class="icon-plus mr-3 "></i><b>Buat Pengajuan</b></a>
                                 </div>
                                 <hr>
                                 <?= $view_more; ?>
-
-                                <!-- Modal -->
-                                <div class="modal fade" id="createF" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg" style="width: 1000px;" role="document">
-                                        <div class="modal-content">
-                                            <!-- <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Pengajuan Form</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div> -->
-                                            <div class="modal-body d-flex justify-content-around">
-                                                <?php foreach ($jenis_p as $a) { ?>
-                                                    <div class="card border">
-                                                        <a class="card btn btn-outline-info m-1" style="height: 250px;width:250px;" href="createSurat/<?= $a['id']; ?>">
-                                                            <span class="my-auto"><?= $a['nama']; ?></span>
-                                                        </a>
-                                                    </div>
-                                                <?php } ?>
-
-                                            </div>
-                                            <!-- <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary w-100" data-dismiss="modal">Close</button>
-                                            </div> -->
-                                        </div>
-                                    </div>
-                                </div>
 
 
                                 <div class="row">
@@ -92,7 +64,7 @@
 
                                                         ?>
                                                     </p>
-                                                    <a href="#" id="modal_detail" data-toggle="modal" data-target="#modalDetail_form" name="" data-jenis="<?= $a['id_jenis_permohonan']; ?>" data-formulir="<?= $a['id_formulir']; ?>" class="test font-weight-bold text-light float-right">details<i class="ml-2 icon-arrow-right"></i>
+                                                    <a href="#" id="modal_detail" data-toggle="modal" data-target="#modalDetail_form_dosen" name="" data-jenis="<?= $a['id_jenis_permohonan']; ?>" data-formulir="<?= $a['id_formulir']; ?>" class="test font-weight-bold text-light float-right">details<i class="ml-2 icon-arrow-right"></i>
                                                     </a>
                                                 </div>
                                             </div>

@@ -31,7 +31,6 @@
           success: function(data) {
             let parsed2 = JSON.parse(data);
             let data1 = parsed2;
-            console.log(data)
             let html = "";
             data1.forEach((res, index) => {
               if (res.approval == 0) {
@@ -263,33 +262,33 @@
     $('#modalDetail_form_dosen').on('show.bs.modal', function(event) {
       var div = $(event.relatedTarget) // Tombol dimana modal di tampilkan
       var modal = $(this)
+      $('html').css('overflow-y', 'hidden')
       let id_formulir = div.data('formulir')
       let jenis_permohonan = div.data('jenis')
-      $.ajax({
-        type: 'POST',
-        url: `<?= base_url('user/User/get_detail_form/') ?>${id_formulir}/${jenis_permohonan}`,
-        success: function(data) {
-          $('html').css('overflow-y', 'hidden')
-          let parsed3 = JSON.parse(data);
-          let data1 = parsed3;
-          console.log(data)
-          let html = "";
-          data1.forEach((res, index) => {
-            if (res.approval == 0) {
-              var status = "Not Approval";
-              var color = "text-warning"
-            } else if (res.approval == 1) {
-              var status = "Approval";
-              var color = "text-success"
-            } else if (res.approval == 2) {
-              var status = "Duplicate";
-              var color = "text-danger"
-            }
-            console.log(status)
-            let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            let date = new Date(res.tgl_lahir);
-            let tanggal_lahir = `${date.getDate()}-${months[date.getMonth()]}-${date.getFullYear()}`;
-            html += `<div class="modal-header">
+      if (jenis_permohonan == 1) {
+        $.ajax({
+          type: 'POST',
+          url: `<?= base_url('user/User/get_detail_form/') ?>${id_formulir}/${jenis_permohonan}`,
+          success: function(data) {
+            let parsed3 = JSON.parse(data);
+            let data1 = parsed3;
+            let html = "";
+            data1.forEach((res, index) => {
+              if (res.approval == 0) {
+                var status = "Not Approval";
+                var color = "text-warning"
+              } else if (res.approval == 1) {
+                var status = "Approval";
+                var color = "text-success"
+              } else if (res.approval == 2) {
+                var status = "Duplicate";
+                var color = "text-danger"
+              }
+
+              let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+              let date = new Date(res.tgl_lahir);
+              let tanggal_lahir = `${date.getDate()}-${months[date.getMonth()]}-${date.getFullYear()}`;
+              html += `<div class="modal-header">
                                             <div class="d-flex justify-content-around">
                                                 <h5 class="modal-title" id="exampleModalLabel">${res.no_form} </h5>
                                                 <span class="${color} ml-3"> (<b>${status}</b>)</span>
@@ -367,24 +366,178 @@
 
                                             </div>
                                             <div class="modal-footer d-flex justify-content-center">
-                                            <button type="button" class="btn btn-danger " data-dismiss="modal">Reject</button>
-                                            <button type="button" class="btn btn-success " data-dismiss="modal">Approve</button>
+                                                <button type="button" class="btn btn-danger " id="tolak" >Reject</button>
+                                                <button type="button" class="btn btn-success" id="setuju" >Approve</button>
                                             </div>`
-            $('#data_modal_dosen').html(html);
-          })
-        },
-        error: function(error) {
-          console.log(error);
-          alert("asuk")
-        }
-      });
-    })
+              $('#data_modal_dosen').html(html);
+              $('#tolak').click(() => {
+                let id_formulir = $(this).attr('value')
+
+                alert(id_formulir);
+              })
+              $('#setuju').click(() => {
+                $.ajax({
+                  type: 'POST',
+                  url: `<?= base_url('user/User/approve/') ?>`,
+                })
+              })
+            })
+          },
+          error: function(error) {
+            console.log(error);
+            alert("asuk")
+          }
+
+        });
+      } else if (jenis_permohonan == 2) {
+        $.ajax({
+          type: 'POST',
+          url: `<?= base_url('user/User/get_detail_form/') ?>${id_formulir}/${jenis_permohonan}`,
+          success: function(data) {
+            let parsed2 = JSON.parse(data);
+            let data1 = parsed2;
+            let html = "";
+            data1.forEach((res, index) => {
+              if (res.approval == 0) {
+                var status = "Not Approval";
+                var color = "text-warning"
+              } else if (res.approval == 1) {
+                var status = "Approval";
+                var color = "text-success"
+              } else if (res.approval == 2) {
+                var status = "Duplicate";
+                var color = "text-danger"
+              }
+              let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+              let date = new Date(res.tgl_lahir);
+              let tanggal_lahir = `${date.getDate()}-${months[date.getMonth()]}-${date.getFullYear()}`;
+              html += `<div class="modal-header">
+                                            <div class="d-flex justify-content-around">
+                                                <h5 class="modal-title" id="exampleModalLabel">${res.no_form} </h5>
+                                                <span class="${color} ml-3"> (<b>${status}</b>)</span>
+                                            </div>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body row">  
+                                              <form class="forms-sample col-lg-12" >       
+                                              <div id="accordion">
+                                                    <p id="akordion" class="akordion-child mb-3 " style="cursor:pointer;" data-toggle="collapse" data-target="#collapseIji" aria-expanded="true" aria-controls="collapseOne">
+                                                      <b>Data Mahasiswa</b> <i  class="ti-angle-right ml-2" ></i>
+                                                    </p>
+                                                  <div id="collapseIji" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                                                    <div class="form-group row">
+                                                        <div class="col-lg-6">
+                                                          <label for="exampleInputUsername1">NIM</label>
+                                                          <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Username" value="${res.nim}" readonly>
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                          <label for="exampleInputUsername1" class="">Nama</label>
+                                                          <input type="text" class="form-control " id="exampleInputUsername1" placeholder="Username" value="${res.nama_lengkap}" readonly>
+                                                        </div>                                        
+                                                    </div> 
+                                                    <div class="form-group row">
+                                                        <div class="col-lg-6">
+                                                          <label for="exampleInputUsername1">Program</label>
+                                                          <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Username" value="${res.nama_program}" readonly>
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                          <label for="exampleInputUsername1" class="">Program Studi</label>
+                                                          <input type="text" class="form-control " id="exampleInputUsername1" placeholder="Username" value="${res.nama_prodi}" readonly>
+                                                        </div>                                        
+                                                    </div> 
+                                                    <div class="form-group row">
+                                                        <div class="col-lg-6">
+                                                          <label for="tempat">Tempat</label>                                                
+                                                          <input type="text" class="form-control" id="tempat" placeholder="Tempat" value="${res.tempat}" readonly>                                                    
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                          <label for="tgl">Tanggal Lahir</label>                                                
+                                                          <input type="text" class="form-control" id="tgl" placeholder="tgl_lahir" value="${tanggal_lahir}" readonly>
+                                                        </div>                                        
+                                                    </div> 
+                                                    <div class="form-group row">
+                                                        <div class="col-lg-6">
+                                                          <label for="exampleInputUsername1">Alamat</label>
+                                                          <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Username" value="${res.alamat}" readonly>
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                          <label for="exampleInputUsername1" class="">No Telepon</label>
+                                                          <input type="text" class="form-control " id="exampleInputUsername1" placeholder="Username" value="${res.no_telp}" readonly>
+                                                        </div>                                        
+                                                    </div> 
+                                                  </div>
+                                                  </div>
+                                                    <div class="form-group row">
+                                                        <div class="col-lg-6">
+                                                          <label for="exampleInputUsername1">Nama Perusahaan</label>
+                                                          <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Username" value="${res.nama_perusahaan}"readonly>
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                          <label for="exampleInputUsername1" class="">Alamat Surat</label>
+                                                          <input type="text" class="form-control " id="exampleInputUsername1" placeholder="Username" value="${res.alamat_surat}" readonly>
+                                                        </div>                                        
+                                                    </div> 
+                                                    <div class="form-group row">
+                                                        <div class="col-lg-6">
+                                                          <label for="exampleInputUsername1">Perwakilan Perusahaan</label>
+                                                          <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Username" value="${res.perwakilan_perusahaan}"readonly >
+                                                        </div>                                                    
+                                                        <div class="col-lg-6">
+                                                          <label for="exampleInputUsername1">Jabatan Perwakilan</label>
+                                                          <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Username" value="${res.jabatan_perwakilan}"readonly >
+                                                        </div>                                                    
+                                                    </div>                                                                                                 
+                                                    <div class="form-group row">
+                                                        <div class="col-lg-12">
+                                                          <label for="exampleInputUsername1">Telp Perusahaan</label>
+                                                          <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Username" value="${res.no_telp_perusahaan}" readonly>
+                                                        </div>                                                    
+                                                    </div>
+                                              </form>
+
+                                            </div>
+                                            <div class="modal-footer d-flex justify-content-center">
+                                                <button type="button" class="btn btn-danger" id="tolak" data-formulir="${res.id_formulir}">Reject</button>
+                                                <button type="button" class="btn btn-success" id="setuju" data-formulir="${res.id_formulir}">Approve</button>
+                                            </div>`
+              $('#data_modal_dosen').html(html);
+              $('#tolak').click(() => {
+                var div = $(event.relatedTarget)
+                var modal = $(this)
+                let id_formulir = div.data('formulir')
+                alert(id_formulir);
+              })
+              $('#setuju').click(() => {
+                var div = $(event.relatedTarget)
+                var modal = $(this)
+                let id_formulir = div.data('formulir')
+                $.ajax({
+                  type: 'POST',
+                  url: `<?= base_url('user/User/approve/') ?>${id_formulir}`,
+                  success: function(data) {
+                    location.reload(true);
+                  }
+                })
+              })
+            })
+
+          },
+          error: function(error) {
+            console.log(error);
+          }
+        });
+
+      }
+
+    });
     $('#modalDetail_form_dosen').on('hide.bs.modal', (event) => {
       $('html').css('overflow-y', 'auto')
-    })
+    });
     $('#modalDetail_form').on('hide.bs.modal', (event) => {
       $('html').css('overflow-y', 'auto')
-    })
+    });
     // $('#modal_detail_dosen').click(() => {
     //   let id_formulir = $('.test').attr('data-formulir');
     //   let jenis_permohonan = $('.test').attr('data-jenis');

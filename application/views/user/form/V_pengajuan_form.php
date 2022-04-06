@@ -78,7 +78,7 @@
                                             <div class="card card-tale">
                                                 <div class="card-header d-flex justify-content-between">
                                                     <p class="mb-0"><?= $a['no_form']; ?></p>
-                                                    <?= $approval; ?>
+                                                    <?= $approval . ' ' . $a['approval']; ?>
 
                                                 </div>
                                                 <div class="card-body">

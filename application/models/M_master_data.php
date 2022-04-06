@@ -215,7 +215,17 @@ class M_master_data extends CI_Model
         $this->db->where('id_formulir', $insert);
         return $this->db->get('data_formulir')->row_array();
     }
-
+    function approve($data)
+    {
+        $this->db->set('approval', $data['approval']);
+        $this->db->where('id_formulir', $data['id_formulir']);
+        $this->db->update('data_formulir');
+        if ($this->db->affected_rows()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     function get_detail_riset($id_pengguna)
     {
         $this->db->select('a.*,b.nama as jenis_permohonan,c.judul as judul_tugas');

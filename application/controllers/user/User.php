@@ -48,6 +48,17 @@ class User extends CI_Controller
         // die();
         $this->load->view('user/form/V_pengajuan_form', $data);
     }
+
+    public function approve($id_formulir)
+    {
+        $data = [
+            'approval' => 1,
+            'id_formulir' => $id_formulir
+        ];
+        $approve = $this->master_data->approve($data);
+        echo json_encode($approve);
+    }
+
     public function Pengajuan_form_dosen()
     {
         $data['id_pengguna'] = $this->session->userdata('idadmin');
@@ -59,8 +70,7 @@ class User extends CI_Controller
         $data['User'] = $this;
         $data['form'] = $this->master_data->get_all_form_by_prodi($prodi)->result_array();
         $data['jenis_p'] = $this->master_data->get_jenis_permohonan();
-        $form = $this->master_data->get_all_form_by_prodi($prodi);
-        if ($form->num_rows > 0) {
+        if (count($data['form']) > 0) {
             $data['view_more'] = '<div class="my-4 d-flex flex-row-reverse">
             <a href="" class="btn btn-inverse-info btn-sm "><i class="icon-grid mr-3"></i>View More</a>
         </div>';
