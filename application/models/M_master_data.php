@@ -265,8 +265,9 @@ class M_master_data extends CI_Model
         $this->db->select('a.*,b.nama as jenis_permohonan');
         $this->db->from('data_formulir a');
         $this->db->join('jenispermohonan b', 'a.id_jenis_permohonan=b.id', 'left_outer');
-        $this->db->limit(3);
         $this->db->where(['a.id_mahasiswa' => $id_pengguna,]);
+        $this->db->order_by('id_formulir', 'DESC');
+        $this->db->limit(3);
         return $this->db->get()->result_array();
     }
     function get_all_form_by_admin()

@@ -25,8 +25,7 @@
                     <div class="row">
                         <div class="col-md-12 mt-3 grid-margin transparent">
                             <div class="container">
-                                <div class="header d-flex justify-content-between">
-                                    <h3 class="font-weight-light ">Latest Data</h3>
+                                <div class="header d-flex justify-content-end">
                                     <a class="btn btn-inverse-dark" href="#" data-target="#createF" data-toggle="modal"><i class="icon-plus mr-3 "></i><b>Buat Pengajuan</b></a>
                                 </div>
                                 <hr>
@@ -69,16 +68,16 @@
                                         if ($a['approval'] == 0) {
                                             $approval = '<p class="mb-0" class="card" style="background: yellow;width:25px;height:20px;"></p>';
                                         } elseif ($a['approval'] == 1) {
-                                            $approval = '<p class="mb-0" class="card" style="background: green;width:25px;height:20px;"></p>';
+                                            $approval = '<p class="mb-0" class="card" style="background: #01ff00;width:25px;height:20px;"></p>';
                                         } elseif ($a['approval'] == 2) {
-                                            $approval = '<p class="mb-0" class="card" style="background: success;width:25px;height:20px;"></p>';
+                                            $approval = '<p class="mb-0" class="card" style="background: red;width:25px;height:20px;"></p>';
                                         }
                                     ?>
                                         <div class="col-md-4 mb-2 stretch-card transparent">
                                             <div class="card card-tale">
                                                 <div class="card-header d-flex justify-content-between">
                                                     <p class="mb-0"><?= $a['no_form']; ?></p>
-                                                    <?= $approval . ' ' . $a['approval']; ?>
+                                                    <?= $approval; ?>
 
                                                 </div>
                                                 <div class="card-body">

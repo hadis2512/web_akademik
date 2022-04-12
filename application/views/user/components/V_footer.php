@@ -366,26 +366,32 @@
 
                                             </div>
                                             <div class="modal-footer d-flex justify-content-center">
-                                                <button type="button" class="btn btn-danger " id="tolak" >Reject</button>
-                                                <button type="button" class="btn btn-success" id="setuju" >Approve</button>
+                                                <button type="button" class="btn btn-danger" class="tolak" data-formulir="${res.id_formulir}">Reject</button>
+                                                <button type="button" class="btn btn-success" class="setuju" value="${res.id_formulir}">Approve</button>
                                             </div>`
               $('#data_modal_dosen').html(html);
-              $('#tolak').click(() => {
-                let id_formulir = $(this).attr('value')
-
-                alert(id_formulir);
-              })
-              $('#setuju').click(() => {
-                $.ajax({
-                  type: 'POST',
-                  url: `<?= base_url('user/User/approve/') ?>`,
-                })
-              })
+              // $('#tolak').click(() => {
+              //   var div = $(event.relatedTarget)
+              //   var modal = $(this)
+              //   let id_formulir = div.data('formulir')
+              //   alert(id_formulir);
+              // })
+              // $('#setuju').click(() => {
+              //   var div = $(event.relatedTarget)
+              //   var modal = $(this)
+              //   let id_formulir = div.data('formulir')
+              //   $.ajax({
+              //     type: 'POST',
+              //     url: `<?= base_url('user/User/approve/') ?>${id_formulir}`,
+              //     success: function(data) {
+              //       location.reload(true);
+              //     }
+              //   })
+              // })
             })
           },
           error: function(error) {
-            console.log(error);
-            alert("asuk")
+            console.log(error)
           }
 
         });
@@ -499,28 +505,11 @@
 
                                             </div>
                                             <div class="modal-footer d-flex justify-content-center">
-                                                <button type="button" class="btn btn-danger" id="tolak" data-formulir="${res.id_formulir}">Reject</button>
-                                                <button type="button" class="btn btn-success" id="setuju" data-formulir="${res.id_formulir}">Approve</button>
+                                                <button type="button" class="btn btn-danger" class="tolak" data-formulir="${res.id_formulir}">Reject</button>
+                                                <button type="button" class="btn btn-success" class="setuju" value="${res.id_formulir}">Approve</button>
                                             </div>`
               $('#data_modal_dosen').html(html);
-              $('#tolak').click(() => {
-                var div = $(event.relatedTarget)
-                var modal = $(this)
-                let id_formulir = div.data('formulir')
-                alert(id_formulir);
-              })
-              $('#setuju').click(() => {
-                var div = $(event.relatedTarget)
-                var modal = $(this)
-                let id_formulir = div.data('formulir')
-                $.ajax({
-                  type: 'POST',
-                  url: `<?= base_url('user/User/approve/') ?>${id_formulir}`,
-                  success: function(data) {
-                    location.reload(true);
-                  }
-                })
-              })
+
             })
 
           },
@@ -530,7 +519,24 @@
         });
 
       }
-
+      $('.tolak').click(() => {
+        var div = $(event.relatedTarget)
+        var modal = $(this)
+        let id_formulir = div.data('formulir')
+        alert(id_formulir);
+      })
+      $('.setuju').click(() => {
+        var div = $(event.relatedTarget)
+        var modal = $(this)
+        let id_formulir = div.data('formulir')
+        $.ajax({
+          type: 'POST',
+          url: `<?= base_url('user/User/approve/') ?>${id_formulir}`,
+          success: function(data) {
+            location.reload(true);
+          }
+        })
+      })
     });
     $('#modalDetail_form_dosen').on('hide.bs.modal', (event) => {
       $('html').css('overflow-y', 'auto')
