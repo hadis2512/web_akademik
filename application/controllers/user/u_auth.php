@@ -25,7 +25,7 @@ class u_auth extends CI_Controller
         $u = $this->security->xss_clean($u);
         $p = $this->security->xss_clean($p);
         $cadmin = $this->user->login($u, $p);
-        // print_r($cadmin);
+        // print_r($cadmin->result_array());
         // die();
         if ($cadmin == 'Password Salah!!') {
             echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-danger animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>' . $cadmin . '</b> </div>');
@@ -44,8 +44,10 @@ class u_auth extends CI_Controller
             $email = $xcadmin['email'];
             $user_nama = $xcadmin['nama_lengkap'];
             $jabatan = $xcadmin['jabatan'];
-            $data = $this->user->get_data_lengkap($email)->row_array();
-            $prodi = $data['nama_prodi'];
+            $data = $this->user->get_data_lengkap($email)->result_array();
+            $prodi = $data[0]['nama_prodi'];
+            // print_r($prodi);
+            // die();
             $this->session->set_userdata('idadmin', $idadmin);
             $this->session->set_userdata('email', $email);
             $this->session->set_userdata('nama', $user_nama);

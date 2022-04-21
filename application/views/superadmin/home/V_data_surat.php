@@ -17,9 +17,7 @@
                         <h1 class="h3 mb-0 text-gray-800">Data Surat</h1>
 
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="./">Home</a></li>
-                            <li class="breadcrumb-item">Forms</li>
-                            <li class="breadcrumb-item active" aria-current="page">Form Basics</li>
+                            <li class="breadcrumb-item"><a href="./">Data Surat</a></li>
                         </ol>
                     </div>
 
@@ -27,7 +25,39 @@
                         <div class="col-lg-12">
                             <div class="card mb-4">
                                 <div class="table-responsive p-3">
+                                    <table class="table align-items-center table-flush table-hover" id="dataTableHover">
+                                        <thead class="thead-light">
+                                            <tr class="text-center">
+                                                <th>No</th>
+                                                <th>No Surat</th>
+                                                <th>Nama Pengaju</th>
+                                                <th>Program Studi</th>
+                                                <th>Jenis Permohonan</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            $no = 0;
+                                            foreach ($data_surat as $a) {
+                                                $no++;
+                                            ?>
 
+                                                <tr class="text-center">
+                                                    <td><?= $no; ?></td>
+                                                    <td><?= $a['no_surat']; ?></td>
+                                                    <td><?= $a['nama_mahasiswa']; ?></td>
+                                                    <td><?= $a['nama_prodi']; ?></td>
+                                                    <td><?= $a['jenis_permohonan']; ?></td>
+                                                    <td>
+                                                        <a href="<?= base_url('superadmin/master_data/detail_surat/') . $a['id_jenis_p'] . '/' . $a['id_formulir']; ?>"><i class="fas fa-info-circle"></i></a>
+                                                        <a href="<?= base_url('superadmin/master_data/cetak/') . $a['id_jenis_p'] . '/' . $a['id_formulir']; ?>"><i class="fas fa-print"></i></a>
+                                                    </td>
+                                                </tr>
+
+                                            <?php } ?>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>

@@ -15,11 +15,9 @@
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Data Formulir</h1>
-
+                        <?= $this->session->flashdata('msg'); ?>
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="./">Home</a></li>
-                            <li class="breadcrumb-item">Forms</li>
-                            <li class="breadcrumb-item active" aria-current="page">Form Basics</li>
+                            <li class="breadcrumb-item"><a href="<?= base_url('admin-data-formulir'); ?>">Data Formulir</a></li>
                         </ol>
                     </div>
 
@@ -33,8 +31,11 @@
                                                 <th>No</th>
                                                 <th>No Form</th>
                                                 <th>Jenis Permohonan</th>
-                                                <th>Status</th>
-                                                <!-- <th>Jenis Kelamin</th> -->
+                                                <th>Program Studi</th>
+                                                <th>Persetujuan Admin</th>
+                                                <th>Persetujuan Dosen</th>
+                                                <th>Status Surat</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -45,59 +46,45 @@
                                                 $status = $a['approval'];
                                                 if ($status == 0) {
                                                     $stats = 'Not Approval';
-                                                    $warning = 'text-warning';
+                                                    $warning = 'badge badge-warning';
                                                 } elseif ($status == 1) {
                                                     $stats = 'Approval';
-                                                    $warning = 'text-success';
+                                                    $warning = 'badge badge-success';
                                                 } elseif ($status == 2) {
-                                                    $stats = 'Duplicate';
-                                                    $warning = 'text-danger';
+                                                    $stats = 'Rejected';
+                                                    $warning = 'badge badge-danger';
+                                                }
+                                                if ($a['approval_admin'] == 0) {
+                                                    $admin_approve = 'Not Approval';
+                                                    $tag = 'badge badge-warning';
+                                                } elseif ($a['approval_admin'] == 1) {
+                                                    $admin_approve = 'Approval';
+                                                    $tag = 'badge badge-success';
+                                                } elseif ($a['approval_admin'] == 2) {
+                                                    $admin_approve = 'Duplicate';
+                                                    $tag = 'badge badge-danger';
+                                                }
+                                                if ($a['status_surat'] == 0) {
+                                                    $approve_surat = 'Not Ready';
+                                                    $color = 'badge badge-warning';
+                                                } elseif ($a['status_surat'] == 1) {
+                                                    $approve_surat = 'Ready';
+                                                    $color = 'badge badge-success';
                                                 }
                                             ?>
-                                                <tr class="text-center clickable" data-toggle="collapse" data-target="#accordion<?= $a['id_formulir']; ?>">
+
+                                                <tr class="text-center">
                                                     <td><?= $no; ?></td>
                                                     <td><?= $a['no_form']; ?></td>
                                                     <td><?= $a['jenis_permohonan']; ?></td>
-                                                    <td class="<?= $warning; ?>"><?= $stats; ?></td>
+                                                    <td><?= $a['nama_prodi']; ?></td>
+                                                    <td><span class="<?= $tag; ?>"><?= $admin_approve; ?></span></td>
+                                                    <td><span class="<?= $warning; ?>"><?= $stats; ?></span></td>
+                                                    <td><span class="<?= $color; ?>"><?= $approve_surat; ?></span></td>
+                                                    <td><a href="<?= base_url('superadmin/master_data/detail/') . $a['id_jenis_p'] . '/' . $a['id_formulir']; ?>"><i class="fas fa-info-circle"></i></a></td>
                                                 </tr>
-                                                <tr>
-                                                    <td colspan="4">
-                                                        <div id="accordion<?= $a['id_formulir']; ?>" class="collapse">
-                                                            <div class="card">
-                                                                <div class="card-body ">
-                                                                    <div class="d-flex justify-content-around font-weight-bold">
-                                                                        <div class="d-flex justify-content-around">
-                                                                            <label for="nim" class="mr-3">NIM : </label>
-                                                                            <p class=""><?= $a['nim']; ?></p>
-                                                                        </div>
-                                                                        <div class="d-flex justify-content-around">
-                                                                            <label for="nim" class="mr-3">Nama Lengkap : </label>
-                                                                            <p class=""><?= $a['nama_mahasiswa']; ?></p>
-                                                                        </div>
-                                                                        <div class="d-flex justify-content-around">
-                                                                            <label for="nim" class="mr-3">Program Studi : </label>
-                                                                            <p class=""><?= $a['nama_prodi']; ?></p>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="d-flex justify-content-around font-weight-bold">
-                                                                        <div class="d-flex justify-content-around">
-                                                                            <label for="nim" class="mr-3">NIM : </label>
-                                                                            <p class=""><?= $a['nim']; ?></p>
-                                                                        </div>
-                                                                        <div class="d-flex justify-content-around">
-                                                                            <label for="nim" class="mr-3">Nama Lengkap : </label>
-                                                                            <p class=""><?= $a['nama_mahasiswa']; ?></p>
-                                                                        </div>
-                                                                        <div class="d-flex justify-content-around">
-                                                                            <label for="nim" class="mr-3">Program Studi : </label>
-                                                                            <p class=""><?= $a['nama_prodi']; ?></p>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
 
-                                                    <?php } ?>
+                                            <?php } ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -107,13 +94,6 @@
                     <!--Row-->
 
                     <!-- Documentation Link -->
-                    <div class="row">
-                        <div class="col-lg-12 text-center">
-                            <p>For more documentations you can visit<a href="https://getbootstrap.com/docs/4.3/components/forms/" target="_blank">
-                                    bootstrap forms documentations.</a> and <a href="https://getbootstrap.com/docs/4.3/components/input-group/" target="_blank">bootstrap input
-                                    groups documentations</a></p>
-                        </div>
-                    </div>
 
                     <!-- Modal Logout -->
                     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelLogout" aria-hidden="true">

@@ -6,7 +6,7 @@ class Master_data extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        if ($this->session->userdata('masuk') != true) {
+        if ($this->session->userdata('login') != true) {
             $this->session->set_flashdata('msg', '<div class="alert alert-warning alert-dismissible" role="alert">
                                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                                         <span aria-hidden="true">&times;</span>
@@ -18,7 +18,7 @@ class Master_data extends CI_Controller
         $this->load->helper('security');
         $this->load->model('M_superadmin', 'superadmin');
         $this->load->model('M_master_data', 'master_data');
-        $this->load->library('upload');
+        $this->load->library(array('upload', 'Pdf'));
     }
 
     public function data()
@@ -114,13 +114,16 @@ class Master_data extends CI_Controller
     public function data_surat()
     {
         $data['pageTitle'] = "Data Surat";
-
+        $data['data_surat'] = $this->master_data->get_all_form_admin_by_surat();
+        // print_r($data['data_surat']);
+        // die();
         $this->load->view('superadmin/home/V_data_surat', $data);
     }
 
     public function data_formulir()
     {
         $data['pageTitle'] = "Data Formulir";
+        $data['jenis_p'] = $this->master_data->get_jenis_permohonan();
         $data['data_formulir'] = $this->master_data->get_all_form_by_admin();
 
         // print_r($data['data_formulir']);
@@ -139,6 +142,134 @@ class Master_data extends CI_Controller
         // print_r($data['data_karyawan']);
         // die();
         $this->load->view('superadmin/home/V_data_karyawan', $data);
+    }
+    public function get_formulir_riset($id_jenis_p, $id_formulir)
+    {
+        $data['surat_riset'] = $this->master_data->get_formulir_riset($id_jenis_p, $id_formulir);
+        $surat_riset = $data['surat_riset'];
+        $data['pageTitle'] = "Detail Formulir " . $surat_riset['no_form'];
+        $data['id_jenis_p'] = $id_jenis_p;
+        // echo json_encode($data['surat_riset']);
+        // die();        
+        $this->load->view('superadmin/home/V_detail_formulir_riset', $data);
+    }
+    public function get_surat_riset($id_jenis_p, $id_formulir)
+    {
+        $data['surat_riset'] = $this->master_data->get_formulir_riset($id_jenis_p, $id_formulir);
+        $surat_riset = $data['surat_riset'];
+        $data['pageTitle'] = "Detail Surat Riset " . $surat_riset['no_form'];
+        $data['id_jenis_p'] = $id_jenis_p;
+        // echo json_encode($data['surat_riset']);
+        // die();        
+        $this->load->view('superadmin/home/V_detail_surat_riset', $data);
+    }
+    public function get_formulir_kp($id_jenis_p, $id_formulir)
+    {
+        $data['pageTitle'] = "Detail Formulir KP";
+        $data['surat_kp'] = $this->master_data->get_detail_surat_kp($id_formulir, $id_jenis_p);
+        // echo json_encode($data['surat_kp']);
+        // die();
+        $data['id_jenis_p'] = $id_jenis_p;
+
+        $this->load->view('superadmin/home/V_detail_formulir_kp', $data);
+    }
+    public function get_surat_kp($id_jenis_p, $id_formulir)
+    {
+        $data['pageTitle'] = "Detail Surat KP";
+        $data['surat_kp'] = $this->master_data->get_detail_surat_kp($id_formulir, $id_jenis_p);
+        // echo json_encode($data['surat_kp']);
+        // die();
+        $data['id_jenis_p'] = $id_jenis_p;
+
+        $this->load->view('superadmin/home/V_detail_surat_kp', $data);
+    }
+
+    public function validate($id_formulir, $id_jenis_p)
+    {
+        if ($id_jenis_p == 1) {
+            $data = [
+                'id_formulir' => $id_formulir,
+                'approval' => 1,
+                'approval_admin' => 1
+            ];
+            $this->master_data->validasi_admin1($data);
+            redirect('admin-data-formulir');
+        } elseif ($id_jenis_p == 2) {
+            $this->master_data->validasi_admin($id_formulir);
+            redirect('admin-data-formulir');
+        }
+    }
+
+    public function create_surat($id_formulir, $id_jenis_p)
+    {
+
+        if ($id_jenis_p == 1) {
+            $get_surat = $this->master_data->get_surat_riset($id_jenis_p);
+            $tot_surat = count($get_surat);
+            // print_r($tot_surat);
+            // die();
+            $year = date("Y");
+            $data = [
+                'no_surat' => $tot_surat + 1 . '/AO-SRT/IV/' . $year,
+                'id_formulir' => $id_formulir,
+                'created_at' => date("Y-m-d")
+            ];
+            $insert_surat_riset = $this->master_data->insert_surat_riset($data);
+            $this->master_data->admin_buat_surat($id_formulir);
+            if ($insert_surat_riset) {
+                echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-success animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Data Surat Berhasil Di Buat!</div>');
+                redirect('admin-data-formulir');
+            } else {
+                echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-danger animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Data Surat Gagal Di Buat!</div>');
+                redirect('admin-data-formulir');
+            }
+        } elseif ($id_jenis_p == 2) {
+            $get_surat = $this->master_data->get_surat_kp($id_jenis_p);
+            $tot_surat = count($get_surat);
+            // print_r($tot_surat);
+            // die();
+            $year = date("Y");
+            $data = [
+                'no_surat' => $tot_surat + 1 . '/WRII-SRT/VI/' . $year,
+                'id_formulir' => $id_formulir,
+                'created_at' => date("Y-m-d")
+            ];
+            $insert_surat_kp = $this->master_data->insert_surat_kp($data);
+            $this->master_data->admin_buat_surat($id_formulir);
+            if ($insert_surat_kp) {
+                echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-success animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Data Surat Berhasil Di Buat!</div>');
+                redirect('admin-data-formulir');
+            } else {
+                echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-danger animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Data Surat Gagal Di Buat!</div>');
+                redirect('admin-data-formulir');
+            }
+        }
+    }
+    public function duplicate($id_formulir, $id_jenis_p)
+    {
+        $this->master_data->duplikasi_admin($id_formulir);
+        if ($id_jenis_p == 1) {
+            redirect('admin-data-formulir');
+        } elseif ($id_jenis_p == 2) {
+            redirect('admin-data-formulir');
+        }
+    }
+
+    public function detail($id_jenis_p, $id_formulir)
+    {
+        if ($id_jenis_p == 1) {
+            redirect('superadmin/master_data/get_formulir_riset/' . $id_jenis_p . '/' . $id_formulir);
+        } elseif ($id_jenis_p == 2) {
+            redirect('superadmin/master_data/get_formulir_kp/' . $id_jenis_p . '/' . $id_formulir);
+        }
+    }
+    public function detail_surat($id_jenis_p, $id_formulir)
+    {
+        if ($id_jenis_p == 1) {
+            redirect('superadmin/master_data/get_surat_riset/' . $id_jenis_p . '/' . $id_formulir);
+        } elseif ($id_jenis_p == 2) {
+            redirect('superadmin/master_data/get_surat_kp/' . $id_jenis_p . '/' . $id_formulir);
+        }
     }
 
     public function delete_mahasiswa($id)
@@ -189,8 +320,7 @@ class Master_data extends CI_Controller
                     'no_telp' => str_replace("'", "", $this->security->xss_clean($this->input->post('no_telp'))),
                     'alamat' => str_replace("'", "", $this->security->xss_clean($this->input->post('alamat'))),
                     'foto' => $foto,
-                    'id_jabatan' => str_replace("'", "", $this->security->xss_clean($this->input->post('jabatan'))),
-                    'is_active' => 1,
+                    'jabatan' => "Dosen",
                     'created_at' => date('Y-m-d H:i:S'),
                     'updated_at' => date('Y-m-d H:i:S')
                 ];
@@ -227,8 +357,7 @@ class Master_data extends CI_Controller
                 'jenis_kelamin' => str_replace("'", "", $this->security->xss_clean($this->input->post('jenis_kelamin'))),
                 'no_telp' => str_replace("'", "", $this->security->xss_clean($this->input->post('no_telp'))),
                 'alamat' => str_replace("'", "", $this->security->xss_clean($this->input->post('alamat'))),
-                'id_jabatan' => str_replace("'", "", $this->security->xss_clean($this->input->post('jabatan'))),
-                'is_active' => 1,
+                'jabatan' => "Dosen",
                 'created_at' => date('Y-m-d H:i:S'),
                 'updated_at' => date('Y-m-d H:i:S')
             ];
@@ -284,8 +413,7 @@ class Master_data extends CI_Controller
                     'no_telp' => str_replace("'", "", $this->security->xss_clean($this->input->post('no_telp'))),
                     'alamat' => str_replace("'", "", $this->security->xss_clean($this->input->post('alamat'))),
                     'foto' => $foto,
-                    'id_jabatan' => str_replace("'", "", $this->security->xss_clean($this->input->post('jabatan'))),
-                    'is_active' => 1,
+                    'jabatan' => "Dosen",
                     'created_at' => date('Y-m-d H:i:S'),
                     'updated_at' => date('Y-m-d H:i:S')
                 ];
@@ -360,8 +488,7 @@ class Master_data extends CI_Controller
                     'no_telp' => str_replace("'", "", $this->security->xss_clean($this->input->post('no_telp'))),
                     'alamat' => str_replace("'", "", $this->security->xss_clean($this->input->post('alamat'))),
                     'foto' => $foto,
-                    'id_jabatan' => 2,
-                    'is_active' => 1,
+                    'jabatan' => "Mahasiswa",
                     'created_at' => date('Y-m-d H:i:S'),
                     'updated_at' => date('Y-m-d H:i:S')
                 ];
@@ -400,8 +527,7 @@ class Master_data extends CI_Controller
                 'jenis_kelamin' => str_replace("'", "", $this->security->xss_clean($this->input->post('jenis_kelamin'))),
                 'no_telp' => str_replace("'", "", $this->security->xss_clean($this->input->post('no_telp'))),
                 'alamat' => str_replace("'", "", $this->security->xss_clean($this->input->post('alamat'))),
-                'id_jabatan' => 2,
-                'is_active' => 1,
+                'jabatan' => "Mahasiswa",
                 'created_at' => date('Y-m-d H:i:S'),
                 'updated_at' => date('Y-m-d H:i:S')
             ];
@@ -542,5 +668,167 @@ class Master_data extends CI_Controller
                 redirect('superadmin/Master_data/data_mahasiswa');
             }
         }
+    }
+
+    public function cetak($id_jenis_p, $id_formulir)
+    {
+        if ($id_jenis_p == 1) {
+            $this->cetak_surat_riset($id_jenis_p, $id_formulir);
+        } elseif ($id_jenis_p == 2) {
+            $this->cetak_surat_kp($id_jenis_p, $id_formulir);
+        }
+    }
+
+
+
+    public function cetak_surat_kp($id_jenis_p, $id_formulir)
+    {
+        // $bukti_laporan = $this->bukti->get_bukti_by_laporan_id($laporan_id);
+        $laporan = $this->master_data->get_surat_for_print_kp($id_formulir, $id_jenis_p);
+        // print_r($laporan);
+        // die();
+        $tgl_lahir = date("d F Y", strtotime($laporan['tgl_lahir']));
+
+        // $count = count($gambar);
+        // $data = [];
+        // $no = 0;
+
+
+        error_reporting(0); // AGAR ERROR MASALAH VERSI PHP TIDAK MUNCUL
+        $pdf = new FPDF('P', 'mm', 'Legal');
+        $pdf->AddPage();
+
+        $pdf->SetFont('Arial', 'B', 10);
+        $pdf->Cell(0, 10, '', 0, 1);
+        $pdf->Cell(0, 5, '', 0, 1);
+        $pdf->Image('./assets/data/img/kalbis_logo.png', 10, 10, 80);
+
+        $pdf->Cell(10, 20, '', 0, 1);
+        $pdf->SetFont('Arial', '', 10.5);
+        $pdf->Cell(0, 1, 'No Surat              : ' . $laporan['no_surat'], 0, 1, $pdf->setX(25));
+        $pdf->Cell(0, 10, 'Perihal                 : ' . 'Izin kerja praktik', 0, 1, $pdf->setX(25));
+        $pdf->Cell(0, 1, 'Lampiran             : ' . '-', 0, 1, $pdf->setX(25));
+
+        $pdf->Cell(10, 20, '', 0, 1);
+        $pdf->SetFont('Arial', 'B', 10.5);
+        $pdf->Cell(0, 1, 'Yth. Bapak/Ibu ' . $laporan['perwakilan_perusahaan'], 0, 1, $pdf->setX(25));
+        $pdf->Cell(0, 10, '' . $laporan['jabatan'], 0, 1, $pdf->setX(25));
+        $pdf->Cell(0, 1, '' . $laporan['nama_perusahaan'], 0, 1, $pdf->setX(25));
+
+        $pdf->Cell(10, 5, '', 0, 1);
+        $pdf->SetFont('Arial', '', 10.5);
+        $pdf->Cell(0, 1, '' . $laporan['alamat_surat'], 0, 1, $pdf->setX(25));
+
+        $pdf->Cell(0, 15, '', 0, 1);
+        $pdf->SetFont('Arial', '', 10.5);
+        $pdf->Cell(0, 1, 'Dengan hormat,', 0, 1, $pdf->setX(25));
+
+        $pdf->Cell(0, 10, '', 0, 1);
+        $pdf->SetFont('Arial', '', 10.5);
+        $pdf->Cell(0, 1, 'Bersama ini kami menerangkan bahwa :', 0, 1, $pdf->setX(25));
+
+        $pdf->Cell(0, 10, '', 0, 1);
+        $pdf->SetFont('Arial', '', 10.5);
+        $pdf->Cell(0, 1, 'Nama                                 : ' . $laporan['nama_mahasiswa'], 0, 1, $pdf->setX(40));
+        $pdf->Cell(0, 10, 'Tempat/Tanggal Lahir        : ' . $laporan['tempat'] . '/' . $tgl_lahir, 0, 1, $pdf->setX(40));
+        $pdf->Cell(0, 1, 'Nomor Induk Mahasiswa    : ' . $laporan['nim'], 0, 1, $pdf->setX(40));
+        $pdf->Cell(0, 10, 'Program Studi                     : ' . $laporan['nama_prodi'], 0, 1, $pdf->setX(40));
+        $pdf->Cell(0, 1, 'Telepon                               : ' . $laporan['no_telp_mhs'], 0, 1, $pdf->setX(40));
+
+        $pdf->Cell(0, 10, '', 0, 1);
+        $pdf->SetFont('Arial', '', 10.5);
+        $pdf->Cell(0, 1, 'merupakan mahasiswa Institut Teknologi dan Bisnis Kalbis yang sedang melakukan kerja praktik', 0, 1, $pdf->setX(25));
+
+        $pdf->Cell(0, 5, '', 0, 1);
+        $pdf->SetFont('Arial', '', 10.5);
+        $pdf->Cell(0, 10, 'Sehubungan dengan hal itu mohon kiranya mahasiswa kami dapat diberikan kesempatan untuk magang ', 0, 1, $pdf->setX(25));
+        $pdf->Cell(0, 1, 'di Instansi Bapak/Ibu. ', 0, 1, $pdf->setX(25));
+
+        $pdf->Cell(0, 5, '', 0, 1);
+        $pdf->SetFont('Arial', '', 10.5);
+        $pdf->Cell(0, 10, 'Demikian surat ini kami sampaikan. Atas perhatian dan kerjasamanya kami ucapkan terima kasih.', 0, 1, $pdf->setX(25));
+
+        $pdf->Cell(0, 10, '', 0, 1);
+        $pdf->SetFont('Arial', '', 10.5);
+        $pdf->Cell(0, 10, 'Hormat kami,', 0, 1, $pdf->setX(25));
+
+
+        $nama = $laporan['no_surat'] . '-' . $laporan['jenis_permohonan'] . '-' . $laporan['nama_mahasiswa'] . '.pdf';
+        $pdf->Output('D', $nama);
+    }
+    public function cetak_surat_riset($id_jenis_p, $id_formulir)
+    {
+        // $bukti_laporan = $this->bukti->get_bukti_by_laporan_id($laporan_id);
+        $laporan = $this->master_data->get_surat_for_print_riset($id_formulir, $id_jenis_p);
+        print_r($laporan);
+        die();
+        $tgl_lahir = date("d F Y", strtotime($laporan['tgl_lahir']));
+
+        // $count = count($gambar);
+        // $data = [];
+        // $no = 0;
+
+
+        error_reporting(0); // AGAR ERROR MASALAH VERSI PHP TIDAK MUNCUL
+        $pdf = new FPDF('P', 'mm', 'Legal');
+        $pdf->AddPage();
+
+        $pdf->SetFont('Arial', 'B', 10);
+        $pdf->Cell(0, 10, '', 0, 1);
+        $pdf->Cell(0, 5, '', 0, 1);
+        $pdf->Image('./assets/data/img/kalbis_logo.png', 10, 10, 80);
+
+        $pdf->Cell(10, 20, 'C', 0, 1);
+        $pdf->SetFont('Arial', '', 10.5);
+        $pdf->Cell(0, 1, 'No Surat              : ' . $laporan['no_surat'], 0, 1, $pdf->setX(25));
+        $pdf->Cell(0, 10, 'Perihal                 : ' . 'Izin kerja praktik', 0, 1, $pdf->setX(25));
+        $pdf->Cell(0, 1, 'Lampiran             : ' . '-', 0, 1, $pdf->setX(25));
+
+        $pdf->Cell(10, 20, '', 0, 1);
+        $pdf->SetFont('Arial', 'B', 10.5);
+        $pdf->Cell(0, 1, 'Yth. Bapak/Ibu ' . $laporan['perwakilan_perusahaan'], 0, 1, $pdf->setX(25));
+        $pdf->Cell(0, 10, '' . $laporan['jabatan'], 0, 1, $pdf->setX(25));
+        $pdf->Cell(0, 1, '' . $laporan['nama_perusahaan'], 0, 1, $pdf->setX(25));
+
+        $pdf->Cell(10, 5, '', 0, 1);
+        $pdf->SetFont('Arial', '', 10.5);
+        $pdf->Cell(0, 1, '' . $laporan['alamat_surat'], 0, 1, $pdf->setX(25));
+
+        $pdf->Cell(0, 15, '', 0, 1);
+        $pdf->SetFont('Arial', '', 10.5);
+        $pdf->Cell(0, 1, 'Dengan hormat,', 0, 1, $pdf->setX(25));
+
+        $pdf->Cell(0, 10, '', 0, 1);
+        $pdf->SetFont('Arial', '', 10.5);
+        $pdf->Cell(0, 1, 'Bersama ini kami menerangkan bahwa :', 0, 1, $pdf->setX(25));
+
+        $pdf->Cell(0, 10, '', 0, 1);
+        $pdf->SetFont('Arial', '', 10.5);
+        $pdf->Cell(0, 1, 'Nama                                 : ' . $laporan['nama_mahasiswa'], 0, 1, $pdf->setX(40));
+        $pdf->Cell(0, 10, 'Tempat/Tanggal Lahir        : ' . $laporan['tempat'] . '/' . $tgl_lahir, 0, 1, $pdf->setX(40));
+        $pdf->Cell(0, 1, 'Nomor Induk Mahasiswa    : ' . $laporan['nim'], 0, 1, $pdf->setX(40));
+        $pdf->Cell(0, 10, 'Program Studi                     : ' . $laporan['nama_prodi'], 0, 1, $pdf->setX(40));
+        $pdf->Cell(0, 1, 'Telepon                               : ' . $laporan['no_telp_mhs'], 0, 1, $pdf->setX(40));
+
+        $pdf->Cell(0, 10, '', 0, 1);
+        $pdf->SetFont('Arial', '', 10.5);
+        $pdf->Cell(0, 1, 'merupakan mahasiswa Institut Teknologi dan Bisnis Kalbis yang sedang melakukan kerja praktik', 0, 1, $pdf->setX(25));
+
+        $pdf->Cell(0, 5, '', 0, 1);
+        $pdf->SetFont('Arial', '', 10.5);
+        $pdf->Cell(0, 10, 'Sehubungan dengan hal itu mohon kiranya mahasiswa kami dapat diberikan kesempatan untuk magang ', 0, 1, $pdf->setX(25));
+        $pdf->Cell(0, 1, 'di Instansi Bapak/Ibu. ', 0, 1, $pdf->setX(25));
+
+        $pdf->Cell(0, 5, '', 0, 1);
+        $pdf->SetFont('Arial', '', 10.5);
+        $pdf->Cell(0, 10, 'Demikian surat ini kami sampaikan. Atas perhatian dan kerjasamanya kami ucapkan terima kasih.', 0, 1, $pdf->setX(25));
+
+        $pdf->Cell(0, 10, '', 0, 1);
+        $pdf->SetFont('Arial', '', 10.5);
+        $pdf->Cell(0, 10, 'Hormat kami,', 0, 1, $pdf->setX(25));
+
+
+        $nama = $laporan['no_surat'] . '-' . $laporan['jenis_permohonan'] . '-' . $laporan['nama_mahasiswa'] . '.pdf';
+        $pdf->Output('D', $nama);
     }
 }

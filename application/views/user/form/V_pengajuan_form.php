@@ -67,10 +67,19 @@
                                     foreach ($form as $a) {
                                         if ($a['approval'] == 0) {
                                             $approval = '<p class="mb-0" class="card" style="background: yellow;width:25px;height:20px;"></p>';
+                                            if ($a['approval_admin'] == 2) {
+                                                $approval = '<p class="mb-0" class="card" style="background: red;width:25px;height:20px;"></p>';
+                                            }
                                         } elseif ($a['approval'] == 1) {
                                             $approval = '<p class="mb-0" class="card" style="background: #01ff00;width:25px;height:20px;"></p>';
+                                            if ($a['approval_admin'] == 2) {
+                                                $approval = '<p class="mb-0" class="card" style="background: red;width:25px;height:20px;"></p>';
+                                            }
                                         } elseif ($a['approval'] == 2) {
                                             $approval = '<p class="mb-0" class="card" style="background: red;width:25px;height:20px;"></p>';
+                                            if ($a['approval_admin'] == 2) {
+                                                $approval = '<p class="mb-0" class="card" style="background: red;width:25px;height:20px;"></p>';
+                                            }
                                         }
                                     ?>
                                         <div class="col-md-4 mb-2 stretch-card transparent">

@@ -46,6 +46,7 @@ class M_user extends CI_Model
             $this->db->from('mahasiswa a');
             $this->db->join('data_mahasiswa_kampus as b', 'a.id=b.id_mahasiswa', 'left outer');
             $this->db->join('program_studi as c', 'b.program_studi=c.id', 'left outer');
+            $this->db->where('email', $email);
             $mahasiswa = $this->db->get();
             return $mahasiswa;
         } elseif ($emailMhs->num_rows() == 0) {
@@ -57,6 +58,7 @@ class M_user extends CI_Model
                 $this->db->from('karyawan a');
                 $this->db->join('data_karyawan_kampus as b', 'a.id=b.id_karyawan', 'left outer');
                 $this->db->join('program_studi as c', 'b.program_studi=c.id', 'left outer');
+                $this->db->where('email', $email);
                 $karyawan1 = $this->db->get();
                 return $karyawan1;
             }

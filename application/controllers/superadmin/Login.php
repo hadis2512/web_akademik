@@ -8,6 +8,7 @@ class Login extends CI_Controller
         parent::__construct();
         $this->load->helper('security');
         $this->load->model('M_superadmin', 'superadmin');
+        $this->load->model('M_master_data', 'master_data');
     }
 
 
@@ -30,7 +31,7 @@ class Login extends CI_Controller
 
         $cadmin = $this->superadmin->login($u, $p);
         if ($cadmin->num_rows() > 0) {
-            $this->session->set_userdata('masuk', true);
+            $this->session->set_userdata('login', true);
             $this->session->set_userdata('user', $u);
             $xcadmin = $cadmin->row_array();
             $idadmin = $xcadmin['id'];
@@ -39,7 +40,7 @@ class Login extends CI_Controller
             $this->session->set_userdata('nama', $user_nama);
         }
 
-        if ($this->session->userdata('masuk') == true) {
+        if ($this->session->userdata('login') == true) {
             redirect('superadmin/Login/berhasillogin');
         } else {
             redirect('superadmin/Login/gagallogin');
@@ -71,7 +72,7 @@ class Login extends CI_Controller
 
     public function home()
     {
-        if ($this->session->userdata('masuk') != true) {
+        if ($this->session->userdata('login') != true) {
             $this->session->set_flashdata('msg', '<div class="alert alert-warning alert-dismissible" role="alert">
                                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                                         <span aria-hidden="true">&times;</span>
@@ -80,7 +81,37 @@ class Login extends CI_Controller
                                                     </div>');
             redirect('admin-login');
         }
+
         $data['pageTitle'] = "Dashboard";
+        $data_formulir_riset = $this->master_data->get_all_formulir();
+        $data['jumlah_formulir'] = count($data_formulir_riset);
+
+        $data_formulir_riset = $this->master_data->get_all_form_riset();
+        $data['form_riset'] = count($data_formulir_riset);
+
+        $data_formulir_kp = $this->master_data->get_all_form_kp();
+        $data['form_kp'] = count($data_formulir_kp);
+
+        $data_formulir_tertunda = $this->master_data->get_all_form_tertunda();
+        $data['form_tertunda'] = count($data_formulir_tertunda);
+
+        $data_formulir_duplikasi = $this->master_data->get_all_form_duplikasi();
+        $data['form_duplikasi'] = count($data_formulir_duplikasi);
+
+        $data_formulir_tolak = $this->master_data->get_all_form_tolak();
+        $data['form_tolak'] = count($data_formulir_tolak);
+
+        $data_surat_riset = $this->master_data->get_all_surat_riset();
+        $data['surat_riset'] = count($data_surat_riset);
+
+        $data_surat_kp = $this->master_data->get_all_surat_kp();
+        $data['surat_kp'] = count($data_surat_kp);
+
+        $data['latest_form'] = $this->master_data->get_latest_form();
+
+        // print_r($data['latest_form']);
+        // print_r($data_surat_riset);
+        // die();
         $this->load->view('superadmin/home/V_home', $data);
     }
 }

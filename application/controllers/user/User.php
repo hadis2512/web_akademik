@@ -55,7 +55,16 @@ class User extends CI_Controller
             'approval' => 1,
             'id_formulir' => $id_formulir
         ];
-        $approve = $this->master_data->approve($data);
+        $approve = $this->master_data->approve_dosen($data);
+        echo json_encode($approve);
+    }
+    public function reject($id_formulir)
+    {
+        $data = [
+            'approval' => 2,
+            'id_formulir' => $id_formulir
+        ];
+        $approve = $this->master_data->reject_dosen($data);
         echo json_encode($approve);
     }
 
