@@ -519,6 +519,6 @@ class M_master_data extends CI_Model
         $this->db->join('data_surat_kp AS g', 'g.id_formulir=a.id_formulir', 'left outer');
         $this->db->join('jenispermohonan AS h', 'a.id_jenis_permohonan=h.id', 'left outer');
         $this->db->where(['a.id_formulir' => $id_formulir, 'h.id' => $jenis_permohonan]);
-        return $this->db->get()->row_array();
+        return $this->db->get()->result_array();
     }
 }

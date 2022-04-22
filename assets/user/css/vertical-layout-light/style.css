@@ -27272,11 +27272,11 @@ code {
 }
 
 .card.card-tale {
-	/* background: #7da0fa; */
-	background: #f10000;
+	background: #7da0fa;
+	/* background: #f10000; */
 	color: #ffffff;
 }
-.card.card-red  {
+.card.card-red {
 	background: #f10000 !important;
 	color: #ffffff !important;
 }
