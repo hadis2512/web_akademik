@@ -455,7 +455,7 @@ class M_master_data extends CI_Model
     }
     function get_surat_for_print_riset($id_formulir, $id_jenis_p)
     {
-        $this->db->select('a.*,b.id as id_jenis_p, b.nama as jenis_permohonan,c.nama_lengkap as nama_mahasiswa,c.tempat as tempat,c.tgl_lahir as tgl_lahir,c.no_telp as no_telp_mhs,d.nim as nim,e.program_studi as nama_prodi,f.no_surat as no_surat,g.* ');
+        $this->db->select('a.*,b.id as id_jenis_p, b.nama as jenis_permohonan,c.nama_lengkap as nama_mahasiswa,c.tempat as tempat,c.tgl_lahir as tgl_lahir,c.no_telp as no_telp_mhs,d.nim as nim,e.program_studi as nama_prodi,f.no_surat as no_surat,g.*,h.username as nama ');
         $this->db->from('data_formulir a');
         $this->db->join('jenispermohonan b', 'a.id_jenis_permohonan=b.id', 'left_outer');
         $this->db->join('mahasiswa c', 'a.id_mahasiswa=c.id', 'left_outer');
@@ -463,6 +463,7 @@ class M_master_data extends CI_Model
         $this->db->join('program_studi e', 'd.program_studi=e.id', 'left_outer');
         $this->db->join('data_surat f', 'f.id_formulir=a.id_formulir', 'left_outer');
         $this->db->join('data_surat_pengantar_riset g', 'g.id_formulir=a.id_formulir', 'left_outer');
+        $this->db->join('superadmin h', 'f.id_admin=h.id', 'left_outer');
         $this->db->where(['f.id_formulir' => $id_formulir, 'a.id_jenis_permohonan' => $id_jenis_p]);
         return $this->db->get()->row_array();
     }
@@ -495,7 +496,7 @@ class M_master_data extends CI_Model
     }
     function get_formulir_riset($id_jenis_p, $id_formulir)
     {
-        $this->db->select('a.*,b.*, c.nim, c.program_studi as id_prodi,d.program_studi as nama_prodi,e.nama as nama_fakultas,f.nama as nama_program,g.jenis_tugas as jenis_tugas, g.judul as judul_tugas,h.nama as jenis_permohonan');
+        $this->db->select('a.*,b.*, c.nim, c.program_studi as id_prodi,d.program_studi as nama_prodi,e.nama as nama_fakultas,f.nama as nama_program,g.jenis_tugas as jenis_tugas, g.judul as judul_tugas,h.nama as jenis_permohonan,g.alamat_surat as alamat_surat,g.nama_perusahaan as nama_perusahaan, g.perwakilan_perusahaan as perwakilan_perusahaan,g.jabatan as jabatan_perwakilan, g.telp_perusahaan as no_telp_perusahaan');
         $this->db->from('data_formulir a');
         $this->db->join('mahasiswa as b', 'b.id=a.id_mahasiswa', 'left outer');
         $this->db->join('data_mahasiswa_kampus AS c', 'c.id_mahasiswa=b.id', 'left outer');

@@ -103,6 +103,32 @@
                                                 <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Username" value="<?= $surat_riset['judul_tugas']; ?>" readonly>
                                             </div>
                                         </div>
+                                        <div class="form-group row">
+                                            <div class="col-lg-6">
+                                                <label for="exampleInputUsername1">Nama Perusahaan</label>
+                                                <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Username" value="<?= $surat_riset['nama_perusahaan']; ?>">
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <label for="exampleInputUsername1" class="">Alamat Surat</label>
+                                                <input type="text" class="form-control " id="exampleInputUsername1" placeholder="Username" value="<?= $surat_riset['alamat_surat']; ?>">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-lg-6">
+                                                <label for="exampleInputUsername1">Perwakilan Perusahaan</label>
+                                                <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Username" value="<?= $surat_riset['perwakilan_perusahaan']; ?>">
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <label for="exampleInputUsername1">Jabatan Perwakilan</label>
+                                                <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Username" value="<?= $surat_riset['jabatan_perwakilan']; ?>">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-lg-12">
+                                                <label for="exampleInputUsername1">Telp Perusahaan</label>
+                                                <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Username" value="<?= $surat_riset['no_telp_perusahaan']; ?>">
+                                            </div>
+                                        </div>
                                         <hr>
                                         <div class="form-group d-flex justify-content-center">
 

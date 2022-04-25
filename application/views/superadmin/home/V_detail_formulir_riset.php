@@ -103,6 +103,7 @@
                                                 <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Username" value="<?= $surat_riset['judul_tugas']; ?>" readonly>
                                             </div>
                                         </div>
+
                                         <hr>
                                         <div class="form-group d-flex justify-content-center">
                                             <?php if ($surat_riset['approval_admin'] == 0) { ?>

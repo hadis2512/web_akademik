@@ -52,6 +52,32 @@
                                                 <label for="exampleInputUsername1">Judul Tugas Akhir/Tugas Kuliah</label>
                                                 <input type="text" class="form-control" name="judul" id="exampleInputUsername1" placeholder="Entry Here's">
                                             </div>
+                                            <div class="form-group row  ">
+                                                <div class="col-lg-6">
+                                                    <label for="exampleInputUsername1">Nama Perusahaan</label>
+                                                    <input type="text" class="form-control" name="nama_perusahaan" id="exampleInputUsername1" placeholder="Entry Here's">
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <label for="exampleInputUsername1">Alamat Perusahaan</label>
+                                                    <input type="text" class="form-control" name="alamat_perusahaan" id="exampleInputUsername1" placeholder="Entry Here's">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row  ">
+                                                <div class="col-lg-6">
+                                                    <label for="exampleInputUsername1">Perwakilan Perusahaan</label>
+                                                    <input type="text" class="form-control" name="perwakilan" id="exampleInputUsername1" placeholder="Entry Here's">
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <label for="exampleInputUsername1">Jabatan Perwakilan</label>
+                                                    <input type="text" class="form-control" name="jabatan_perwakilan" id="exampleInputUsername1" placeholder="Entry Here's">
+                                                </div>
+                                            </div>
+                                            <div class="form-group ">
+
+                                                <label for="exampleInputUsername1">No Telepon Perusahaan</label>
+                                                <input type="text" class="form-control" name="no_telp_perusahaan" id="exampleInputUsername1" placeholder="Entry Here's">
+
+                                            </div>
                                             <button type="submit" class="btn btn-primary mr-2">Submit</button>
                                             <button class="btn btn-light">Cancel</button>
                                         </form>

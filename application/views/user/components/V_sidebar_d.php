@@ -12,12 +12,12 @@
                 <span class="menu-title">Pengajuan Form</span>
             </a>
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
             <a class="nav-link" href="#">
                 <i class="icon-paper menu-icon"></i>
                 <span class="menu-title">Data Surat</span>
             </a>
-        </li>
+        </li> -->
 
     </ul>
 </nav>

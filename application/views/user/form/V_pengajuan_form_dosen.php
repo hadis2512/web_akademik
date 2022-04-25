@@ -45,7 +45,7 @@
                                         }
                                     ?>
                                         <div class="col-md-4 mb-2 stretch-card transparent">
-                                            <div class="card card-tale">
+                                            <div class="card card-light-blue">
                                                 <div class="card-header d-flex justify-content-between">
                                                     <p class="mb-0"><?= $a['no_form']; ?></p>
                                                     <?= $approval; ?>

@@ -29,7 +29,7 @@
                             <h3 class="font-weight-light m-4">Latest Data</h3>
                             <div class="row">
                                 <div class="col-md-4 mb-2 stretch-card transparent">
-                                    <div class="card card-tale">
+                                    <div class="card card-light-blue">
                                         <div class="card-header">asd</div>
                                         <div class="card-body">
                                             <p class="mb-4">Today’s Bookings</p>
@@ -40,7 +40,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-2 stretch-card transparent">
-                                    <div class="card card-tale">
+                                    <div class="card card-light-blue">
                                         <div class="card-header">asd</div>
                                         <div class="card-body">
                                             <p class="mb-4">Today’s Bookings</p>
@@ -51,7 +51,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-2 stretch-card transparent">
-                                    <div class="card card-tale">
+                                    <div class="card card-light-blue">
                                         <div class="card-header">asd</div>
                                         <div class="card-body">
                                             <p class="mb-4">Today’s Bookings</p>
