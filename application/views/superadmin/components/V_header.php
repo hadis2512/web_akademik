@@ -14,5 +14,5 @@
     <link href="<?= base_url('') ?>assets/superadmin/css/ruang-admin.min.css" rel="stylesheet">
     <link href="<?= base_url('') ?>assets/superadmin/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
+    <link type="text/css" rel="stylesheet" href="<?php echo base_url() . 'assets/superadmin/css/lightgallery.min.css' ?>" />
 </head>

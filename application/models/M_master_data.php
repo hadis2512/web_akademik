@@ -105,7 +105,13 @@ class M_master_data extends CI_Model
         $query = $this->db->select('*')->from('mahasiswa')->get();
         return $query->result_array();
     }
-
+    function get_all_data_ttd()
+    {
+        $this->db->select('a.*,b.id as id_jenis_p,b.nama as jenis_permohonan');
+        $this->db->from('data_ttd as a');
+        $this->db->join('jenispermohonan b', 'a.id_jenis_permohonan=b.id', 'left outer');
+        return $this->db->get('')->result_array();
+    }
     function get_all_jbtn()
     {
         return $this->db->get('jabatan')->result_array();
@@ -119,6 +125,15 @@ class M_master_data extends CI_Model
         $this->db->insert('karyawan', $data);
         $insert_id = $this->db->insert_id();
         return $insert_id;
+    }
+    function save_ttd($data)
+    {
+        $this->db->insert('data_ttd', $data);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     function save_karyawan1($data)

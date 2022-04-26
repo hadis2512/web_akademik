@@ -27,7 +27,7 @@
                 <h6 class="collapse-header">Master Add</h6>
                 <a class="collapse-item" href="<?= base_url('admin-add-mahasiswa'); ?>">Add Data Mahasiswa</a>
                 <a class="collapse-item" href="<?= base_url('admin-add-dosen'); ?>">Add Data Karyawan</a>
-                <!-- <a class="collapse-item" href="<?= base_url('superadmin/Master_data/add_surat'); ?>">Add Surat</a> -->
+                <a class="collapse-item" href="<?= base_url('admin-add-ttd'); ?>">Add Data Tanda Tangan</a>
             </div>
         </div>
     </li>
@@ -41,9 +41,11 @@
                 <h6 class="collapse-header">Master Data User</h6>
                 <a class="collapse-item" href="<?= base_url('admin-data-mahasiswa'); ?>">Data Mahasiswa</a>
                 <a class="collapse-item" href="<?= base_url('admin-data-dosen'); ?>">Data Karyawan</a>
+                <a class="collapse-item" href="<?= base_url('admin-data-ttd'); ?>">Data Tanda Tangan </a>
                 <h6 class="collapse-header">Master Data Surat</h6>
                 <a class="collapse-item" href="<?= base_url('admin-data-formulir'); ?>">Data Formulir</a>
                 <a class="collapse-item" href="<?= base_url('admin-data-surat'); ?>">Data Surat</a>
+
             </div>
         </div>
     </li>

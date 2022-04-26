@@ -18,7 +18,7 @@ class Master_data extends CI_Controller
         $this->load->helper('security');
         $this->load->model('M_superadmin', 'superadmin');
         $this->load->model('M_master_data', 'master_data');
-        $this->load->library(array('upload', 'Pdf'));
+        $this->load->library(array('upload', 'Pdf', 'Qrcode'));
     }
 
     public function data()
@@ -111,6 +111,22 @@ class Master_data extends CI_Controller
         $this->load->view('superadmin/home/V_add_karyawan', $data);
     }
 
+    public function add_data_ttd()
+    {
+        $data['pageTitle'] = "Add Tanda Tangan";
+        $data['jenis_permohonan'] = $this->master_data->get_jenis_permohonan();
+        // $data['jabatan'] = $this->master_data->get_all_jbtn();
+        $this->load->view('superadmin/home/V_add_data_ttd', $data);
+    }
+
+    public function data_ttd()
+    {
+        $data['pageTitle'] = "Data Tanda Tangan";
+        $data['data_ttd'] = $this->master_data->get_all_data_ttd();
+        // print_r($data);
+        // die();
+        $this->load->view('superadmin/home/V_data_ttd', $data);
+    }
     public function data_surat()
     {
         $data['pageTitle'] = "Data Surat";
@@ -309,6 +325,52 @@ class Master_data extends CI_Controller
         echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Data berhasil di hapus !</div>');
         redirect('superadmin/Master_data/data_karyawan');
     }
+
+    public function save_ttd()
+    {
+        $nama = str_replace("'", "", $this->security->xss_clean($this->input->post('nama_lengkap')));
+        $nmfile = "ttd_" . $nama; //nama file saya beri nama langsung dan diikuti fungsi time
+        $config['upload_path'] = $_SERVER['DOCUMENT_ROOT'] . '/web_akademik/assets/data/ttd/'; //path folder
+        $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp'; //type yang dapat diakses bisa anda sesuaikan
+        $config['max_size'] = '2048000000'; //maksimum besar file 2M
+        $config['max_width']  = '0'; //lebar maksimum 1288 px
+        $config['max_height']  = '0'; //tinggi maksimu 1000 px
+        $config['file_name'] = $nmfile; //nama yang terupload nantinya
+
+        $this->upload->initialize($config);
+        $this->load->library('upload', $config);
+        if (!empty($_FILES['foto']['name'])) {
+            if ($this->upload->do_upload('foto')) {
+
+                $pic = $this->upload->data();
+                $foto = "/assets/data/ttd/" . $pic['file_name'];
+
+                $data = [
+                    'nama' => $nama,
+                    'jabatan' => str_replace("'", "", $this->security->xss_clean($this->input->post('jabatan'))),
+                    'id_jenis_permohonan' => str_replace("'", "", $this->security->xss_clean($this->input->post('jenis_permohonan'))),
+                    'tanda_tangan' => $foto,
+                    'created_at' => date('Y-m-d H:i:S'),
+                    'updated_at' => date('Y-m-d H:i:S')
+                ];
+                // print_r($data);
+                // die();
+                $data1 = $this->security->xss_clean($data);
+                $insert = $this->master_data->save_ttd($data1);
+                if ($insert == true) {
+                    echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Data tanda tangan <b>' . $nama . '</b>, berhasil ditambahkan.</div>');
+                    redirect('admin-add-ttd');
+                } else {
+                    echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button>Data tanda tangan <b>' . $nama . '</b>, gagal ditambahkan.</div>');
+                    redirect('admin-add-ttd');
+                }
+            } else {
+                echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button>' . $this->upload->display_errors() . '</div>');
+                redirect('admin-add-ttd');
+            }
+        }
+    }
+
     public function save_karyawan()
     {
         $nip = str_replace("'", "", $this->security->xss_clean($this->input->post('nip')));

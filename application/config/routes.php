@@ -57,10 +57,13 @@ $route['admin-login'] = 'superadmin/Login/index';
 $route['admin-home'] = 'superadmin/Login/home';
 $route['admin-add-mahasiswa'] = 'superadmin/Master_data/add_mahasiswa';
 $route['admin-add-dosen'] = 'superadmin/Master_data/add_karyawan';
+$route['admin-add-ttd'] = 'superadmin/Master_data/add_data_ttd';
+
 $route['admin-data-mahasiswa'] = 'superadmin/master_data/data_mahasiswa';
 $route['admin-data-dosen'] = 'superadmin/master_data/data_karyawan';
 $route['admin-data-formulir'] = 'superadmin/master_data/data_formulir';
 $route['admin-data-surat'] = 'superadmin/master_data/data_surat';
+$route['admin-data-ttd'] = 'superadmin/master_data/data_ttd';
 // end Admin Page
 
 
@@ -77,3 +80,5 @@ $route['Buat-Surat/(:any)'] = 'user/User/Buat_surat/$1';
 $route['Dosen-home'] = 'user/User/Dosen';
 $route['Pengajuan-Form-Dosen'] = 'user/User/Pengajuan_form_dosen';
 // end User Page
+
+// 
