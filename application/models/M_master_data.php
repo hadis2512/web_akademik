@@ -457,7 +457,7 @@ class M_master_data extends CI_Model
     }
     function get_surat_for_print_kp($id_formulir, $id_jenis_p)
     {
-        $this->db->select('a.*,b.id as id_jenis_p, b.nama as jenis_permohonan,c.nama_lengkap as nama_mahasiswa,c.tempat as tempat,c.tgl_lahir as tgl_lahir,c.no_telp as no_telp_mhs,d.nim as nim,e.program_studi as nama_prodi,f.no_surat as no_surat,g.* ');
+        $this->db->select('a.*,b.id as id_jenis_p, b.nama as jenis_permohonan,c.nama_lengkap as nama_mahasiswa,c.tempat as tempat,c.tgl_lahir as tgl_lahir,c.no_telp as no_telp_mhs,d.nim as nim,e.program_studi as nama_prodi,f.no_surat as no_surat,g.*,h.nama as nama_ttd,h.jabatan as jabatan_ttd, h.tanda_tangan as tanda_tangan ');
         $this->db->from('data_formulir a');
         $this->db->join('jenispermohonan b', 'a.id_jenis_permohonan=b.id', 'left_outer');
         $this->db->join('mahasiswa c', 'a.id_mahasiswa=c.id', 'left_outer');
@@ -465,12 +465,13 @@ class M_master_data extends CI_Model
         $this->db->join('program_studi e', 'd.program_studi=e.id', 'left_outer');
         $this->db->join('data_surat f', 'f.id_formulir=a.id_formulir', 'left_outer');
         $this->db->join('data_surat_kp g', 'g.id_formulir=a.id_formulir', 'left_outer');
+        $this->db->join('data_ttd h', 'h.id_jenis_permohonan=b.id', 'left_outer');
         $this->db->where(['f.id_formulir' => $id_formulir, 'a.id_jenis_permohonan' => $id_jenis_p]);
         return $this->db->get()->row_array();
     }
     function get_surat_for_print_riset($id_formulir, $id_jenis_p)
     {
-        $this->db->select('a.*,b.id as id_jenis_p, b.nama as jenis_permohonan,c.nama_lengkap as nama_mahasiswa,c.tempat as tempat,c.tgl_lahir as tgl_lahir,c.no_telp as no_telp_mhs,d.nim as nim,e.program_studi as nama_prodi,f.no_surat as no_surat,g.*,h.username as nama ');
+        $this->db->select('a.*,b.id as id_jenis_p, b.nama as jenis_permohonan,c.nama_lengkap as nama_mahasiswa,c.tempat as tempat,c.tgl_lahir as tgl_lahir,c.no_telp as no_telp_mhs,d.nim as nim,e.program_studi as nama_prodi,f.no_surat as no_surat,g.*');
         $this->db->from('data_formulir a');
         $this->db->join('jenispermohonan b', 'a.id_jenis_permohonan=b.id', 'left_outer');
         $this->db->join('mahasiswa c', 'a.id_mahasiswa=c.id', 'left_outer');
@@ -478,8 +479,15 @@ class M_master_data extends CI_Model
         $this->db->join('program_studi e', 'd.program_studi=e.id', 'left_outer');
         $this->db->join('data_surat f', 'f.id_formulir=a.id_formulir', 'left_outer');
         $this->db->join('data_surat_pengantar_riset g', 'g.id_formulir=a.id_formulir', 'left_outer');
-        $this->db->join('superadmin h', 'f.id_admin=h.id', 'left_outer');
         $this->db->where(['f.id_formulir' => $id_formulir, 'a.id_jenis_permohonan' => $id_jenis_p]);
+        return $this->db->get()->row_array();
+    }
+    function get_ttd($id_jenis_p)
+    {
+        $this->db->select('a.*,b.nama as nama_jenis_p');
+        $this->db->from('data_ttd a');
+        $this->db->join('jenispermohonan b', 'a.id_jenis_permohonan=b.id');
+        $this->db->where('a.id_jenis_permohonan', $id_jenis_p);
         return $this->db->get()->row_array();
     }
     function get_all_form_by_prodi($prodi)

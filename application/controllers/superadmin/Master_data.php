@@ -1,5 +1,9 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
+require "vendor/autoload.php";
+
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
 
 class Master_data extends CI_Controller
 {
@@ -18,7 +22,7 @@ class Master_data extends CI_Controller
         $this->load->helper('security');
         $this->load->model('M_superadmin', 'superadmin');
         $this->load->model('M_master_data', 'master_data');
-        $this->load->library(array('upload', 'Pdf', 'Qrcode'));
+        $this->load->library(array('upload', 'Pdf'));
     }
 
     public function data()
@@ -206,7 +210,8 @@ class Master_data extends CI_Controller
             $data = [
                 'id_formulir' => $id_formulir,
                 'approval' => 1,
-                'approval_admin' => 1
+                'approval_admin' => 1,
+                'update_at' => date('Y-m-d')
             ];
             $this->master_data->validasi_admin1($data);
             redirect('admin-data-formulir');
@@ -860,10 +865,19 @@ class Master_data extends CI_Controller
     {
         // $bukti_laporan = $this->bukti->get_bukti_by_laporan_id($laporan_id);
         $laporan = $this->master_data->get_surat_for_print_riset($id_formulir, $id_jenis_p);
+        $ttd = $this->master_data->get_ttd($id_jenis_p);
         // print_r($laporan);
         // die();
         $tgl_lahir = date("d F Y", strtotime($laporan['tgl_lahir']));
-
+        $tanda_tangan = base_url() . $ttd['tanda_tangan'];
+        // $tampilan = "<div class='card'>
+        // <div></div>
+        // </div>";
+        // $qr = QrCode::create($tanda_tangan);
+        // $writer = new PngWriter();
+        // $result = $writer->write($qr);
+        // $result->saveToFile("./assets/data/img/ttd.png");
+        // die();
         // $count = count($gambar);
         // $data = [];
         // $no = 0;
@@ -936,11 +950,16 @@ class Master_data extends CI_Controller
 
         $pdf->Cell(0, 10, '', 0, 1);
         $pdf->SetFont('Arial', '', 11.5);
-        $pdf->Cell(0, 10, 'Jakarta, ' . date('d F Y'), 0, 1, $pdf->setX(-60));
+        $pdf->Cell(0, 10, 'Jakarta, ' . date('d F Y', strtotime($laporan['updated_at'])), 0, 1, $pdf->setX(-60));
+
+        $pdf->Cell(0, 5, '', 0, 1);
+        $pdf->SetFont('Arial', '', 11.5);
+        $pdf->Image($tanda_tangan,  160, $pdf->getY(), 40);
+        // $pdf->Image('./assets/data/img/kalbis_logo.png', 10, 10, 80);
 
         $pdf->Cell(0, 25, '', 0, 1);
         $pdf->SetFont('Arial', '', 11.5);
-        $pdf->Cell(0, 10, $this->session->userdata('nama'), 0, 1, $pdf->setX(-30));
+        $pdf->Cell(0, 10, 'Siti Komariah SM.MM.', 0, 1, $pdf->setX(-60));
         $pdf->Cell(0, 1, 'Head of Academic Operation', 0, 1, $pdf->setX(-71));
 
 
