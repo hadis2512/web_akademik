@@ -6,13 +6,15 @@
 <script src="<?= base_url('') ?>assets/superadmin/js/demo/chart-area-demo.js"></script>
 <script src="<?= base_url('') ?>assets/superadmin/vendor/datatables/jquery.dataTables.min.js"></script>
 <script src="<?= base_url('') ?>assets/superadmin/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="<?= base_url('') ?>assets/superadmin/js/bcPaint.js"></script>
 <script src="<?php echo base_url() . 'assets/superadmin/js/lightgallery-all.min.js' ?>"></script>
 <script src="https://cdn.jsdelivr.net/picturefill/2.3.1/picturefill.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
+
+
 <!-- Page level custom scripts -->
-
-
-
 <script>
     $(document).ready(function() {
 
@@ -49,7 +51,20 @@
         $('#home-tab').click(() => {
 
         })
-        $(".lightgallery").lightGallery();
+        // $(".lightgallery").lightGallery();        
+        $('#bcPaint').bcPaint();
+
+        $(document).bind("modal", function(e) {
+            e.preventDefault();
+        });
+
+        $(document).keydown(function(e) {
+            if (e.which === 123) {
+                return false;
+            }
+        });
+
+
 
     });
 </script>

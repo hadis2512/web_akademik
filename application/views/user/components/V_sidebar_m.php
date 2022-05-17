@@ -13,7 +13,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="<?= base_url(''); ?>">
+            <a class="nav-link" href="<?= base_url('Data-Surat'); ?>">
                 <i class="icon-paper menu-icon"></i>
                 <span class="menu-title">Data Surat</span>
             </a>

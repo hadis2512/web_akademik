@@ -1,6 +1,8 @@
 <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
     <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-        <h3 class="title">Web Akademik</h3>
+        <a class="navbar-brand brand-logo mr-5" href="index.html"><img src="<?= base_url('assets/user/') ?>images/logo.png" class="mr-2" alt="logo"></a>
+        <a class="navbar-brand brand-logo-mini" href="index.html"><img src="<?= base_url('assets/user/skydash/') ?>images/logo-mini.svg" alt="logo"></a>
+
     </div>
     <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
         <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
@@ -20,14 +22,15 @@
         </ul>
         <ul class="navbar-nav navbar-nav-right">
             <li class="nav-item nav-profile dropdown">
-                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-                    <img src="<?= base_url() ?>assets/user/images/faces/face28.jpg" alt="profile" />
-                    <span><?= $this->session->userdata('email'); ?></span>
+                <a class="nav-link dropdown-toggle " href="#" data-toggle="dropdown" id="profileDropdown">
+                    <img class="mr-2" src="<?= base_url($this->session->userdata('foto')); ?>" alt="profile" />
+                    <span class="mr-2"><?= $this->session->userdata('email'); ?></span>
+                    <i class="ti-more"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-                    <a class="dropdown-item">
-                        <i class="ti-settings text-primary"></i>
-                        Settings
+                    <a class="dropdown-item" href="<?= base_url('user/User/profileM/') . $this->session->userdata('idadmin'); ?>">
+                        <i class="ti-user text-primary"></i>
+                        My Profile
                     </a>
                     <a class="dropdown-item" href="<?= base_url('user/U_auth/logout'); ?>">
                         <i class="ti-power-off text-primary"></i>

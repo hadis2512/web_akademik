@@ -55,10 +55,10 @@
                                                     $warning = 'badge badge-danger';
                                                 }
                                                 if ($a['approval_admin'] == 0) {
-                                                    $admin_approve = 'Not Approval';
+                                                    $admin_approve = 'Not Validate';
                                                     $tag = 'badge badge-warning';
                                                 } elseif ($a['approval_admin'] == 1) {
-                                                    $admin_approve = 'Approval';
+                                                    $admin_approve = 'Validate';
                                                     $tag = 'badge badge-success';
                                                 } elseif ($a['approval_admin'] == 2) {
                                                     $admin_approve = 'Duplicate';
@@ -123,10 +123,9 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>copyright &copy; <script>
+                        <span>copyright Kalbis Institute &copy; <script>
                                 document.write(new Date().getFullYear());
-                            </script> - developed by
-                            <b><a href="https://indrijunanda.gitlab.io/" target="_blank">indrijunanda</a></b>
+                            </script>
                         </span>
                     </div>
                 </div>

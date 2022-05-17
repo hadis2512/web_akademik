@@ -1,9 +1,9 @@
 <!-- Sidebar -->
 <ul class="navbar-nav sidebar sidebar-light accordion" id="accordionSidebar">
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-        <div class="sidebar-brand-icon">
-            <img src="img/logo/logo2.png">
-        </div>
+        <!-- <div class="sidebar-brand-icon">
+            <img src="<?= base_url('assets/data/') ?>img/kalbis_logo.png">
+        </div> -->
         <div class="sidebar-brand-text mx-3">Admin </div>
     </a>
     <hr class="sidebar-divider my-0">
@@ -26,7 +26,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Master Add</h6>
                 <a class="collapse-item" href="<?= base_url('admin-add-mahasiswa'); ?>">Add Data Mahasiswa</a>
-                <a class="collapse-item" href="<?= base_url('admin-add-dosen'); ?>">Add Data Karyawan</a>
+                <a class="collapse-item" href="<?= base_url('admin-add-dosen'); ?>">Add Data Dosen</a>
                 <a class="collapse-item" href="<?= base_url('admin-add-ttd'); ?>">Add Data Tanda Tangan</a>
             </div>
         </div>
@@ -40,7 +40,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Master Data User</h6>
                 <a class="collapse-item" href="<?= base_url('admin-data-mahasiswa'); ?>">Data Mahasiswa</a>
-                <a class="collapse-item" href="<?= base_url('admin-data-dosen'); ?>">Data Karyawan</a>
+                <a class="collapse-item" href="<?= base_url('admin-data-dosen'); ?>">Data Dosen</a>
                 <a class="collapse-item" href="<?= base_url('admin-data-ttd'); ?>">Data Tanda Tangan </a>
                 <h6 class="collapse-header">Master Data Surat</h6>
                 <a class="collapse-item" href="<?= base_url('admin-data-formulir'); ?>">Data Formulir</a>

@@ -11,78 +11,263 @@
 <script src="<?= base_url() ?>assets/user/js/todolist.js"></script>
 <script src="<?= base_url() ?>assets/user/js/dashboard.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment-with-locales.min.js" integrity="sha512-vFABRuf5oGUaztndx4KoAEUVQnOvAIFs59y4tO0DILGWhQiFnFHiR+ZJfxLDyJlXgeut9Z07Svuvm+1Jv89w5g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-  $(document).ready(() => {
-    // $('.test').click(() => {
-    //   let id_formulir = $('.test').attr('data-formulir');
-    //   let jenis_permohonan = $('.test').attr('data-jenis');
-    //   $('.modalDetail_form').modal('show')
-    // })
-    $('#modalDetail_form').on('show.bs.modal', function(event) {
-      var div = $(event.relatedTarget) // Tombol dimana modal di tampilkan
-      var modal = $(this)
-      $('html').css('overflow-y', 'hidden')
-      let id_formulir = div.data('formulir')
-      let jenis_permohonan = div.data('jenis')
-      if (jenis_permohonan == 1) {
+    $(document).ready(() => {
+
+
+        let id_pengguna = $('#formulirM').data('pengguna');
         $.ajax({
-          type: 'POST',
-          url: `<?= base_url('user/User/get_detail_form/') ?>${id_formulir}/${jenis_permohonan}`,
-          success: function(data) {
-            let parsed2 = JSON.parse(data);
-            let data1 = parsed2;
-            let html = "";
-            data1.forEach((res, index) => {
-              if (res.approval_admin == 0) {
-                var status =
-                  '<div class="badge badge-warning ml-2">Not Approve</div>';
-
-                if (res.approval == 2) {
-                  var status =
-                    '<div class="badge badge-danger ml-2">Reject</div>';
+            type: 'POST',
+            url: `<?= base_url('user/User/get_data_form/') ?>${id_pengguna}`,
+            success: function(data) {
+                // console.log(data)
+                let dataP = JSON.parse(data);
+                let html = "";
+                console.log(dataP)
+                if (dataP.length < 3) {
+                    $("#loadmore").addClass('d-none');
                 }
-              } else if (res.approval_admin == 1) {
-                var status =
-                  '<div class="badge badge-success ml-2">Approve</div>';
-                if (res.approval == 2) {
-                  var status =
-                    '<div class="badge badge-danger ml-2">Reject</div>';
+
+                const dataCard = (indexStart, indexEnd) => {
+                    const dataSliced = dataP.slice(indexStart, indexEnd);
+                    dataSliced.forEach((res, index) => {
+                        if (res.approval == 0 && res.approval_admin == 0) {
+                            var status = '<div class="badge badge-success align-self-start">Terkirim</div>';
+                            // if (res.approval_admin == 1 ) {
+                            //   res.approval = '<div class="badge badge-success">Validasi Admin</div>';
+                            // } else if (res.approval_admin == 2) {
+                            //   res.approval = '<div class="badge badge-danger">Duplikat</div>';
+                            // }
+                        } else if (res.approval == 0 && res.approval_admin == 1) {
+                            var status = '<div class="badge badge-success align-self-start"><i class="fas fa-check mr-2"></i>Admin</div>';
+                        } else if (res.approval == 0 && res.approval_admin == 2) {
+                            var status = '<div class="badge badge-danger align-self-start">Duplikasi</div>';
+                        } else if (res.approval == 1 && res.approval_admin == 1 && res.status_surat == 0) {
+                            var status = '<div class="badge badge-success align-self-start"><i class="fas fa-check mr-2"></i>Kaprodi</div>';
+                        } else if (res.approval == 1 && res.approval_admin == 1) {
+                            var status = '<div class="badge badge-success align-self-start"><i class="fas fa-check mr-2"></i>Surat</div>';
+                        } else if (res.approval == 2 && res.approval_admin == 1) {
+                            var status = '<div class="badge badge-success align-self-start">Ditolak Kaprodi</div>';
+                        }
+
+                        // let date = new Date(res.created_at).getTime();
+                        // let dateNow = new Date().getTime();
+                        // let dateBaru = new Date(dateNow - date);
+                        var a = moment(res.created_at)
+                        var b = moment()
+                        // console.log(b.diff(a, "days"))
+                        // console.log(moment(res.created_at).fromNow())
+                        // console.log(new Date().getDate())
+                        // console.log(new Date(res.created_at).getDate())
+                        let totDate = b.diff(a, "days") + " hari yang lalu";
+                        // let totDate = date.getDate(dateNow) + " hari yang lalu";
+                        html += `
+              <div class = "col-md-4 mb-2 stretch-card transparent" >
+              <div class = "card card-light-blue">
+              <div class = "card-header d-flex justify-content-between">
+              <p class = "mb-0" > ${res.no_form} </p>${status}
+              </div> 
+              <div class = "card-body" >
+              <h4 class = "mb-2" >${res.jenis_permohonan} </h4> 
+              </div> 
+              <div class = "card-footer d-flex justify-content-between" >
+              <p class = "mb-0" >${totDate}</p>
+              <a href="#" id="modal_detail" data-toggle="modal" data-target="#modalDetail_form" name="" data-jenis="${res.id_jenis_permohonan}" data-formulir="${res.id_formulir}" class="test font-weight-bold text-light float-right">details<i class="ml-2 icon-arrow-right"></i>
+              </a>
+              </div>
+              </div>
+              </div>
+              </div>`;
+
+
+                        // $now = date('d F y');
+                        // $tgl_lapor = date('d F y  ', strtotime($a['created_at']));
+                        // $datediff = $User->dateDifference($tgl_lapor, $now);
+                        // echo $datediff . ' hari yang lalu';
+                    });
+                    $('#formulirM').html(html);
+                };
+
+                let idx = 0;
+                let idxEnd = 3;
+
+                dataCard(idx, idxEnd);
+
+                $('#loadmore').on('click', () => {
+                    html = '';
+                    dataCard(idx, idxEnd += 3);
+
+                    if (idxEnd >= dataP.length) {
+                        $('#loadmore').addClass('d-none');
+                    }
+                })
+            }
+        })
+
+        let id_user = $('#suratM').data('pengguna');
+        $.ajax({
+            type: 'POST',
+            url: `<?= base_url('user/User/get_data_surat/') ?>${id_user}`,
+            success: function(data) {
+                // console.log(data)
+                let dataS = JSON.parse(data);
+                let html = "";
+                console.log(dataS)
+                if (dataS.length < 3) {
+                    $("#loadmore1").addClass('d-none');
                 }
-              } else if (res.approval && res.approval_admin == 2) {
-                var status =
-                  '<div class="badge badge-danger ml-2">Reject</div>';
-              }
 
-              if (res.approval_admin == 0) {
-                var log =
-                  '<div class="w-100 badge badge-success">Formulir sudah terkirim ke <b>Admin</b>, silahkan tunggu!</div>';
-              } else if (res.approval_admin == 1 && res.approval == 0) {
-                var log =
-                  '<div class="w-100 badge badge-success">Formulir sudah di approve oleh <b>Admin</b>, formulir sudah terkirim ke <b>Dosen</b>, silahkan tunggu!</div>';
-              } else if (res.approval_admin == 1 && res.approval == 1 &&
-                res.status_surat == 0) {
-                var log =
-                  '<div class="w-100 badge badge-success">Formulir sudah di approve oleh <b>Admin/Dosen</b>, silahkan tunggu untuk pembuatan suratnya!</div>';
-              } else if (res.approval_admin == 1 && res.approval == 2) {
-                var log =
-                  '<div class="w-100 badge badge-danger">Formulir di tolak oleh <b>Dosen</b>!</div>';
-              } else if (res.approval_admin == 2) {
-                var log =
-                  '<div class="w-100 badge badge-danger">Formulir di tolak oleh <b>Admin</b>!</div>';
-              } else if (res.approval_admin == 1 && res.approval == 1 &&
-                res.status_surat == 1) {
-                var log =
-                  `<a href="<?= base_url('user/User/cetak/') ?>${res.id_jenis_permohonan}/${res.id_formulir}" class="btn btn-info mx-auto"><i class="fa-solid fa-print mr-2"></i>Cetak Surat</a>`;
-              }
+                const dataCard = (indexStart, indexEnd) => {
+                    const dataSliced = dataS.slice(indexStart, indexEnd);
+                    dataSliced.forEach((res, index) => {
+                        if (res.approval == 0 && res.approval_admin == 0) {
+                            var status = '<div class="badge badge-success align-self-start">Terkirim</div>';
+                        } else if (res.approval == 0 && res.approval_admin == 1) {
+                            var status = '<div class="badge badge-success align-self-start"><i class="fas fa-check mr-2"></i>Admin</div>';
+                        } else if (res.approval == 0 && res.approval_admin == 2) {
+                            var status = '<div class="badge badge-danger align-self-start">Duplikasi</div>';
+                        } else if (res.approval == 1 && res.approval_admin == 1 && res.status_surat == 0) {
+                            var status = '<div class="badge badge-success align-self-start"><i class="fas fa-check mr-2"></i>Kaprodi</div>';
+                        } else if (res.approval == 1 && res.approval_admin == 1) {
+                            var status = '<div class="badge badge-success align-self-start"><i class="fas fa-check mr-2"></i>Surat</div>';
+                        } else if (res.approval == 2 && res.approval_admin == 1) {
+                            var status = '<div class="badge badge-success align-self-start">Ditolak Kaprodi</div>';
+                        }
 
-              let months = ["January", "February", "March", "April",
-                "May", "June", "July", "August", "September",
-                "October", "November", "December"
-              ];
-              let date = new Date(res.tgl_lahir);
-              let tanggal_lahir =
-                `${date.getDate()}-${months[date.getMonth()]}-${date.getFullYear()}`;
-              html += `<div class="modal-header">
+
+
+                        var a = moment(res.created_at)
+                        var b = moment()
+                        let totDate = b.diff(a, "days") + " hari yang lalu";
+                        html += `<div class = "col-md-4 mb-2 stretch-card transparent" >
+                                 <div class = "card card-light-blue">
+                                 <div class = "card-header d-flex justify-content-between">
+                                 <p class = "mb-0 " > ${res.no_surat} </p>
+                                         
+                                 </div> 
+                                 <div class = "card-body" >
+                                 <h4 class = "mb-2" >${res.jenis_permohonan} </h4>              
+                                 </div> 
+                                 <div class = "card-footer d-flex justify-content-between" >
+                                 <p class = "mb-0" >${totDate}</p>
+                                 <a href="#" id="modal_detail" data-toggle="modal" data-target="#modalDetail_form" name="" data-jenis="${res.id_jenis_permohonan}" data-formulir="${res.id_formulir}" class="test font-weight-bold text-light float-right">details<i class="ml-2 icon-arrow-right"></i>
+                                 </a>
+                                 </div>
+                                 </div>
+                                 </div>
+                                 </div>`;
+
+
+                        // $now = date('d F y');
+                        // $tgl_lapor = date('d F y  ', strtotime($a['created_at']));
+                        // $datediff = $User->dateDifference($tgl_lapor, $now);
+                        // echo $datediff . ' hari yang lalu';
+                    });
+                    $('#suratM').html(html);
+                };
+
+                let idx = 0;
+                let idxEnd = 3;
+
+                dataCard(idx, idxEnd);
+
+                $('#loadmore1').on('click', () => {
+                    html = '';
+                    dataCard(idx, idxEnd += 3);
+
+                    if (idxEnd >= dataS.length) {
+                        $('#loadmore1').addClass('d-none');
+                    }
+                })
+            }
+        })
+
+
+        // $('.test').click(() => {
+        //   let id_formulir = $('.test').attr('data-formulir');
+        //   let jenis_permohonan = $('.test').attr('data-jenis');
+        //   $('.modalDetail_form').modal('show')
+        // })
+        $('#modalDetail_form').on('show.bs.modal', function(event) {
+            // console.log(event)
+            var div = $(event.relatedTarget) // Tombol dimana modal di tampilkan
+            var modal = $(this)
+            $('html').css('overflow-y', 'hidden')
+            let id_formulir = div.data('formulir')
+            let jenis_permohonan = div.data('jenis')
+            // alert(jenis_permohonan)
+            if (jenis_permohonan == 1) {
+                $.ajax({
+                    type: 'POST',
+                    url: `<?= base_url('user/User/get_detail_form/') ?>${id_formulir}/${jenis_permohonan}`,
+                    success: function(data) {
+                        let parsed2 = JSON.parse(data);
+                        let data1 = parsed2;
+                        let html = "";
+                        console.log(data1)
+                        data1.forEach((res, index) => {
+                            if (res.approval == 0 && res.approval_admin == 0) {
+                                var status = '<div class="badge badge-success align-self-start">Terkirim</div>';
+                                var log =
+                                    '<div class="w-100 badge badge-success">Formulir sudah terkirim ke <b>Admin</b>, silahkan tunggu!</div>';
+                                // if (res.approval_admin == 1 ) {
+                                //   res.approval = '<div class="badge badge-success">Validasi Admin</div>';
+                                // } else if (res.approval_admin == 2) {
+                                //   res.approval = '<div class="badge badge-danger">Duplikat</div>';
+                                // }
+                            } else if (res.approval == 0 && res.approval_admin == 1) {
+                                var status = '<div class="badge badge-success align-self-start">Disetujui Admin</div>';
+                                var log =
+                                    '<div class="w-100 badge badge-success">Formulir sudah di approve oleh <b>Admin</b>, formulir sudah terkirim ke <b>Dosen</b>, silahkan tunggu!</div>';
+                            } else if (res.approval == 0 && res.approval_admin == 2) {
+                                var status = '<div class="badge badge-danger align-self-start">Duplikasi</div>';
+                                var log =
+                                    '<div class="w-100 badge badge-danger">Formulir di tolak oleh <b>Admin</b>!</div>';
+                            } else if (res.approval == 1 && res.approval_admin == 1 && res.status_surat == 0) {
+                                var status = '<div class="badge badge-success align-self-start">Disetujui Kaprodi</div>';
+                                var log =
+                                    '<div class="w-100 badge badge-success">Formulir sudah di approve oleh <b>Admin dan Kaprodi</b>, silahkan tunggu untuk pembuatan suratnya!</div>';
+                            } else if (res.approval == 1 && res.approval_admin == 1 && res.status_surat == 1) {
+                                var status = '<div class="badge badge-success align-self-start">Surat Sudah Siap</div>';
+                                var log =
+                                    '<div class="w-100 badge badge-success">Surat sudah siap!</div>';
+                            } else if (res.approval == 2 && res.approval_admin == 1) {
+                                var status = '<div class="badge badge-success align-self-start">Ditolak Kaprodi</div>';
+                                var log =
+                                    '<div class="w-100 badge badge-danger">Formulir di tolak oleh <b>Dosen</b>!</div>';
+                            }
+
+                            // if (res.approval_admin == 0) {
+                            //   var log =
+                            //     '<div class="w-100 badge badge-success">Formulir sudah terkirim ke <b>Admin</b>, silahkan tunggu!</div>';
+                            // } else if (res.approval_admin == 1 && res.approval == 0) {
+                            //   var log =
+                            //     '<div class="w-100 badge badge-success">Formulir sudah di approve oleh <b>Admin</b>, formulir sudah terkirim ke <b>Dosen</b>, silahkan tunggu!</div>';
+                            // } else if (res.approval_admin == 1 && res.approval == 1 &&
+                            //   res.status_surat == 0) {
+                            //   var log =
+                            //     '<div class="w-100 badge badge-success">Formulir sudah di approve oleh <b>Admin/Dosen</b>, silahkan tunggu untuk pembuatan suratnya!</div>';
+                            // } else if (res.approval_admin == 1 && res.approval == 2) {
+                            //   var log =
+                            //     '<div class="w-100 badge badge-danger">Formulir di tolak oleh <b>Dosen</b>!</div>';
+                            // } else if (res.approval_admin == 2) {
+                            //   var log =
+                            //     '<div class="w-100 badge badge-danger">Formulir di tolak oleh <b>Admin</b>!</div>';
+                            // } else if (res.approval_admin == 1 && res.approval == 1 &&
+                            //   res.status_surat == 1) {
+                            //   var log =
+                            //     `<a href="<?= base_url('user/User/cetak/') ?>${res.id_jenis_permohonan}/${res.id_formulir}" class="btn btn-info mx-auto"><i class="fa-solid fa-print mr-2"></i>Cetak Surat</a>`;
+                            // }
+
+                            let months = ["January", "February", "March", "April",
+                                "May", "June", "July", "August", "September",
+                                "October", "November", "December"
+                            ];
+                            let date = new Date(res.tgl_lahir);
+                            let tanggal_lahir =
+                                `${date.getDate()}-${months[date.getMonth()]}-${date.getFullYear()}`;
+                            html += `<div class="modal-header">
                                             <div class="d-flex justify-content-around">
                                                 <h5 class="modal-title mr-2" id="exampleModalLabel">${res.no_form} </h5>
                                                 ${status}
@@ -189,74 +374,63 @@
                                             <div class="modal-footer">
                                                 ${log }
                                             </div>`
-              $('#data_modal').html(html);
-            })
-          },
-          error: function(error) {
-            console.log(error);
-          }
-        });
-      } else if (jenis_permohonan == 2) {
-        $.ajax({
-          type: 'POST',
-          url: `<?= base_url('user/User/get_detail_form/') ?>${id_formulir}/${jenis_permohonan}`,
-          success: function(data) {
-            let parsed2 = JSON.parse(data);
-            let data2 = parsed2;
-            // console.log(data2)
-            let html = "";
-            data2.forEach((res, index) => {
-              if (res.approval_admin == 0) {
-                var status =
-                  '<div class="badge badge-warning ml-2">Not Approve</div>';
-
-                if (res.approval == 2) {
-                  var status =
-                    '<div class="badge badge-danger ml-2">Reject</div>';
-                }
-              } else if (res.approval_admin == 1) {
-                var status =
-                  '<div class="badge badge-success ml-2">Approve</div>';
-                if (res.approval == 2) {
-                  var status =
-                    '<div class="badge badge-danger ml-2">Reject</div>';
-                }
-              } else if (res.approval && res.approval_admin == 2) {
-                var status =
-                  '<div class="badge badge-danger ml-2">Reject</div>';
-              }
-
-              if (res.approval_admin == 0) {
-                var log =
-                  '<div class="w-100 badge badge-success">Formulir sudah terkirim ke <b>Admin</b>, silahkan tunggu!</div>';
-              } else if (res.approval_admin == 1 && res.approval == 0) {
-                var log =
-                  '<div class="w-100 badge badge-success">Formulir sudah di approve oleh <b>Admin</b>, formulir sudah terkirim ke <b>Dosen</b>, silahkan tunggu!</div>';
-              } else if (res.approval_admin == 1 && res.approval == 1 &&
-                res.status_surat == 0) {
-                var log =
-                  '<div class="w-100 badge badge-success">Formulir sudah di approve oleh <b>Admin/Dosen</b>, silahkan tunggu untuk pembuatan suratnya!</div>';
-              } else if (res.approval_admin == 1 && res.approval == 2) {
-                var log =
-                  '<div class="w-100 badge badge-danger">Formulir di tolak oleh <b>Dosen</b>!</div>';
-              } else if (res.approval_admin == 2) {
-                var log =
-                  '<div class="w-100 badge badge-danger">Formulir di tolak oleh <b>Admin</b>!</div>';
-              } else if (res.approval_admin == 1 && res.approval == 1 &&
-                res.status_surat == 1) {
-                var log =
-                  `<a href="<?= base_url('user/User/cetak/') ?>${res.id_jenis_permohonan}/${res.id_formulir}" class="btn btn-info mx-auto"><i class="fa-solid fa-print mr-2"></i>Cetak Surat</a>`;
-              }
-              let months = ["January", "February", "March", "April",
-                "May", "June", "July", "August", "September",
-                "October", "November", "December"
-              ];
-              let date = new Date(res.tgl_lahir);
-              let tanggal_lahir =
-                `${date.getDate()}-${months[date.getMonth()]}-${date.getFullYear()}`;
-              html += `<div class="modal-header">
+                            $('#data_modal').html(html);
+                        })
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            } else if (jenis_permohonan == 2) {
+                $.ajax({
+                    type: 'POST',
+                    url: `<?= base_url('user/User/get_detail_form/') ?>${id_formulir}/${jenis_permohonan}`,
+                    success: function(data) {
+                        let parsed2 = JSON.parse(data);
+                        let data2 = [parsed2];
+                        console.log(data2)
+                        let html = "";
+                        data2.forEach((res, index) => {
+                            if (res.approval == 0 && res.approval_admin == 0) {
+                                var status = '<div class="badge badge-success align-self-start">Terkirim</div>';
+                                var log =
+                                    '<div class="w-100 badge badge-success">Formulir sudah terkirim ke <b>Admin</b>, silahkan tunggu!</div>';
+                                // if (res.approval_admin == 1 ) {
+                                //   res.approval = '<div class="badge badge-success">Validasi Admin</div>';
+                                // } else if (res.approval_admin == 2) {
+                                //   res.approval = '<div class="badge badge-danger">Duplikat</div>';
+                                // }
+                            } else if (res.approval == 0 && res.approval_admin == 1) {
+                                var status = '<div class="badge badge-success align-self-start">Disetujui Admin</div>';
+                                var log =
+                                    '<div class="w-100 badge badge-success">Formulir sudah di approve oleh <b>Admin</b>, formulir sudah terkirim ke <b>Dosen</b>, silahkan tunggu!</div>';
+                            } else if (res.approval == 0 && res.approval_admin == 2) {
+                                var status = '<div class="badge badge-danger align-self-start">Duplikasi</div>';
+                                var log =
+                                    '<div class="w-100 badge badge-danger">Formulir di tolak oleh <b>Admin</b>!</div>';
+                            } else if (res.approval == 1 && res.approval_admin == 1 && res.status_surat == 0) {
+                                var status = '<div class="badge badge-success align-self-start">Disetujui Kaprodi</div>';
+                                var log =
+                                    '<div class="w-100 badge badge-success">Formulir sudah di approve oleh <b>Admin dan Kaprodi</b>, silahkan tunggu untuk pembuatan suratnya!</div>';
+                            } else if (res.approval == 1 && res.approval_admin == 1 && res.status_surat == 1) {
+                                var status = '<div class="badge badge-success align-self-start">Surat Sudah Siap</div>';
+                                var log =
+                                    '<div class="w-100 badge badge-success">Surat sudah siap!</div>';
+                            } else if (res.approval == 2 && res.approval_admin == 1) {
+                                var status = '<div class="badge badge-success align-self-start">Ditolak Kaprodi</div>';
+                                var log =
+                                    '<div class="w-100 badge badge-danger">Formulir di tolak oleh <b>Dosen</b>!</div>';
+                            }
+                            let months = ["January", "February", "March", "April",
+                                "May", "June", "July", "August", "September",
+                                "October", "November", "December"
+                            ];
+                            let date = new Date(res.tgl_lahir);
+                            let tanggal_lahir =
+                                `${date.getDate()}-${months[date.getMonth()]}-${date.getFullYear()}`;
+                            html += `<div class="modal-header">
                                             <div class="d-flex justify-content-around">
-                                                <h5 class="modal-title" id="exampleModalLabel">${res.no_form} </h5>
+                                                <h5 class="modal-title mr-2" id="exampleModalLabel">${res.no_form} </h5>
                                                 ${status}
                                             </div>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -344,54 +518,54 @@
                                             <div class="modal-footer">
                                                 ${log}
                                             </div>`
-              $('#data_modal').html(html);
-            })
-          },
-          error: function(error) {
-            console.log(error);
-          }
+                            $('#data_modal').html(html);
+                        })
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            }
+
+
+
+
         });
-      }
+        $('#modalDetail_form_dosen').on('show.bs.modal', function(event) {
+            var div = $(event.relatedTarget) // Tombol dimana modal di tampilkan
+            var modal = $(this)
+            $('html').css('overflow-y', 'hidden')
+            let id_formulir = div.data('formulir')
+            let jenis_permohonan = div.data('jenis')
 
+            if (jenis_permohonan == 1) {
+                $.ajax({
+                    type: 'POST',
+                    url: `<?= base_url('user/User/get_detail_form/') ?>${id_formulir}/${jenis_permohonan}`,
+                    success: function(data) {
+                        let parsed3 = JSON.parse(data);
+                        let data1 = parsed3;
+                        let html = "";
+                        data1.forEach((res, index) => {
+                            if (res.approval == 0) {
+                                var status = "Not Approval";
+                                var color = "text-warning"
+                            } else if (res.approval == 1) {
+                                var status = "Approval";
+                                var color = "text-success"
+                            } else if (res.approval == 2) {
+                                var status = "Duplicate";
+                                var color = "text-danger"
+                            }
 
-
-
-    });
-    $('#modalDetail_form_dosen').on('show.bs.modal', function(event) {
-      var div = $(event.relatedTarget) // Tombol dimana modal di tampilkan
-      var modal = $(this)
-      $('html').css('overflow-y', 'hidden')
-      let id_formulir = div.data('formulir')
-      let jenis_permohonan = div.data('jenis')
-
-      if (jenis_permohonan == 1) {
-        $.ajax({
-          type: 'POST',
-          url: `<?= base_url('user/User/get_detail_form/') ?>${id_formulir}/${jenis_permohonan}`,
-          success: function(data) {
-            let parsed3 = JSON.parse(data);
-            let data1 = parsed3;
-            let html = "";
-            data1.forEach((res, index) => {
-              if (res.approval == 0) {
-                var status = "Not Approval";
-                var color = "text-warning"
-              } else if (res.approval == 1) {
-                var status = "Approval";
-                var color = "text-success"
-              } else if (res.approval == 2) {
-                var status = "Duplicate";
-                var color = "text-danger"
-              }
-
-              let months = ["January", "February", "March", "April",
-                "May", "June", "July", "August", "September",
-                "October", "November", "December"
-              ];
-              let date = new Date(res.tgl_lahir);
-              let tanggal_lahir =
-                `${date.getDate()}-${months[date.getMonth()]}-${date.getFullYear()}`;
-              html += `<div class="modal-header">
+                            let months = ["January", "February", "March", "April",
+                                "May", "June", "July", "August", "September",
+                                "October", "November", "December"
+                            ];
+                            let date = new Date(res.tgl_lahir);
+                            let tanggal_lahir =
+                                `${date.getDate()}-${months[date.getMonth()]}-${date.getFullYear()}`;
+                            html += `<div class="modal-header">
                                             <div class="d-flex justify-content-around">
                                                 <h5 class="modal-title" id="exampleModalLabel">${res.no_form} </h5>
                                                 <span class="${color} ml-3"> (<b>${status}</b>)</span>
@@ -472,72 +646,72 @@
                                                 <button type="button" class="btn btn-danger tolak"   data-formulir="${res.id_formulir}">Reject</button>
                                                 <button type="button" class="btn btn-success setuju"  value="${res.id_formulir}">Approve</button>
                                             </div>`
-              $('#data_modal_dosen').html(html);
-              $('.tolak').click((e) => {
-                var div = $(event.relatedTarget)
-                var modal = $(this)
-                let id_formulir = div.data('formulir')
-                // alert(id_formulir)
+                            $('#data_modal_dosen').html(html);
+                            $('.tolak').click((e) => {
+                                var div = $(event.relatedTarget)
+                                var modal = $(this)
+                                let id_formulir = div.data('formulir')
+                                // alert(id_formulir)
+                                $.ajax({
+                                    type: 'POST',
+                                    url: `<?= base_url('user/User/reject/') ?>${id_formulir}`,
+                                    success: function(data) {
+                                        location.reload(true);
+                                    }
+                                })
+                            })
+
+
+                            $('.setuju').click(() => {
+                                var div = $(event.relatedTarget)
+                                var modal = $(this)
+                                let id_formulir = div.data('formulir')
+                                // alert(id_formulir)
+                                $.ajax({
+                                    type: 'POST',
+                                    url: `<?= base_url('user/User/approve/') ?>${id_formulir}`,
+                                    success: function(data) {
+                                        location.reload(true);
+                                    }
+                                })
+
+                            })
+                        })
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+
+                });
+            } else if (jenis_permohonan == 2) {
                 $.ajax({
-                  type: 'POST',
-                  url: `<?= base_url('user/User/reject/') ?>${id_formulir}`,
-                  success: function(data) {
-                    location.reload(true);
-                  }
-                })
-              })
+                    type: 'POST',
+                    url: `<?= base_url('user/User/get_detail_form/') ?>${id_formulir}/${jenis_permohonan}`,
+                    success: function(data) {
+                        let parsed2 = JSON.parse(data);
+                        let data2 = [parsed2];
 
-
-              $('.setuju').click(() => {
-                var div = $(event.relatedTarget)
-                var modal = $(this)
-                let id_formulir = div.data('formulir')
-                // alert(id_formulir)
-                $.ajax({
-                  type: 'POST',
-                  url: `<?= base_url('user/User/approve/') ?>${id_formulir}`,
-                  success: function(data) {
-                    location.reload(true);
-                  }
-                })
-
-              })
-            })
-          },
-          error: function(error) {
-            console.log(error)
-          }
-
-        });
-      } else if (jenis_permohonan == 2) {
-        $.ajax({
-          type: 'POST',
-          url: `<?= base_url('user/User/get_detail_form/') ?>${id_formulir}/${jenis_permohonan}`,
-          success: function(data) {
-            let parsed2 = JSON.parse(data);
-            let data2 = [parsed2];
-
-            console.log(data2)
-            let html = "";
-            data2.forEach((res, index) => {
-              if (res.approval == 0) {
-                var status = "Not Approval";
-                var color = "text-warning"
-              } else if (res.approval == 1) {
-                var status = "Approval";
-                var color = "text-success"
-              } else if (res.approval == 2) {
-                var status = "Duplicate";
-                var color = "text-danger"
-              }
-              let months = ["January", "February", "March", "April",
-                "May", "June", "July", "August", "September",
-                "October", "November", "December"
-              ];
-              let date = new Date(res.tgl_lahir);
-              let tanggal_lahir =
-                `${date.getDate()}-${months[date.getMonth()]}-${date.getFullYear()}`;
-              html += `<div class="modal-header">
+                        console.log(data2)
+                        let html = "";
+                        data2.forEach((res, index) => {
+                            if (res.approval == 0) {
+                                var status = "Not Approval";
+                                var color = "text-warning"
+                            } else if (res.approval == 1) {
+                                var status = "Approval";
+                                var color = "text-success"
+                            } else if (res.approval == 2) {
+                                var status = "Duplicate";
+                                var color = "text-danger"
+                            }
+                            let months = ["January", "February", "March", "April",
+                                "May", "June", "July", "August", "September",
+                                "October", "November", "December"
+                            ];
+                            let date = new Date(res.tgl_lahir);
+                            let tanggal_lahir =
+                                `${date.getDate()}-${months[date.getMonth()]}-${date.getFullYear()}`;
+                            html += `<div class="modal-header">
                                             <div class="d-flex justify-content-around">
                                                 <h5 class="modal-title" id="exampleModalLabel">${res.no_form} </h5>
                                                 <span class="${color} ml-3"> (<b>${status}</b>)</span>
@@ -628,71 +802,101 @@
                                                 <button type="button" class="btn btn-danger tolak"  data-formulir="${res.id_formulir}">Reject</button>
                                                 <button type="button" class="btn btn-success setuju"  value="${res.id_formulir}">Approve</button>
                                             </div>`
-              $('#data_modal_dosen').html(html);
-              $('.tolak').click((e) => {
-                var div = $(event.relatedTarget)
-                var modal = $(this)
-                let id_formulir = div.data('formulir')
-                // alert(id_formulir)
-                $.ajax({
-                  type: 'POST',
-                  url: `<?= base_url('user/User/reject/') ?>${id_formulir}`,
-                  success: function(data) {
-                    location.reload(true);
-                  }
-                })
-              })
+                            $('#data_modal_dosen').html(html);
+                            $('.tolak').click((e) => {
+                                var div = $(event.relatedTarget)
+                                var modal = $(this)
+                                let id_formulir = div.data('formulir')
+                                // alert(id_formulir)
+                                $.ajax({
+                                    type: 'POST',
+                                    url: `<?= base_url('user/User/reject/') ?>${id_formulir}`,
+                                    success: function(data) {
+                                        location.reload(true);
+                                    }
+                                })
+                            })
 
 
-              $('.setuju').click(() => {
-                var div = $(event.relatedTarget)
-                var modal = $(this)
-                let id_formulir = div.data('formulir')
-                // alert(id_formulir)
-                $.ajax({
-                  type: 'POST',
-                  url: `<?= base_url('user/User/approve/') ?>${id_formulir}`,
-                  success: function(data) {
-                    location.reload(true);
-                  }
-                })
-              })
-            })
+                            $('.setuju').click(() => {
+                                var div = $(event.relatedTarget)
+                                var modal = $(this)
+                                let id_formulir = div.data('formulir')
+                                // alert(id_formulir)
+                                $.ajax({
+                                    type: 'POST',
+                                    url: `<?= base_url('user/User/approve/') ?>${id_formulir}`,
+                                    success: function(data) {
+                                        location.reload(true);
+                                    }
+                                })
+                            })
+                        })
 
-          },
-          error: function(error) {
-            console.log(error);
-          }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+
+
+
+            }
+
+        });
+        $('#modalDetail_form_dosen').on('hide.bs.modal', (event) => {
+            $('html').css('overflow-y', 'auto')
+        });
+        $('#modalDetail_form').on('hide.bs.modal', (event) => {
+            $('html').css('overflow-y', 'auto')
+        });
+        // $('#modal_detail_dosen').click(() => {
+        //   let id_formulir = $('.test').attr('data-formulir');
+        //   let jenis_permohonan = $('.test').attr('data-jenis');
+        //   alert(jenis_permohonan);
+        //   $('#modalDetail_form').modal('show')
+
+        // });
+        $('#akordion').click(() => {
+            console.log('asuk')
+            // if ($(this).closest('#akordion').find('.')) {
+
+            // }
+        });
+
+        $('#program_m').on('change', () => {
+            // let id = $('select[id="program_m"]:selected').val();
+            let value = $("#program_m").val();
+            $.ajax({
+                type: 'POST',
+                url: `<?= base_url('user/User/get_prodi/') ?>${value}`,
+                success: function(data) {
+                    let parsed = JSON.parse(data);
+                    // console.log(parsed)
+                    $("#select_prodi").html(parsed);
+                    // $(this).next('select[id="select_prodi"]').focus().val(parsed);
+                }
+            });
         });
 
 
-
-      }
-
-    });
-    $('#modalDetail_form_dosen').on('hide.bs.modal', (event) => {
-      $('html').css('overflow-y', 'auto')
-    });
-    $('#modalDetail_form').on('hide.bs.modal', (event) => {
-      $('html').css('overflow-y', 'auto')
-    });
-    // $('#modal_detail_dosen').click(() => {
-    //   let id_formulir = $('.test').attr('data-formulir');
-    //   let jenis_permohonan = $('.test').attr('data-jenis');
-    //   alert(jenis_permohonan);
-    //   $('#modalDetail_form').modal('show')
-
-    // });
-    $('#akordion').click(() => {
-      console.log('asuk')
-      // if ($(this).closest('#akordion').find('.')) {
-
-      // }
-    });
-    flatpickr("#tgl", {});
-
-
-  })
+        flatpickr("#tgl", {});
+        $('#uplod').change((e) => {
+            var input = $(e.currentTarget);
+            var file = input[0].files[0];
+            // console.log(file);
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(event) {
+                    $('.pp_v').attr('src', event.target.result);
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+        $("#btn_ganti_poto").click(() => {
+            $("#uplod").click();
+        });
+    })
 </script>
 </body>
 

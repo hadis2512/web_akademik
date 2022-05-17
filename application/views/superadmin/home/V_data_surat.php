@@ -30,6 +30,7 @@
                                             <tr class="text-center">
                                                 <th>No</th>
                                                 <th>No Surat</th>
+                                                <th>No Form</th>
                                                 <th>Nama Pengaju</th>
                                                 <th>Program Studi</th>
                                                 <th>Jenis Permohonan</th>
@@ -46,15 +47,33 @@
                                                 <tr class="text-center">
                                                     <td><?= $no; ?></td>
                                                     <td><?= $a['no_surat']; ?></td>
+                                                    <td><?= $a['no_form']; ?></td>
                                                     <td><?= $a['nama_mahasiswa']; ?></td>
                                                     <td><?= $a['nama_prodi']; ?></td>
                                                     <td><?= $a['jenis_permohonan']; ?></td>
-                                                    <td>
-                                                        <a href="<?= base_url('superadmin/master_data/detail_surat/') . $a['id_jenis_p'] . '/' . $a['id_formulir']; ?>"><i class="fas fa-info-circle"></i></a>
-                                                        <a href="<?= base_url('superadmin/master_data/cetak/') . $a['id_jenis_p'] . '/' . $a['id_formulir']; ?>"><i class="fas fa-print"></i></a>
+                                                    <td class="d-flex justify-content-around align-self-start">
+                                                        <!-- <a href="<?= base_url('superadmin/master_data/lihat_surat/') . $a['id_jenis_p'] . '/' . $a['id_surat']; ?>" class="btn btn-info btn-sm mr-2"><i class="fas fa-info-circle"></i></a> -->
+                                                        <a href="#" data-target="#lihat_modal<?= $a['id_surat']; ?>" data-toggle="modal" class="btn btn-info btn-sm mr-2"><i class="fas fa-info-circle"></i></a>
+                                                        <a href="<?= base_url('superadmin/master_data/download_surat/') . $a['id_jenis_p'] . '/' . $a['id_surat']; ?>" class="btn btn-success btn-sm"><i class="fas fa-arrow-alt-circle-down"></i></a>
                                                     </td>
                                                 </tr>
-
+                                                <div class="modal fade" id="lihat_modal<?= $a['id_surat']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelLogout" aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h6 class="modal-title" id="exampleModalLabelLogout">
+                                                                    <b><?= $a['nama_file']; ?></b>
+                                                                </h6>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <object type="application/pdf" data="<?= base_url() . $a['path_file'] ?>" height="750" style="width:100%;">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             <?php } ?>
                                         </tbody>
                                     </table>
@@ -65,13 +84,6 @@
                     <!--Row-->
 
                     <!-- Documentation Link -->
-                    <div class="row">
-                        <div class="col-lg-12 text-center">
-                            <p>For more documentations you can visit<a href="https://getbootstrap.com/docs/4.3/components/forms/" target="_blank">
-                                    bootstrap forms documentations.</a> and <a href="https://getbootstrap.com/docs/4.3/components/input-group/" target="_blank">bootstrap input
-                                    groups documentations</a></p>
-                        </div>
-                    </div>
 
                     <!-- Modal Logout -->
                     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelLogout" aria-hidden="true">

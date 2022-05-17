@@ -19,7 +19,7 @@ class Master_data extends CI_Controller
                                                     </div>');
             redirect('admin-login');
         }
-        $this->load->helper('security');
+        $this->load->helper("download");
         $this->load->model('M_superadmin', 'superadmin');
         $this->load->model('M_master_data', 'master_data');
         $this->load->library(array('upload', 'Pdf'));
@@ -100,6 +100,38 @@ class Master_data extends CI_Controller
         // print_r($data['data_mahasiswa']);
         // die();
         $this->load->view('superadmin/home/V_data_mahasiswa', $data);
+    }
+    public function ttd_test()
+    {
+        $base64 = $this->input->post('signed');
+        $b64 = base64_decode($base64);
+        // $im = imageCreateFromString($b64);
+        $img_file = 'assets/data/img/' . date('Y-M-d,H-i-s') . '.png';
+        file_put_contents($img_file, $b64);
+        // echo gettype($im);
+        // die();
+        // $data = print_r($base64);
+        // imagepng($im, $img_file, 0);
+        // print_r($im);
+        redirect($img_file);
+        // print_r($img_file);
+        die();
+        // echo json_encode($base64);
+        // die();
+        // $folderPath = base_url('assets/data/img/');
+
+        // $image_parts = explode(";base64,", $_POST['signed']);
+
+        // $image_type_aux = explode("image/", $image_parts[0]);
+
+        // $image_type = $image_type_aux[1];
+
+        // $image_base64 = base64_decode($image_parts[1]);
+
+        // $file = $folderPath . uniqid() . '.' . $image_type;
+
+        // $a = file_put_contents($file, $image_base64);
+        // echo json_encode($a);
     }
     public function testing()
     {
@@ -187,7 +219,7 @@ class Master_data extends CI_Controller
     {
         $data['pageTitle'] = "Detail Formulir KP";
         $data['surat_kp'] = $this->master_data->get_detail_surat_kp($id_formulir, $id_jenis_p);
-        // echo json_encode($data['surat_kp']);
+        // echo print_r($data['surat_kp']);
         // die();
         $data['id_jenis_p'] = $id_jenis_p;
 
@@ -241,13 +273,129 @@ class Master_data extends CI_Controller
             $data = [
                 'no_surat' => $jumlah_surat . $total_surat . '/AO-SRT/IV/' . $year,
                 'id_formulir' => $id_formulir,
+                'id_admin' => 1,
                 'created_at' => date("Y-m-d")
             ];
-            // print_r($data);
-            // die();
             $insert_surat_riset = $this->master_data->insert_surat_riset($data);
+            // print_r($insert_surat_riset);
+            // die();
             $this->master_data->admin_buat_surat($id_formulir);
             if ($insert_surat_riset) {
+                // $bukti_laporan = $this->bukti->get_bukti_by_laporan_id($laporan_id);
+                $laporan = $this->master_data->get_surat_for_print_riset($id_formulir, $id_jenis_p);
+                $ttd = $this->master_data->get_ttd();
+                // print_r($laporan);
+                // die();
+                $tgl_lahir = date("d F Y", strtotime($laporan['tgl_lahir']));
+                $tanda_tangan = base_url() . $ttd['tanda_tangan'];
+                // $tampilan = "<div class='card'>
+                // <div></div>
+                // </div>";
+                // $qr = QrCode::create($tanda_tangan);
+                // $writer = new PngWriter();
+                // $result = $writer->write($qr);
+                // $result->saveToFile("./assets/data/img/ttd.png");
+                // die();
+                // $count = count($gambar);
+                // $data = [];
+                // $no = 0;
+
+
+                error_reporting(0); // AGAR ERROR MASALAH VERSI PHP TIDAK MUNCUL
+                $pdf = new FPDF('P', 'mm', 'a4');
+                $pdf->AddPage();
+
+                $pdf->SetFont('Arial', 'B', 10);
+                $pdf->Cell(0, 10, '', 0, 1);
+                $pdf->Cell(0, 5, '', 0, 1);
+                $pdf->Image('./assets/data/img/kalbis_logo.png', 10, 10, 80);
+
+                $pdf->Cell(10, 20, '', 0, 1);
+                $pdf->SetFont('Arial', 'B', 12);
+                $pdf->Cell(0, 1, 'Surat Pengantar Riset', 0, 1, 'C');
+
+                $pdf->Cell(10, 5, '', 0, 1);
+                $pdf->SetFont('Arial', '', 12);
+                $pdf->Cell(0, 1, $laporan['no_surat'], 0, 1, 'C');
+
+                $pdf->Cell(10, 20, '', 0, 1);
+                $pdf->SetFont('Arial', 'B', 11.5);
+                $pdf->Cell(0, 1, 'Yth. Bapak/Ibu ' . $laporan['perwakilan_perusahaan'], 0, 1, $pdf->setX(25));
+                $pdf->Cell(0, 10, '' . $laporan['jabatan'], 0, 1, $pdf->setX(25));
+                $pdf->Cell(0, 1, '' . $laporan['nama_perusahaan'], 0, 1, $pdf->setX(25));
+
+                $pdf->Cell(10, 5, '', 0, 1);
+                $pdf->SetFont('Arial', '', 11.5);
+                $pdf->Cell(0, 1, '' . $laporan['alamat_surat'], 0, 1, $pdf->setX(25));
+
+                $pdf->Cell(0, 15, '', 0, 1);
+                $pdf->SetFont('Arial', '', 11.5);
+                $pdf->Cell(0, 1, 'Dengan hormat,', 0, 1, $pdf->setX(25));
+
+                $pdf->Cell(0, 10, '', 0, 1);
+                $pdf->SetFont('Arial', '', 11.5);
+                $pdf->Cell(0, 1, 'Bersama ini kami menerangkan bahwa :', 0, 1, $pdf->setX(25));
+
+                $pdf->Cell(0, 10, '', 0, 1);
+                $pdf->SetFont('Arial', '', 11.5);
+                $pdf->Cell(0, 1, 'Nama                                 : ' . $laporan['nama_mahasiswa'], 0, 1, $pdf->setX(40));
+                $pdf->Cell(0, 10, 'Tempat/Tanggal Lahir        : ' . $laporan['tempat'] . '/' . $tgl_lahir, 0, 1, $pdf->setX(40));
+                $pdf->Cell(0, 1, 'Nomor Induk Mahasiswa    : ' . $laporan['nim'], 0, 1, $pdf->setX(40));
+                $pdf->Cell(0, 10, 'Program Studi                     : ' . $laporan['nama_prodi'], 0, 1, $pdf->setX(40));
+                $pdf->Cell(0, 1, 'Telepon                               : ' . $laporan['no_telp_mhs'], 0, 1, $pdf->setX(40));
+
+                if ($laporan['jenis_tugas'] == "tugas akhir") {
+                    $pdf->Cell(0, 10, '', 0, 1);
+                    $pdf->SetFont('Arial', '', 11.5);
+                    $pdf->MultiCell(0, 5, 'merupakan mahasiswa Institut Teknologi dan Bisnis Kalbis yang sedang mengerjakan tugas untuk mata kuliah Skripsi.', 0, 1, $pdf->setX(25), 'J');
+
+                    $pdf->Cell(0, 5, '', 0, 1);
+                    $pdf->SetFont('Arial', '', 11.5);
+                    $pdf->MultiCell(0, 5, 'Sehubungan dengan hal itu mohon kiranya mahasiswa kami dapat diizinkan untuk melakukan riset dengan judul: "' . $laporan['judul'] . '".', 0, 1, $pdf->setX(25), 'J');
+                } elseif ($laporan['jenis_tugas'] == "tugas kuliah") {
+                    $pdf->Cell(0, 10, '', 0, 1);
+                    $pdf->SetFont('Arial', '', 11.5);
+                    $pdf->MultiCell(0, 5, 'merupakan mahasiswa Institut Teknologi dan Bisnis Kalbis yang sedang mengerjakan tugas kuliah.', 0, 1, $pdf->setX(25), 'J');
+
+                    $pdf->Cell(0, 5, '', 0, 1);
+                    $pdf->SetFont('Arial', '', 11.5);
+                    $pdf->MultiCell(0, 5, 'Sehubungan dengan hal itu mohon kiranya mahasiswa kami dapat diizinkan untuk melakukan tugas kuliah dengan judul: "' . $laporan['judul'] . '".', 0, 1, $pdf->setX(25), 'J');
+                }
+
+                $pdf->Cell(0, 5, '', 0, 1);
+                $pdf->SetFont('Arial', '', 11.5);
+                $pdf->MultiCell(0, 5, 'Demikian surat keterangan ini dibuat dengan sesungguhnya untuk dapat dipergunakan sebagaimana mestinya.', 0, 1, $pdf->setX(25), 'J');
+
+                $pdf->Cell(0, 10, '', 0, 1);
+                $pdf->SetFont('Arial', '', 11.5);
+                $pdf->Cell(0, 10, 'Jakarta, ' . date('d F Y', strtotime($laporan['updated_at'])), 0, 1, $pdf->setX(-60));
+
+                $pdf->Cell(0, 5, '', 0, 1);
+                $pdf->SetFont('Arial', '', 11.5);
+                $pdf->Image($tanda_tangan,  160, $pdf->getY(), 40);
+                // $pdf->Image('./assets/data/img/kalbis_logo.png', 10, 10, 80);
+
+                $pdf->Cell(0, 25, '', 0, 1);
+                $pdf->SetFont('Arial', '', 11.5);
+                $pdf->Cell(0, 10, 'Siti Komariah SM.MM.', 0, 1, $pdf->setX(-60));
+                $pdf->Cell(0, 1, 'Head of Academic Operation', 0, 1, $pdf->setX(-71));
+
+
+                $pdf->setY(-19);
+                // $pdf->Cell(0, 10, '', 0, 1);
+                // $pdf->SetFont('Arial', '', 10.5);
+                $pdf->SetFont('Arial', 'B', 10);
+                // $pdf->Cell(0, 10, '', 0, 1);
+                $pdf->Image('./assets/data/img/kalbis_footer.png', 0, $pdf->GetY(), 210);
+                // $a = preg_replace($laporan['no_surat'], "-", $laporan['no_surat']);
+                $b = explode('/', $laporan['no_surat']);
+                $a = implode("-", $b);
+                $nama = $a  . '_surat_pengantar_riset_' . $laporan['nama_mahasiswa'] . '.pdf';
+                $path = "/assets/data/" . $nama;
+                // echo $path;
+                // die();
+                $save_to_local = $pdf->Output(__DIR__ . "/../../../assets/data/" . $nama, "F");
+                $this->master_data->update_file_pdf($path, $nama, $insert_surat_riset);
                 echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-success animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Data Surat Berhasil Di Buat!</div>');
                 redirect('admin-data-formulir');
             } else {
@@ -271,11 +419,125 @@ class Master_data extends CI_Controller
             $data = [
                 'no_surat' => $jumlah_surat . $total_surat . '/WRII-SRT/VI/' . $year,
                 'id_formulir' => $id_formulir,
+                'id_admin' => 1,
                 'created_at' => date("Y-m-d")
             ];
             $insert_surat_kp = $this->master_data->insert_surat_kp($data);
+
             $this->master_data->admin_buat_surat($id_formulir);
             if ($insert_surat_kp) {
+                // $bukti_laporan = $this->bukti->get_bukti_by_laporan_id($laporan_id);
+                $laporan = $this->master_data->get_surat_for_print_kp($id_formulir, $id_jenis_p);
+                $ttd = $this->master_data->get_ttd();
+                $tanda_tangan = base_url() . $ttd['tanda_tangan'];
+                // print_r($tanda_tangan);
+                // die();
+                // print_r($laporan);
+                // die();
+                $tgl_lahir = date("d F Y", strtotime($laporan['tgl_lahir']));
+
+                // $count = count($gambar);
+                // $data = [];
+                // $no = 0;
+
+
+                error_reporting(0); // AGAR ERROR MASALAH VERSI PHP TIDAK MUNCUL
+                $pdf = new FPDF('P', 'mm', 'Legal');
+                $pdf->AddPage();
+
+
+                $pdf->SetTitle($laporan['no_surat'] . '-' . $laporan['jenis_permohonan'] . '-' . $laporan['nama_mahasiswa'] . '.pdf');
+
+                // $pdf->SetFont('Arial', 'B', 10);
+                // $pdf->Cell(30, 10, 'Title', 1, 0, 'C');
+
+                $pdf->SetFont('Arial', 'B', 10);
+                $pdf->Cell(0, 10, '', 0, 1);
+                $pdf->Cell(0, 5, '', 0, 1);
+                $pdf->Image('./assets/data/img/kalbis_logo.png', 10, 10, 80);
+
+                $pdf->Cell(10, 20, '', 0, 1);
+                $pdf->SetFont('Arial', '', 10.5);
+                $pdf->Cell(0, 1, 'No Surat              : ' . $laporan['no_surat'], 0, 1, $pdf->setX(25));
+                $pdf->Cell(0, 10, 'Perihal                 : ' . 'Izin kerja praktik', 0, 1, $pdf->setX(25));
+                $pdf->Cell(0, 1, 'Lampiran             : ' . '-', 0, 1, $pdf->setX(25));
+
+                $pdf->Cell(10, 20, '', 0, 1);
+                $pdf->SetFont('Arial', 'B', 10.5);
+                $pdf->Cell(0, 1, 'Yth. Bapak/Ibu ' . $laporan['perwakilan_perusahaan'], 0, 1, $pdf->setX(25));
+                $pdf->Cell(0, 10, '' . $laporan['jabatan'], 0, 1, $pdf->setX(25));
+                $pdf->Cell(0, 1, '' . $laporan['nama_perusahaan'], 0, 1, $pdf->setX(25));
+
+                $pdf->Cell(10, 5, '', 0, 1);
+                $pdf->SetFont('Arial', '', 10.5);
+                $pdf->Cell(0, 1, '' . $laporan['alamat_surat'], 0, 1, $pdf->setX(25));
+
+                $pdf->Cell(0, 15, '', 0, 1);
+                $pdf->SetFont('Arial', '', 10.5);
+                $pdf->Cell(0, 1, 'Dengan hormat,', 0, 1, $pdf->setX(25));
+
+                $pdf->Cell(0, 7.5, '', 0, 1);
+                $pdf->SetFont('Arial', '', 10.5);
+                $pdf->Cell(0, 1, 'Bersama ini kami menerangkan bahwa :', 0, 1, $pdf->setX(25));
+
+                $pdf->Cell(0, 10, '', 0, 1);
+                $pdf->SetFont('Arial', '', 10.5);
+                $pdf->Cell(0, 1, 'Nama                                 : ' . $laporan['nama_mahasiswa'], 0, 1, $pdf->setX(40));
+                $pdf->Cell(0, 10, 'Tempat/Tanggal Lahir        : ' . $laporan['tempat'] . '/' . $tgl_lahir, 0, 1, $pdf->setX(40));
+                $pdf->Cell(0, 1, 'Nomor Induk Mahasiswa    : ' . $laporan['nim'], 0, 1, $pdf->setX(40));
+                $pdf->Cell(0, 10, 'Program Studi                     : ' . $laporan['nama_prodi'], 0, 1, $pdf->setX(40));
+                $pdf->Cell(0, 1, 'Telepon                               : ' . $laporan['no_telp_mhs'], 0, 1, $pdf->setX(40));
+
+                $pdf->Cell(0, 10, '', 0, 1);
+                $pdf->SetFont('Arial', '', 10.5);
+                $pdf->MultiCell(0, 8, 'merupakan mahasiswa Institut Teknologi dan Bisnis Kalbis yang sedang melakukan kerja praktik. Sehubungan dengan hal itu mohon kiranya mahasiswa kami dapat diberikan kesempatan untuk magang di Instansi Bapak/Ibu.', 0, 1, $pdf->setX(25));
+
+                // $pdf->Cell(0, 5, '', 0, 1);
+                // $pdf->SetFont('Arial', '', 10.5);
+                // $pdf->Cell(0, 10, '', 0, 1, $pdf->setX(25));
+                // $pdf->Cell(0, 1, ' ', 0, 1, $pdf->setX(25));
+
+                $pdf->Cell(0, 5, '', 0, 1);
+                $pdf->SetFont('Arial', '', 10.5);
+                $pdf->Cell(0, 10, 'Demikian surat ini kami sampaikan. Atas perhatian dan kerjasamanya kami ucapkan terima kasih.', 0, 1, $pdf->setX(25));
+
+                $pdf->Cell(0, 10, '', 0, 1);
+                $pdf->SetFont('Arial', '', 10.5);
+                $pdf->Cell(0, 10, 'Jakarta,' . date('d F Y', strtotime($laporan['updated_at'])), 0, 1, $pdf->setX(25));
+
+                $pdf->Cell(0, 5, '', 0, 1);
+                $pdf->SetFont('Arial', '', 11.5);
+                $pdf->Image($tanda_tangan,  25, $pdf->getY(), 40);
+
+
+                $pdf->Cell(0, 35, '', 0, 1);
+                $pdf->SetFont('Arial', 'B', 10.5);
+                $pdf->Cell(0, 1, 'Dr. Siti Nurjanah, SE., MM.,', 0, 1, $pdf->setX(25));
+
+                $pdf->Cell(0, 1, '', 0, 1);
+                $pdf->SetFont('Arial', '', 10.5);
+                $pdf->Cell(0, 10, 'Wakil Rektor II', 0, 1, $pdf->setX(25));
+
+                $pdf->Cell(0, 15, '', 0, 1);
+                $pdf->SetFont('Arial', '', 10.5);
+                $pdf->MultiCell(0, 5, 'Surat ini hanya untuk keperluan mandapatkan izin kerja praktik di perusahaan/PT/Dinas/Kementerian dan tidak berlaku untuk keperluan lain. Apabila Bapak/Ibu memerlukan validasi keaslian surat ini dari Institusi, Bapak/Ibu dapat mengirimkan email ke student.service@kalbis.ac.id', 0, 1,  $pdf->setX(25));
+
+                $pdf->setY(-19);
+                // $pdf->Cell(0, 10, '', 0, 1);
+                // $pdf->SetFont('Arial', '', 10.5);
+                $pdf->SetFont('Arial', 'B', 10);
+                // $pdf->Cell(0, 10, '', 0, 1);
+                $pdf->Image('./assets/data/img/kalbis_footer.png', 0, $pdf->GetY(), 220);
+
+                $b = explode('/', $laporan['no_surat']);
+                $a = implode("-", $b);
+                $nama = $a  . '_surat_magang' . '_' . $laporan['nama_mahasiswa'] . '.pdf';
+                $path = "/assets/data/" . $nama;
+                // echo $path;
+                // die();
+                $save_to_local = $pdf->Output(__DIR__ . "/../../../assets/data/" . $nama, "F");
+
+                $this->master_data->update_file_pdfKP($path, $nama, $insert_surat_kp);
                 echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-success animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Data Surat Berhasil Di Buat!</div>');
                 redirect('admin-data-formulir');
             } else {
@@ -308,6 +570,40 @@ class Master_data extends CI_Controller
             redirect('superadmin/master_data/get_surat_riset/' . $id_jenis_p . '/' . $id_formulir);
         } elseif ($id_jenis_p == 2) {
             redirect('superadmin/master_data/get_surat_kp/' . $id_jenis_p . '/' . $id_formulir);
+        }
+    }
+
+    public function download_surat($id_jenis_p, $id_surat)
+    {
+
+        if ($id_jenis_p == 1) {
+            $pdf_surat_riset = $this->master_data->get_pdf_surat_riset($id_surat);
+            $surat_riset = $this->master_data->get_surat($id_surat);
+            $path_file = $_SERVER['DOCUMENT_ROOT'] . '/web_akademik' . $pdf_surat_riset['file_pdf'];
+            // $surat_riset = $this->master_data->get_surat($id_surat);
+
+            header("Cache-Control:  maxage=1");
+            header("Pragma: public");
+            header("Content-type: application/pdf");
+            header("Content-Transfer-Encoding: Binary");
+            header("Content-length: " . filesize($path_file));
+            header("Content-disposition: attachment; filename=\"" . basename($path_file) . "\"");
+            readfile($path_file);
+            // force_download($surat_riset['nama_file'], $path_file);
+        } elseif ($id_jenis_p == 2) {
+            $pdf_surat_riset = $this->master_data->get_pdf_surat_riset($id_surat);
+            $surat_riset = $this->master_data->get_surat($id_surat);
+            $path_file = $_SERVER['DOCUMENT_ROOT'] . '/web_akademik' . $pdf_surat_riset['file_pdf'];
+            // $surat_riset = $this->master_data->get_surat($id_surat);
+            print_r($surat_riset);
+            die();
+            header("Cache-Control:  maxage=1");
+            header("Pragma: public");
+            header("Content-type: application/pdf");
+            header("Content-Transfer-Encoding: Binary");
+            header("Content-length: " . filesize($path_file));
+            header("Content-disposition: attachment; filename=\"" . basename($path_file) . "\"");
+            readfile($path_file);
         }
     }
 
@@ -547,8 +843,8 @@ class Master_data extends CI_Controller
 
         $nim = str_replace("'", "", $this->security->xss_clean($this->input->post('nim')));
         $nmfile = $nim . "_" . date("H-i-s"); //nama file saya beri nama langsung dan diikuti fungsi time
-        $config['upload_path'] = $_SERVER['DOCUMENT_ROOT'] . '/web_akademik/assets/data/mahasiswa/'; //path folder
-        $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp'; //type yang dapat diakses bisa anda sesuaikan
+        $config['upload_path'] = $_SERVER['DOCUMENT_ROOT'] . '/web_akademik/assets/data/mahasiswa/foto_profilM'; //path folder
+        $config['allowed_types'] = 'gif|jpg|PNG|jpeg|bmp'; //type yang dapat diakses bisa anda sesuaikan
         $config['max_size'] = '2048000000'; //maksimum besar file 2M
         $config['max_width']  = '0'; //lebar maksimum 1288 px
         $config['max_height']  = '0'; //tinggi maksimu 1000 px
@@ -560,7 +856,7 @@ class Master_data extends CI_Controller
             if ($this->upload->do_upload('foto')) {
 
                 $pic = $this->upload->data();
-                $foto = "/assets/data/mahasiswa/" . $pic['file_name'];
+                $foto = "/assets/data/mahasiswa/foto_profilM/" . $pic['file_name'];
 
                 $data = [
 
@@ -599,7 +895,7 @@ class Master_data extends CI_Controller
                     redirect('superadmin/Master_data/add_mahasiswa');
                 }
             } else {
-                echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button>' . $this->upload->display_errors() . '.</div>');
+                echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button>' . $this->upload->display_errors() . '</div>');
                 redirect('superadmin/Master_data/add_mahasiswa');
             }
         } else {
@@ -645,7 +941,7 @@ class Master_data extends CI_Controller
 
         $nim = str_replace("'", "", $this->security->xss_clean($this->input->post('nim')));
         $nmfile = $nim . "_" . date("H-i-s"); //nama file saya beri nama langsung dan diikuti fungsi time
-        $config['upload_path'] = $_SERVER['DOCUMENT_ROOT'] . '/web_akademik/assets/data/mahasiswa/'; //path folder
+        $config['upload_path'] = $_SERVER['DOCUMENT_ROOT'] . '/web_akademik/assets/data/mahasiswa/foto_profilM/'; //path folder
         $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp'; //type yang dapat diakses bisa anda sesuaikan
         $config['max_size'] = '2048000000'; //maksimum besar file 2M
         $config['max_width']  = '0'; //lebar maksimum 1288 px
@@ -658,7 +954,7 @@ class Master_data extends CI_Controller
             if ($this->upload->do_upload('foto')) {
 
                 $pic = $this->upload->data();
-                $foto = "/assets/data/mahasiswa/" . $pic['file_name'];
+                $foto = "/assets/data/mahasiswa/foto_profilM/" . $pic['file_name'];
 
                 $data = [
 
@@ -755,222 +1051,40 @@ class Master_data extends CI_Controller
         }
     }
 
-    public function cetak($id_jenis_p, $id_formulir)
+    public function lihat_surat($id_jenis_p, $id_formulir)
     {
         if ($id_jenis_p == 1) {
-            $this->cetak_surat_riset($id_jenis_p, $id_formulir);
+            $this->lihat_surat_riset($id_jenis_p, $id_formulir);
         } elseif ($id_jenis_p == 2) {
-            $this->cetak_surat_kp($id_jenis_p, $id_formulir);
+            $this->lihat_surat_kp($id_jenis_p, $id_formulir);
         }
     }
 
 
 
-    public function cetak_surat_kp($id_jenis_p, $id_formulir)
+    public function lihat_surat_kp($id_jenis_p, $id_surat)
     {
-        // $bukti_laporan = $this->bukti->get_bukti_by_laporan_id($laporan_id);
-        $laporan = $this->master_data->get_surat_for_print_kp($id_formulir, $id_jenis_p);
-        // print_r($laporan);
+        $pdf_surat_kp = $this->master_data->get_pdf_surat_kp($id_surat);
+        // print_r($pdf_surat_kp);
         // die();
-        $tgl_lahir = date("d F Y", strtotime($laporan['tgl_lahir']));
-
-        // $count = count($gambar);
-        // $data = [];
-        // $no = 0;
-
-
-        error_reporting(0); // AGAR ERROR MASALAH VERSI PHP TIDAK MUNCUL
-        $pdf = new FPDF('P', 'mm', 'Legal');
-        $pdf->AddPage();
-
-        $pdf->SetFont('Arial', 'B', 10);
-        $pdf->Cell(0, 10, '', 0, 1);
-        $pdf->Cell(0, 5, '', 0, 1);
-        $pdf->Image('./assets/data/img/kalbis_logo.png', 10, 10, 80);
-
-        $pdf->Cell(10, 20, '', 0, 1);
-        $pdf->SetFont('Arial', '', 10.5);
-        $pdf->Cell(0, 1, 'No Surat              : ' . $laporan['no_surat'], 0, 1, $pdf->setX(25));
-        $pdf->Cell(0, 10, 'Perihal                 : ' . 'Izin kerja praktik', 0, 1, $pdf->setX(25));
-        $pdf->Cell(0, 1, 'Lampiran             : ' . '-', 0, 1, $pdf->setX(25));
-
-        $pdf->Cell(10, 20, '', 0, 1);
-        $pdf->SetFont('Arial', 'B', 10.5);
-        $pdf->Cell(0, 1, 'Yth. Bapak/Ibu ' . $laporan['perwakilan_perusahaan'], 0, 1, $pdf->setX(25));
-        $pdf->Cell(0, 10, '' . $laporan['jabatan'], 0, 1, $pdf->setX(25));
-        $pdf->Cell(0, 1, '' . $laporan['nama_perusahaan'], 0, 1, $pdf->setX(25));
-
-        $pdf->Cell(10, 5, '', 0, 1);
-        $pdf->SetFont('Arial', '', 10.5);
-        $pdf->Cell(0, 1, '' . $laporan['alamat_surat'], 0, 1, $pdf->setX(25));
-
-        $pdf->Cell(0, 15, '', 0, 1);
-        $pdf->SetFont('Arial', '', 10.5);
-        $pdf->Cell(0, 1, 'Dengan hormat,', 0, 1, $pdf->setX(25));
-
-        $pdf->Cell(0, 7.5, '', 0, 1);
-        $pdf->SetFont('Arial', '', 10.5);
-        $pdf->Cell(0, 1, 'Bersama ini kami menerangkan bahwa :', 0, 1, $pdf->setX(25));
-
-        $pdf->Cell(0, 10, '', 0, 1);
-        $pdf->SetFont('Arial', '', 10.5);
-        $pdf->Cell(0, 1, 'Nama                                 : ' . $laporan['nama_mahasiswa'], 0, 1, $pdf->setX(40));
-        $pdf->Cell(0, 10, 'Tempat/Tanggal Lahir        : ' . $laporan['tempat'] . '/' . $tgl_lahir, 0, 1, $pdf->setX(40));
-        $pdf->Cell(0, 1, 'Nomor Induk Mahasiswa    : ' . $laporan['nim'], 0, 1, $pdf->setX(40));
-        $pdf->Cell(0, 10, 'Program Studi                     : ' . $laporan['nama_prodi'], 0, 1, $pdf->setX(40));
-        $pdf->Cell(0, 1, 'Telepon                               : ' . $laporan['no_telp_mhs'], 0, 1, $pdf->setX(40));
-
-        $pdf->Cell(0, 10, '', 0, 1);
-        $pdf->SetFont('Arial', '', 10.5);
-        $pdf->MultiCell(0, 8, 'merupakan mahasiswa Institut Teknologi dan Bisnis Kalbis yang sedang melakukan kerja praktik. Sehubungan dengan hal itu mohon kiranya mahasiswa kami dapat diberikan kesempatan untuk magang di Instansi Bapak/Ibu.', 0, 1, $pdf->setX(25));
-
-        // $pdf->Cell(0, 5, '', 0, 1);
-        // $pdf->SetFont('Arial', '', 10.5);
-        // $pdf->Cell(0, 10, '', 0, 1, $pdf->setX(25));
-        // $pdf->Cell(0, 1, ' ', 0, 1, $pdf->setX(25));
-
-        $pdf->Cell(0, 5, '', 0, 1);
-        $pdf->SetFont('Arial', '', 10.5);
-        $pdf->Cell(0, 10, 'Demikian surat ini kami sampaikan. Atas perhatian dan kerjasamanya kami ucapkan terima kasih.', 0, 1, $pdf->setX(25));
-
-        $pdf->Cell(0, 10, '', 0, 1);
-        $pdf->SetFont('Arial', '', 10.5);
-        $pdf->Cell(0, 10, 'Hormat kami,', 0, 1, $pdf->setX(25));
-
-        $pdf->Cell(0, 40, '', 0, 1);
-        $pdf->SetFont('Arial', 'B', 10.5);
-        $pdf->Cell(0, 1, 'Dr. Siti Nurjanah, SE., MM.,', 0, 1, $pdf->setX(25));
-
-        $pdf->Cell(0, 1, '', 0, 1);
-        $pdf->SetFont('Arial', '', 10.5);
-        $pdf->Cell(0, 10, 'Wakil Rektor II', 0, 1, $pdf->setX(25));
-
-        $pdf->Cell(0, 15, '', 0, 1);
-        $pdf->SetFont('Arial', '', 10.5);
-        $pdf->MultiCell(0, 5, 'Surat ini hanya untuk keperluan mandapatkan izin kerja praktik di perusahaan/PT/Dinas/Kementerian dan tidak berlaku untuk keperluan lain. Apabila Bapak/Ibu memerlukan validasi keaslian surat ini dari Institusi, Bapak/Ibu dapat mengirimkan email ke student.service@kalbis.ac.id', 0, 1,  $pdf->setX(25));
-
-        $pdf->setY(-19);
-        // $pdf->Cell(0, 10, '', 0, 1);
-        // $pdf->SetFont('Arial', '', 10.5);
-        $pdf->SetFont('Arial', 'B', 10);
-        // $pdf->Cell(0, 10, '', 0, 1);
-        $pdf->Image('./assets/data/img/kalbis_footer.png', 0, $pdf->GetY(), 220);
-
-
-
-        $nama = $laporan['no_surat'] . '-' . $laporan['jenis_permohonan'] . '-' . $laporan['nama_mahasiswa'] . '.pdf';
-        $pdf->Output('D', $nama);
+        $filename = $pdf_surat_kp;
+        // print_r($filename);
+        // die();
+        redirect($filename);
     }
-    public function cetak_surat_riset($id_jenis_p, $id_formulir)
+
+
+
+    public function lihat_surat_riset($id_jenis_p, $id_surat)
     {
-        // $bukti_laporan = $this->bukti->get_bukti_by_laporan_id($laporan_id);
-        $laporan = $this->master_data->get_surat_for_print_riset($id_formulir, $id_jenis_p);
-        $ttd = $this->master_data->get_ttd($id_jenis_p);
-        // print_r($laporan);
+
+        $pdf_surat_riset = $this->master_data->get_pdf_surat_riset($id_surat);
+        // print_r($pdf_surat_riset);
         // die();
-        $tgl_lahir = date("d F Y", strtotime($laporan['tgl_lahir']));
-        $tanda_tangan = base_url() . $ttd['tanda_tangan'];
-        // $tampilan = "<div class='card'>
-        // <div></div>
-        // </div>";
-        // $qr = QrCode::create($tanda_tangan);
-        // $writer = new PngWriter();
-        // $result = $writer->write($qr);
-        // $result->saveToFile("./assets/data/img/ttd.png");
+        $filename = $pdf_surat_riset;
+
+        // print_r($filename);
         // die();
-        // $count = count($gambar);
-        // $data = [];
-        // $no = 0;
-
-
-        error_reporting(0); // AGAR ERROR MASALAH VERSI PHP TIDAK MUNCUL
-        $pdf = new FPDF('P', 'mm', 'Legal');
-        $pdf->AddPage();
-
-        $pdf->SetFont('Arial', 'B', 10);
-        $pdf->Cell(0, 10, '', 0, 1);
-        $pdf->Cell(0, 5, '', 0, 1);
-        $pdf->Image('./assets/data/img/kalbis_logo.png', 10, 10, 80);
-
-        $pdf->Cell(10, 20, '', 0, 1);
-        $pdf->SetFont('Arial', 'B', 12);
-        $pdf->Cell(0, 1, 'Surat Pengantar Riset', 0, 1, 'C');
-
-        $pdf->Cell(10, 5, '', 0, 1);
-        $pdf->SetFont('Arial', '', 12);
-        $pdf->Cell(0, 1, $laporan['no_surat'], 0, 1, 'C');
-
-        $pdf->Cell(10, 20, '', 0, 1);
-        $pdf->SetFont('Arial', 'B', 11.5);
-        $pdf->Cell(0, 1, 'Yth. Bapak/Ibu ' . $laporan['perwakilan_perusahaan'], 0, 1, $pdf->setX(25));
-        $pdf->Cell(0, 10, '' . $laporan['jabatan'], 0, 1, $pdf->setX(25));
-        $pdf->Cell(0, 1, '' . $laporan['nama_perusahaan'], 0, 1, $pdf->setX(25));
-
-        $pdf->Cell(10, 5, '', 0, 1);
-        $pdf->SetFont('Arial', '', 11.5);
-        $pdf->Cell(0, 1, '' . $laporan['alamat_surat'], 0, 1, $pdf->setX(25));
-
-        $pdf->Cell(0, 15, '', 0, 1);
-        $pdf->SetFont('Arial', '', 11.5);
-        $pdf->Cell(0, 1, 'Dengan hormat,', 0, 1, $pdf->setX(25));
-
-        $pdf->Cell(0, 10, '', 0, 1);
-        $pdf->SetFont('Arial', '', 11.5);
-        $pdf->Cell(0, 1, 'Bersama ini kami menerangkan bahwa :', 0, 1, $pdf->setX(25));
-
-        $pdf->Cell(0, 10, '', 0, 1);
-        $pdf->SetFont('Arial', '', 11.5);
-        $pdf->Cell(0, 1, 'Nama                                 : ' . $laporan['nama_mahasiswa'], 0, 1, $pdf->setX(40));
-        $pdf->Cell(0, 10, 'Tempat/Tanggal Lahir        : ' . $laporan['tempat'] . '/' . $tgl_lahir, 0, 1, $pdf->setX(40));
-        $pdf->Cell(0, 1, 'Nomor Induk Mahasiswa    : ' . $laporan['nim'], 0, 1, $pdf->setX(40));
-        $pdf->Cell(0, 10, 'Program Studi                     : ' . $laporan['nama_prodi'], 0, 1, $pdf->setX(40));
-        $pdf->Cell(0, 1, 'Telepon                               : ' . $laporan['no_telp_mhs'], 0, 1, $pdf->setX(40));
-
-        if ($laporan['jenis_tugas'] == "tugas akhir") {
-            $pdf->Cell(0, 10, '', 0, 1);
-            $pdf->SetFont('Arial', '', 11.5);
-            $pdf->MultiCell(0, 5, 'merupakan mahasiswa Institut Teknologi dan Bisnis Kalbis yang sedang mengerjakan tugas untuk mata kuliah Skripsi.', 0, 1, $pdf->setX(25), 'J');
-
-            $pdf->Cell(0, 5, '', 0, 1);
-            $pdf->SetFont('Arial', '', 11.5);
-            $pdf->MultiCell(0, 5, 'Sehubungan dengan hal itu mohon kiranya mahasiswa kami dapat diizinkan untuk melakukan riset dengan judul: "' . $laporan['judul'] . '".', 0, 1, $pdf->setX(25), 'J');
-        } elseif ($laporan['jenis_tugas'] == "tugas kuliah") {
-            $pdf->Cell(0, 10, '', 0, 1);
-            $pdf->SetFont('Arial', '', 11.5);
-            $pdf->MultiCell(0, 5, 'merupakan mahasiswa Institut Teknologi dan Bisnis Kalbis yang sedang mengerjakan tugas kuliah.', 0, 1, $pdf->setX(25), 'J');
-
-            $pdf->Cell(0, 5, '', 0, 1);
-            $pdf->SetFont('Arial', '', 11.5);
-            $pdf->MultiCell(0, 5, 'Sehubungan dengan hal itu mohon kiranya mahasiswa kami dapat diizinkan untuk melakukan tugas kuliah dengan judul: "' . $laporan['judul'] . '".', 0, 1, $pdf->setX(25), 'J');
-        }
-
-        $pdf->Cell(0, 5, '', 0, 1);
-        $pdf->SetFont('Arial', '', 11.5);
-        $pdf->MultiCell(0, 5, 'Demikian surat keterangan ini dibuat dengan sesungguhnya untuk dapat dipergunakan sebagaimana mestinya.', 0, 1, $pdf->setX(25), 'J');
-
-        $pdf->Cell(0, 10, '', 0, 1);
-        $pdf->SetFont('Arial', '', 11.5);
-        $pdf->Cell(0, 10, 'Jakarta, ' . date('d F Y', strtotime($laporan['updated_at'])), 0, 1, $pdf->setX(-60));
-
-        $pdf->Cell(0, 5, '', 0, 1);
-        $pdf->SetFont('Arial', '', 11.5);
-        $pdf->Image($tanda_tangan,  160, $pdf->getY(), 40);
-        // $pdf->Image('./assets/data/img/kalbis_logo.png', 10, 10, 80);
-
-        $pdf->Cell(0, 25, '', 0, 1);
-        $pdf->SetFont('Arial', '', 11.5);
-        $pdf->Cell(0, 10, 'Siti Komariah SM.MM.', 0, 1, $pdf->setX(-60));
-        $pdf->Cell(0, 1, 'Head of Academic Operation', 0, 1, $pdf->setX(-71));
-
-
-        $pdf->setY(-19);
-        // $pdf->Cell(0, 10, '', 0, 1);
-        // $pdf->SetFont('Arial', '', 10.5);
-        $pdf->SetFont('Arial', 'B', 10);
-        // $pdf->Cell(0, 10, '', 0, 1);
-        $pdf->Image('./assets/data/img/kalbis_footer.png', 0, $pdf->GetY(), 220);
-
-        $nama = $laporan['no_surat'] . '-' . $laporan['jenis_permohonan'] . '-' . $laporan['nama_mahasiswa'] . '.pdf';
-        $pdf->Output('D', $nama);
+        redirect($filename);
     }
 }

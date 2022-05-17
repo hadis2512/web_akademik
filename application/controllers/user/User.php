@@ -31,7 +31,11 @@ class User extends CI_Controller
         }
     }
 
-
+    public function get_data_form($id_pengguna)
+    {
+        $get_form = $this->master_data->get_form_by_id($id_pengguna);
+        echo json_encode($get_form);
+    }
     public function Pengajuan_form()
     {
         $data['id_pengguna'] = $this->session->userdata('idadmin');
@@ -42,12 +46,36 @@ class User extends CI_Controller
         $data['User'] = $this;
         $data['riset'] = $this->master_data->get_detail_riset($id_pengguna);
         $data['kp'] = $this->master_data->get_detail_kp($id_pengguna);
+        // die();
         $data['form'] = $this->master_data->get_form($id_pengguna);
+        // $data['form'] = $this->master_data->get_form_by_id($id_pengguna);
         // print_r($data['kp']);
         // print_r($data['riset']);
         // print_r($data['form']);
         // die();
         $this->load->view('user/form/V_pengajuan_form', $data);
+    }
+
+    public function get_data_surat($id_pengguna)
+    {
+        $get_surat = $this->master_data->get_data_surat_mahasiswa($id_pengguna);
+        echo json_encode($get_surat);
+    }
+
+
+    public function data_surat()
+    {
+        $data['id_pengguna'] = $this->session->userdata('idadmin');
+        $id_pengguna = $data['id_pengguna'];
+        $data['form'] = $this->master_data->get_surat_by_id_pengguna($id_pengguna);
+        $id_pengguna = $data['id_pengguna'];
+        $data['pageTitle'] = "Data Surat";
+        $data['User'] = $this;
+        // print_r($data['kp']);
+        // print_r($data['riset']);
+        // print_r($data['form']);
+        // die();
+        $this->load->view('user/form/V_data_surat', $data);
     }
 
     public function approve($id_formulir)
@@ -79,6 +107,8 @@ class User extends CI_Controller
         $data['pageTitle'] = "Pengajuan Form";
         $data['User'] = $this;
         $data['form'] = $this->master_data->get_all_form_by_prodi($prodi)->result_array();
+        // print_r($data['form']);
+        // die();
         $data['jenis_p'] = $this->master_data->get_jenis_permohonan();
         if (count($data['form']) > 0) {
             $data['view_more'] = '<div class="my-4 d-flex flex-row-reverse">
@@ -127,8 +157,6 @@ class User extends CI_Controller
             $this->cetak_surat_kp($id_jenis_p, $id_formulir);
         }
     }
-
-
 
     public function cetak_surat_kp($id_jenis_p, $id_formulir)
     {
@@ -342,9 +370,266 @@ class User extends CI_Controller
 
     public function Mahasiswa()
     {
+        $id_pengguna = $this->session->userdata('idadmin');
         $data['pageTitle'] = "Home Mahasiswa";
+        $data['User'] = $this;
+        $data['form'] = $this->master_data->get_form($id_pengguna);
+        if (count($data['form']) > 0) {
+            $data['view_more'] = '<div class="my-4 d-flex flex-row-reverse">
+            <a href="' . base_url('Pengajuan-Form') . '" class="btn btn-inverse-info btn-sm "><i class="icon-grid mr-3"></i>View More</a>
+        </div>';
+        } else {
+            $data['view_more'] = '<div class="row flex-grow">
+            <div class="col-lg-7  mx-auto text-secondary">
+                <div class="row align-items-center d-flex flex-row">
+                    <div class="col-lg-12 error-page-divider text-lg-center pl-lg-4">                        
+                        <h3 class="font-weight-light mt-5">Saat ini belum ada data.</h3>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-center">
+                    <div class="my-5 ">
+                    <a href="' . base_url('Pengajuan-Form') . '" class="btn btn-primary"><i class="ti-plus mr-2"></i>Buat Pengajuan</a>       
+                    </div>
+                </div>
+            </div>
+        </div>';
+        }
         $this->load->view('user/home/V_Mahasiswa_home', $data);
     }
+
+    function get_prodi($id)
+    {
+        $data = $this->master_data->get_prodi_id($id);
+        $result = array();
+        foreach ($data as $a) {
+            $select =  '<option value="' . $a['id'] . '">' . $a['program_studi'] . '</option>';
+            array_push($result, $select);
+        }
+        echo json_encode($result);
+    }
+
+    public function edit_profile_m($id)
+    {
+        $profil = $this->master_data->get_my_profile($id);
+        $oldpass = $profil[0]['password'];
+        // print_r($oldpass[0]['password']);
+        // die();
+        $nim = str_replace("'", "", $this->security->xss_clean($this->input->post('nim')));
+        $nmfile = $nim . "_" . date("H-i-s"); //nama file saya beri nama langsung dan diikuti fungsi time
+        $config['upload_path'] = $_SERVER['DOCUMENT_ROOT'] . '/web_akademik/assets/data/mahasiswa/foto_profilM/'; //path folder
+        $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp'; //type yang dapat diakses bisa anda sesuaikan
+        $config['max_size'] = '2048000000'; //maksimum besar file 2M
+        $config['max_width']  = '0'; //lebar maksimum 1288 px
+        $config['max_height']  = '0'; //tinggi maksimu 1000 px
+        $config['file_name'] = $nmfile; //nama yang terupload nantinya
+        $pw_lama = $this->input->post('oldpass');
+        $pw_baru = $this->input->post('password');
+        if ($pw_lama != null && $pw_baru != null) {
+            $pw = md5(str_replace("'", "", $this->security->xss_clean($pw_lama)));
+            $pw1 = md5(str_replace("'", "", $this->security->xss_clean($pw_baru)));
+        } else {
+            $pw = (str_replace("'", "", $this->security->xss_clean($pw_lama)));
+            $pw1 = (str_replace("'", "", $this->security->xss_clean($pw_baru)));
+        }
+
+        $this->upload->initialize($config);
+        $this->load->library('upload', $config);
+        if (!empty($_FILES['foto']['name'])) {
+            if ($this->upload->do_upload('foto')) {
+
+                $pic = $this->upload->data();
+                $foto = "/assets/data/mahasiswa/foto_profilM/" . $pic['file_name'];
+                if ($oldpass == $pw) {
+                    $data = [
+
+                        'nama_lengkap' => str_replace("'", "", $this->security->xss_clean($this->input->post('nama_lengkap'))),
+                        'password' => $pw1,
+                        'tempat' => str_replace("'", "", $this->security->xss_clean($this->input->post('tempat'))),
+                        'tgl_lahir' => str_replace("'", "", $this->security->xss_clean($this->input->post('tgl_lahir'))),
+                        'jenis_kelamin' => str_replace("'", "", $this->security->xss_clean($this->input->post('jenis_kelamin'))),
+                        'no_telp' => str_replace("'", "", $this->security->xss_clean($this->input->post('no_telp'))),
+                        'alamat' => str_replace("'", "", $this->security->xss_clean($this->input->post('alamat'))),
+                        'foto' => $foto,
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ];
+
+                    $data_kampus = [
+                        'nim' => $nim,
+                        'program_studi' => $this->input->post('prodi')
+                    ];
+
+
+                    $data1 = $this->security->xss_clean($data);
+                    $data2 = $this->security->xss_clean($data_kampus);
+
+
+                    $insert = $this->master_data->update_mahasiswa($data1, $id);
+                    if ($insert) {
+                        $update = $this->master_data->update_data_kampus($data2, $id);
+                        $poto_propil = $this->master_data->get_foto($id);
+                        $this->session->set_userdata('foto', $poto_propil['foto']);
+                        // $this->session->set_userdata('email', $poto_propil['email']);
+                        echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Data  <b>' . $data['nama_lengkap'] . '</b> Successfully added to database.</div>');
+                        redirect('user/User/profileM/' . $id);
+                    } else {
+                        echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button></b> Failed added to database.</div>');
+                        redirect('user/User/profileM/' . $id);
+                    }
+                } elseif ($pw == null && $pw1 == null) {
+                    $data = [
+
+                        'nama_lengkap' => str_replace("'", "", $this->security->xss_clean($this->input->post('nama_lengkap'))),
+                        'tempat' => str_replace("'", "", $this->security->xss_clean($this->input->post('tempat'))),
+                        'tgl_lahir' => str_replace("'", "", $this->security->xss_clean($this->input->post('tgl_lahir'))),
+                        'jenis_kelamin' => str_replace("'", "", $this->security->xss_clean($this->input->post('jenis_kelamin'))),
+                        'no_telp' => str_replace("'", "", $this->security->xss_clean($this->input->post('no_telp'))),
+                        'alamat' => str_replace("'", "", $this->security->xss_clean($this->input->post('alamat'))),
+                        'foto' => $foto,
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ];
+
+                    $data_kampus = [
+                        'nim' => $nim,
+                        'program_studi' => $this->input->post('prodi')
+                    ];
+
+
+                    $data1 = $this->security->xss_clean($data);
+                    $data2 = $this->security->xss_clean($data_kampus);
+
+
+                    $insert = $this->master_data->update_mahasiswa($data1, $id);
+                    if ($insert) {
+                        $update = $this->master_data->update_data_kampus($data2, $id);
+                        $poto_propil = $this->master_data->get_foto($id);
+                        $this->session->set_userdata('foto', $poto_propil['foto']);
+                        // $this->session->set_userdata('email', $poto_propil['email']);
+                        echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Data  <b>' . $data['nama_lengkap'] . '</b> Successfully added to database.</div>');
+                        redirect('user/User/profileM/' . $id);
+                    } else {
+                        echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button></b> Failed added to database.</div>');
+                        redirect('user/User/profileM/' . $id);
+                    }
+                } elseif ($pw != $oldpass) {
+                    echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button>Password Lama Salah .</div>');
+                    redirect('user/User/profileM/' . $id);
+                }
+            } else {
+                echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button>' . $this->upload->display_errors() . '.</div>');
+                redirect('user/User/profileM/' . $id);
+            }
+        } elseif (empty($_FILES['foto']['name'])) {
+            if ($oldpass == $pw) {
+                $data = [
+
+                    'nama_lengkap' => str_replace("'", "", $this->security->xss_clean($this->input->post('nama_lengkap'))),
+                    'password' => $pw1,
+                    'tempat' => str_replace("'", "", $this->security->xss_clean($this->input->post('tempat'))),
+                    'tgl_lahir' => str_replace("'", "", $this->security->xss_clean($this->input->post('tgl_lahir'))),
+                    'jenis_kelamin' => str_replace("'", "", $this->security->xss_clean($this->input->post('jenis_kelamin'))),
+                    'no_telp' => str_replace("'", "", $this->security->xss_clean($this->input->post('no_telp'))),
+                    'alamat' => str_replace("'", "", $this->security->xss_clean($this->input->post('alamat'))),
+                    'updated_at' => date('Y-m-d H:i:s')
+                ];
+
+                $data_kampus = [
+                    'nim' => $nim,
+                    'program_studi' => $this->input->post('prodi')
+                ];
+
+                $data1 = $this->security->xss_clean($data);
+                $data2 = $this->security->xss_clean($data_kampus);
+
+
+                $insert = $this->master_data->update_mahasiswa($data1, $id);
+                if ($insert) {
+                    $update = $this->master_data->update_data_kampus($data2, $id);
+                    $poto_propil = $this->master_data->get_my_profile($id);
+                    // $this->session->set_userdata('foto', $poto_propil['foto']);                    
+                    $this->session->set_userdata('nama', $poto_propil['nama_lengkap']);
+                    echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Data  <b>' . $data['nama_lengkap'] . '</b> Successfully added to database.</div>');
+                    redirect('user/User/profileM/' . $id);
+                } else {
+                    echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button></b> Failed added to database.</div>');
+                    redirect('user/User/profileM/' . $id);
+                }
+            } elseif ($oldpass == null && $pw == null) {
+                $data = [
+
+                    'nama_lengkap' => str_replace("'", "", $this->security->xss_clean($this->input->post('nama_lengkap'))),
+                    'tempat' => str_replace("'", "", $this->security->xss_clean($this->input->post('tempat'))),
+                    'tgl_lahir' => str_replace("'", "", $this->security->xss_clean($this->input->post('tgl_lahir'))),
+                    'jenis_kelamin' => str_replace("'", "", $this->security->xss_clean($this->input->post('jenis_kelamin'))),
+                    'no_telp' => str_replace("'", "", $this->security->xss_clean($this->input->post('no_telp'))),
+                    'alamat' => str_replace("'", "", $this->security->xss_clean($this->input->post('alamat'))),
+                    'updated_at' => date('Y-m-d H:i:s')
+                ];
+
+                $data_kampus = [
+                    'nim' => $nim,
+                    'program_studi' => $this->input->post('prodi')
+                ];
+
+                $data1 = $this->security->xss_clean($data);
+                $data2 = $this->security->xss_clean($data_kampus);
+
+
+                $insert = $this->master_data->update_mahasiswa($data1, $id);
+                if ($insert) {
+                    $update = $this->master_data->update_data_kampus($data2, $id);
+                    $poto_propil = $this->master_data->get_my_profile($id);
+                    // $this->session->set_userdata('foto', $poto_propil['foto']);                    
+                    $this->session->set_userdata('nama', $poto_propil['nama_lengkap']);
+                    echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Data  <b>' . $data['nama_lengkap'] . '</b> Successfully added to database.</div>');
+                    redirect('user/User/profileM/' . $id);
+                } else {
+                    echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button></b> Failed added to database.</div>');
+                    redirect('user/User/profileM/' . $id);
+                }
+            } elseif ($oldpass != $pw) {
+                echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button></b> Password Lama Salah!.</div>');
+                redirect('user/User/profileM/' . $id);
+            }
+        }
+    }
+
+
+    public function profileM($id)
+    {
+        $data['pageTitle'] = "My Profile";
+        $data['profile'] = $this->master_data->get_my_profile($id);
+        // print_r($data['profile']);
+        // die();
+        $data['program'] = $this->master_data->get_all_program();
+
+
+        $propil = $data['profile'];
+        $program = $data['program'];
+        $prodi = $this->master_data->get_prodi_id1($propil[0]['id_prodi']);
+        $data['prodi1'] = $this->master_data->get_prodi_id($propil[0]['id_program']);
+        // print_r($propil);
+        // die();
+
+        if ($propil[0]['jenis_kelamin'] == "Pria") {
+            $data['jenis_kelamin'] = "<option selected>Pria</option>
+            <option>Wanita</option>";
+        } elseif ($propil[0]['jenis_kelamin'] == "Wanita") {
+            $data['jenis_kelamin'] = "<option>Pria</option>            
+            <option selected>Wanita</option>";
+        }
+
+        $foto = $propil[0]['foto'];
+        if ($foto == null) {
+            $data['foto'] = '<img class=" pp_v" style="position: relative; width:150px;height:150px;border-radius:50%;" id="pp" src="' . base_url('assets/user/images/user.jpg') . '" alt="asd"/>';
+        } elseif ($foto != null) {
+            $data['foto'] = '<img class="pp_v" style="position: relative; width:150px;height:150px;border-radius:50%;" id="pp" src="' . base_url($foto) . '" alt="profile" />';
+        }
+
+        $data['form'] = $this->master_data->get_form($id);
+        $this->load->view('user/home/V_profileM', $data);
+    }
+
 
     public function Dosen()
     {
@@ -371,7 +656,7 @@ class User extends CI_Controller
             'no_form' => $no_form,
             'id_mahasiswa' => $this->session->userdata('idadmin'),
             'id_jenis_permohonan' => $jenis_permohonan,
-            'created_at' => date('Y-m-d H:i:S')
+            'created_at' => date('Y-m-d H:i:s')
         ];
         $data1 = $this->security->xss_clean($data);
         $insert = $this->master_data->save_formulir($data1);
