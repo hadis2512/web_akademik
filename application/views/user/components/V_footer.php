@@ -15,7 +15,7 @@
 <script>
     $(document).ready(() => {
 
-
+        // formulir
         let id_pengguna = $('#formulirM').data('pengguna');
         $.ajax({
             type: 'POST',
@@ -25,7 +25,7 @@
                 let dataP = JSON.parse(data);
                 let html = "";
                 console.log(dataP)
-                if (dataP.length < 3) {
+                if (dataP.length < 4) {
                     $("#loadmore").addClass('d-none');
                 }
 
@@ -34,11 +34,6 @@
                     dataSliced.forEach((res, index) => {
                         if (res.approval == 0 && res.approval_admin == 0) {
                             var status = '<div class="badge badge-success align-self-start">Terkirim</div>';
-                            // if (res.approval_admin == 1 ) {
-                            //   res.approval = '<div class="badge badge-success">Validasi Admin</div>';
-                            // } else if (res.approval_admin == 2) {
-                            //   res.approval = '<div class="badge badge-danger">Duplikat</div>';
-                            // }
                         } else if (res.approval == 0 && res.approval_admin == 1) {
                             var status = '<div class="badge badge-success align-self-start"><i class="fas fa-check mr-2"></i>Admin</div>';
                         } else if (res.approval == 0 && res.approval_admin == 2) {
@@ -105,90 +100,6 @@
             }
         })
 
-        let id_user = $('#suratM').data('pengguna');
-        $.ajax({
-            type: 'POST',
-            url: `<?= base_url('user/User/get_data_surat/') ?>${id_user}`,
-            success: function(data) {
-                // console.log(data)
-                let dataS = JSON.parse(data);
-                let html = "";
-                console.log(dataS)
-                if (dataS.length < 3) {
-                    $("#loadmore1").addClass('d-none');
-                }
-
-                const dataCard = (indexStart, indexEnd) => {
-                    const dataSliced = dataS.slice(indexStart, indexEnd);
-                    dataSliced.forEach((res, index) => {
-                        if (res.approval == 0 && res.approval_admin == 0) {
-                            var status = '<div class="badge badge-success align-self-start">Terkirim</div>';
-                        } else if (res.approval == 0 && res.approval_admin == 1) {
-                            var status = '<div class="badge badge-success align-self-start"><i class="fas fa-check mr-2"></i>Admin</div>';
-                        } else if (res.approval == 0 && res.approval_admin == 2) {
-                            var status = '<div class="badge badge-danger align-self-start">Duplikasi</div>';
-                        } else if (res.approval == 1 && res.approval_admin == 1 && res.status_surat == 0) {
-                            var status = '<div class="badge badge-success align-self-start"><i class="fas fa-check mr-2"></i>Kaprodi</div>';
-                        } else if (res.approval == 1 && res.approval_admin == 1) {
-                            var status = '<div class="badge badge-success align-self-start"><i class="fas fa-check mr-2"></i>Surat</div>';
-                        } else if (res.approval == 2 && res.approval_admin == 1) {
-                            var status = '<div class="badge badge-success align-self-start">Ditolak Kaprodi</div>';
-                        }
-
-
-
-                        var a = moment(res.created_at)
-                        var b = moment()
-                        let totDate = b.diff(a, "days") + " hari yang lalu";
-                        html += `<div class = "col-md-4 mb-2 stretch-card transparent" >
-                                 <div class = "card card-light-blue">
-                                 <div class = "card-header d-flex justify-content-between">
-                                 <p class = "mb-0 " > ${res.no_surat} </p>
-                                         
-                                 </div> 
-                                 <div class = "card-body" >
-                                 <h4 class = "mb-2" >${res.jenis_permohonan} </h4>              
-                                 </div> 
-                                 <div class = "card-footer d-flex justify-content-between" >
-                                 <p class = "mb-0" >${totDate}</p>
-                                 <a href="#" id="modal_detail" data-toggle="modal" data-target="#modalDetail_form" name="" data-jenis="${res.id_jenis_permohonan}" data-formulir="${res.id_formulir}" class="test font-weight-bold text-light float-right">details<i class="ml-2 icon-arrow-right"></i>
-                                 </a>
-                                 </div>
-                                 </div>
-                                 </div>
-                                 </div>`;
-
-
-                        // $now = date('d F y');
-                        // $tgl_lapor = date('d F y  ', strtotime($a['created_at']));
-                        // $datediff = $User->dateDifference($tgl_lapor, $now);
-                        // echo $datediff . ' hari yang lalu';
-                    });
-                    $('#suratM').html(html);
-                };
-
-                let idx = 0;
-                let idxEnd = 3;
-
-                dataCard(idx, idxEnd);
-
-                $('#loadmore1').on('click', () => {
-                    html = '';
-                    dataCard(idx, idxEnd += 3);
-
-                    if (idxEnd >= dataS.length) {
-                        $('#loadmore1').addClass('d-none');
-                    }
-                })
-            }
-        })
-
-
-        // $('.test').click(() => {
-        //   let id_formulir = $('.test').attr('data-formulir');
-        //   let jenis_permohonan = $('.test').attr('data-jenis');
-        //   $('.modalDetail_form').modal('show')
-        // })
         $('#modalDetail_form').on('show.bs.modal', function(event) {
             // console.log(event)
             var div = $(event.relatedTarget) // Tombol dimana modal di tampilkan
@@ -531,6 +442,7 @@
 
 
         });
+
         $('#modalDetail_form_dosen').on('show.bs.modal', function(event) {
             var div = $(event.relatedTarget) // Tombol dimana modal di tampilkan
             var modal = $(this)
@@ -881,6 +793,7 @@
 
 
         flatpickr("#tgl", {});
+
         $('#uplod').change((e) => {
             var input = $(e.currentTarget);
             var file = input[0].files[0];

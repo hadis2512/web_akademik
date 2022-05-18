@@ -33,25 +33,25 @@
                     <div class="row">
                         <?php
                         foreach ($form as $a) {
-                            if ($a['approval'] == 0) {
-                                $approval = '<div class="badge badge-warning align-self-start">Not Approve</div>';
-                                if ($a['approval_admin'] == 2) {
-                                    $approval = '<div class="badge badge-danger">Reject</div>';
-                                }
-                            } elseif ($a['approval'] == 1) {
-                                $approval = '<div class="badge badge-success">Approve</div>';
-                                if ($a['approval_admin'] == 2) {
-                                    $approval = '<div class="badge badge-danger">Reject</div>';
-                                }
-                            } elseif ($a['approval'] == 2 && $a['approval_admin'] == 2) {
-                                $approval = '<div class="badge badge-danger">Reject</div>';
+                            if ($a['approval'] == 0 && $a['approval_admin'] == 0) {
+                                $status = '<div class="badge badge-success align-self-start">Terkirim</div>';
+                            } else if ($a['approval'] == 0 && $a['approval_admin'] == 1) {
+                                $status = '<div class="badge badge-success align-self-start"><i class="fas fa-check mr-2"></i>Admin</div>';
+                            } else if ($a['approval'] == 0 && $a['approval_admin'] == 2) {
+                                $status = '<div class="badge badge-danger align-self-start">Duplikasi</div>';
+                            } else if ($a['approval'] == 1 && $a['approval_admin'] == 1 && $a['status_surat']  == 0) {
+                                $status = '<div class="badge badge-success align-self-start"><i class="fas fa-check mr-2"></i>Kaprodi</div>';
+                            } else if ($a['approval'] == 1 && $a['approval_admin'] == 1) {
+                                $status = '<div class="badge badge-success align-self-start"><i class="fas fa-check mr-2"></i>Surat</div>';
+                            } else if ($a['approval'] == 2 && $a['approval_admin'] == 1) {
+                                $status = '<div class="badge badge-success align-self-start">Ditolak Kaprodi</div>';
                             }
                         ?>
                             <div class="col-md-4 mb-2 stretch-card transparent">
                                 <div class="card card-light-blue">
                                     <div class="card-header d-flex justify-content-between">
                                         <p class="mb-0"><?= $a['no_form']; ?></p>
-                                        <?= $approval; ?>
+                                        <?= $status; ?>
 
                                     </div>
                                     <div class="card-body">

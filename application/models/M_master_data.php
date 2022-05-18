@@ -576,6 +576,7 @@ class M_master_data extends CI_Model
         $this->db->from('data_surat a');
         $this->db->join('data_formulir b', 'a.id_formulir=b.id_formulir', 'left outer');
         $this->db->join('jenispermohonan c', 'b.id_jenis_permohonan=c.id', 'left_outer');
+        $this->db->order_by('a.created_at', "desc");
         $this->db->where('b.id_mahasiswa', $id_pengguna);
         return $this->db->get()->result_array();
     }
@@ -670,7 +671,10 @@ class M_master_data extends CI_Model
     }
     public function get_surat($id_surat)
     {
+        $this->db->select('a.id_surat as id_surat,a.no_surat as no_surat,a.nama_file as nama_file,a.file_pdf as file_pdf,a.created_at as created_at,b.*');
+        $this->db->from('data_surat a');
+        $this->db->join('data_formulir b', 'a.id_formulir=b.id_formulir', 'left outer');
         $this->db->where('id_surat', $id_surat);
-        return $this->db->get('data_surat')->row_array();
+        return $this->db->get('')->row_array();
     }
 }

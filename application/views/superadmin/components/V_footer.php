@@ -19,7 +19,6 @@
     $(document).ready(function() {
 
 
-
         $('input[name="program"]').on('change', () => {
             let id = $('input[name="program"]:checked').val();
             $.ajax({
@@ -54,7 +53,7 @@
         // $(".lightgallery").lightGallery();        
         $('#bcPaint').bcPaint();
 
-        $(document).bind("modal", function(e) {
+        $(document).bind("contextMenu", function(e) {
             e.preventDefault();
         });
 
@@ -64,7 +63,9 @@
             }
         });
 
-
+        $("[data-toggle='modal']").on("contextmenu", function(e) {
+            e.preventDefault();
+        })
 
     });
 </script>

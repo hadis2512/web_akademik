@@ -49,8 +49,7 @@ class u_auth extends CI_Controller
             $foto = $xcadmin['foto'];
             $data = $this->user->get_data_lengkap($email)->result_array();
             $prodi = $data[0]['nama_prodi'];
-            // print_r($prodi);
-            // die();
+
             $this->session->set_userdata('idadmin', $idadmin);
             $this->session->set_userdata('email', $email);
             $this->session->set_userdata('nama', $user_nama);

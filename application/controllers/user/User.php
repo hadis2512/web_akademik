@@ -16,7 +16,7 @@ class User extends CI_Controller
             redirect('login');
         }
 
-        $this->load->helper('security');
+        $this->load->helper(['security', 'download']);
         $this->load->model('M_user', 'user');
         $this->load->library(array('upload', 'Pdf'));
         $this->load->model('M_master_data', 'master_data');
@@ -78,6 +78,14 @@ class User extends CI_Controller
         $this->load->view('user/form/V_data_surat', $data);
     }
 
+    function get_surat_by_id($id_surat)
+    {
+        $data['data_surat'] = $this->master_data->get_surat($id_surat);
+        $data_surat = $data['data_surat'];
+        echo json_encode($data_surat);
+        // die();
+    }
+
     public function approve($id_formulir)
     {
         $data = [
@@ -136,7 +144,42 @@ class User extends CI_Controller
         // die();
         $this->load->view('user/form/V_pengajuan_form_dosen', $data);
     }
+    public function download_surat($id_jenis_p, $id_surat)
+    {
 
+        if ($id_jenis_p == 1) {
+            $pdf_surat_riset = $this->master_data->get_pdf_surat_riset($id_surat);
+            $surat_riset = $this->master_data->get_surat($id_surat);
+            // print_r($pdf_surat_riset);
+            // print_r($surat_riset);
+            // die();
+            $path_file = $_SERVER['DOCUMENT_ROOT'] . '/web_akademik' . $pdf_surat_riset['file_pdf'];
+            // $surat_riset = $this->master_data->get_surat($id_surat);
+
+            header("Cache-Control:  maxage=1");
+            header("Pragma: public");
+            header("Content-type: application/pdf");
+            header("Content-Transfer-Encoding: Binary");
+            header("Content-length: " . filesize($path_file));
+            header("Content-disposition: attachment; filename=\"" . basename($path_file) . "\"");
+            readfile($path_file);
+            // force_download($surat_riset['nama_file'], $path_file);
+        } elseif ($id_jenis_p == 2) {
+            $pdf_surat_riset = $this->master_data->get_pdf_surat_riset($id_surat);
+            $surat_riset = $this->master_data->get_surat($id_surat);
+            $path_file = $_SERVER['DOCUMENT_ROOT'] . '/web_akademik' . $pdf_surat_riset['file_pdf'];
+            // $surat_riset = $this->master_data->get_surat($id_surat);
+            // print_r($surat_riset);
+            // die();
+            header("Cache-Control:  maxage=1");
+            header("Pragma: public");
+            header("Content-type: application/pdf");
+            header("Content-Transfer-Encoding: Binary");
+            header("Content-length: " . filesize($path_file));
+            header("Content-disposition: attachment; filename=\"" . basename($path_file) . "\"");
+            readfile($path_file);
+        }
+    }
     public function get_detail_form($id_formulir, $jenis_permohonan)
     {
         if ($jenis_permohonan == 1) {
@@ -374,6 +417,8 @@ class User extends CI_Controller
         $data['pageTitle'] = "Home Mahasiswa";
         $data['User'] = $this;
         $data['form'] = $this->master_data->get_form($id_pengguna);
+        // print_r($data['form']);
+        // die();
         if (count($data['form']) > 0) {
             $data['view_more'] = '<div class="my-4 d-flex flex-row-reverse">
             <a href="' . base_url('Pengajuan-Form') . '" class="btn btn-inverse-info btn-sm "><i class="icon-grid mr-3"></i>View More</a>

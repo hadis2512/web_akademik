@@ -34,9 +34,9 @@
 
 
                             </div>
-                            <div class="modal fade bd-example-modal-lg modalDetail_form" id="modalDetail_form" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-lg">
-                                    <div class="modal-content" id="data_modal">
+                            <div class="modal fade bd-example-modal-lg " id="modalLihatSurat" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content" id="data_surat_ready">
 
                                     </div>
                                 </div>
@@ -67,3 +67,4 @@
     </div>
     <!-- container-scroller -->
     <?php $this->load->view('user/components/V_footer'); ?>
+    <?php $this->load->view('user/components/V_script_data_surat'); ?>

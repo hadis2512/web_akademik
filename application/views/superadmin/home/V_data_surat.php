@@ -1,6 +1,6 @@
 <?php $this->load->view('superadmin/components/V_header') ?>
 
-<body id="page-top">
+<body id="page-top" oncontextmenu="return false">
     <div id="wrapper">
         <!-- Sidebar -->
         <?php $this->load->view('superadmin/components/V_sidebar'); ?>
@@ -69,7 +69,7 @@
                                                                 </button>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <object type="application/pdf" data="<?= base_url() . $a['path_file'] ?>" height="750" style="width:100%;">
+                                                                <object type="application/pdf" data="<?= base_url() . $a['path_file'] ?>" height="750" style="width:100%;"></onject>
                                                             </div>
                                                         </div>
                                                     </div>
