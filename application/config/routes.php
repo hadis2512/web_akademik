@@ -73,9 +73,10 @@ $route['Login'] = 'user/u_auth/index';
 // Mahasiswa
 $route['Mahasiswa-home'] = 'user/User/Mahasiswa';
 $route['Pengajuan-Form'] = 'user/User/Pengajuan_form';
-$route['createSurat/(:any)'] = 'user/User/Create_surat/$1';
+$route['createSurat/(:any)'] = 'user/User/buat_pengajuan/$1';
 $route['Buat-Surat/(:any)'] = 'user/User/Buat_surat/$1';
 $route['Data-Surat'] = 'user/User/Data_surat';
+// $route['get-detail-form/(:any)'] = 'user/User/get_detail_form/$1';
 // end Mahasiswa
 $route['Dosen-home'] = 'user/User/Dosen';
 $route['Pengajuan-Form-Dosen'] = 'user/User/Pengajuan_form_dosen';

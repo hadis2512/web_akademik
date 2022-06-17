@@ -17,22 +17,7 @@ class M_user extends CI_Model
                 return $a;
             }
         } elseif ($emailMhs->num_rows() == 0) {
-            $this->db->select('email');
-            $this->db->where(array('email' => $u));
-            $karyawan = $this->db->get('karyawan');
-            if ($karyawan->num_rows() > 0) {
-                $this->db->select('*');
-                $this->db->where(array('email' => $u, 'password' => md5($p)));
-                $karyawan1 = $this->db->get('karyawan');
-                if ($karyawan1->num_rows() > 0) {
-                    return $karyawan1;
-                } else {
-                    $a = "Password Salah!!";
-                    return $a;
-                }
-            }
-        } else {
-            $a = "Username atau Password Salah!!";
+            $a = "Data tidak ada!!";
             return $a;
         }
     }
@@ -50,18 +35,9 @@ class M_user extends CI_Model
             $mahasiswa = $this->db->get();
             return $mahasiswa;
         } elseif ($emailMhs->num_rows() == 0) {
-            $this->db->select('email');
-            $this->db->where(array('email' => $email));
-            $karyawan = $this->db->get('karyawan');
-            if ($karyawan->num_rows() > 0) {
-                $this->db->select('a.*,b.nip as nip,c.program_studi as nama_prodi');
-                $this->db->from('karyawan a');
-                $this->db->join('data_karyawan_kampus as b', 'a.id=b.id_karyawan', 'left outer');
-                $this->db->join('program_studi as c', 'b.program_studi=c.id', 'left outer');
-                $this->db->where('email', $email);
-                $karyawan1 = $this->db->get();
-                return $karyawan1;
-            }
+
+
+            return false;
         }
     }
 }

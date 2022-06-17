@@ -9,7 +9,7 @@
                 let dataS = JSON.parse(data);
                 let html = "";
                 console.log(dataS)
-                if (dataS.length < 4) {
+                if (dataS.length < 3) {
                     $("#loadmore1").addClass('d-none');
                 }
 
@@ -84,7 +84,8 @@
             var modal = $(this)
             // $('html').css('overflow-y', 'hidden')
             let id_surat = div.data('surat')
-            // let jenis_permohonan = div.data('jenis')            
+            let jenis_permohonan = div.data('jenis')
+            alert(id_surat)
 
             $.ajax({
                 type: 'POST',

@@ -7,7 +7,7 @@
                 <div class="row w-100 mx-0">
                     <div class="col-lg-4 mx-auto">
                         <div class="auth-form-light text-left py-5 px-4 px-sm-5">
-                            <h3 class="text-center">Sign In</h3>
+                            <h3 class="text-center">Login Mahasiswa</h3>
 
                             <form id="sign_in" class="pt-3" action="<?= base_url('user/u_auth/auth'); ?>" method="POST">
                                 <div class="msg"><?= $this->session->flashdata('msg'); ?></div>

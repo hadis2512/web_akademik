@@ -30,6 +30,7 @@
                         </ol>
                     </div>
 
+                    <?= $this->session->flashdata('msg'); ?>
                     <div class="row">
                         <div class="col-lg-12">
 
@@ -116,15 +117,16 @@
                                         <hr>
                                         <div class="form-group d-flex justify-content-center">
                                             <?php if ($surat_kp['approval_admin'] == 2) { ?>
-                                                <button type="button" class="btn btn-danger mr-2" class="tolak" disabled>Duplicate</button>
-                                                <a href="<?= base_url('superadmin/master_data/validate/') . $surat_kp['id_formulir'] . '/' . $id_jenis_p; ?>" type="button" class="btn btn-success" class="setuju">Validate</a>
+                                                <button type="button" class="btn btn-danger mr-2" class="tolak" disabled>Reject</button>
+                                                <a href="<?= base_url('superadmin/master_data/validate/') . $surat_kp['id_formulir'] . '/' . $id_jenis_p . '/' .  $surat_kp['email']; ?>" type="button" class="btn btn-success" class="setuju">Validate</a>
                                             <?php } elseif ($surat_kp['approval_admin'] == 0) { ?>
-                                                <a href="<?= base_url('superadmin/master_data/duplicate/') . $surat_kp['id_formulir'] . '/' . $id_jenis_p; ?>" type="button" class="btn btn-danger mr-2" class="tolak">Duplicate</a>
-                                                <a href="<?= base_url('superadmin/master_data/validate/') . $surat_kp['id_formulir'] . '/' . $id_jenis_p; ?>" type="button" class="btn btn-success" class="setuju">Validate</a>
-                                            <?php } elseif ($surat_kp['approval_admin'] == 1 && $surat_kp['approval'] == 1 && $surat_kp['status_surat'] == 0) { ?>
-                                                `<a href="<?= base_url('superadmin/master_data/create_surat/') . $surat_kp['id_formulir'] . '/' . $id_jenis_p; ?>" type="button" class="btn btn-success" class="setuju">Buat Surat</a>`
+                                                <a href="<?= base_url('superadmin/master_data/duplicate/') . $surat_kp['id_formulir'] . '/' . $id_jenis_p . '/' .  $surat_kp['email']; ?>" type="button" class="btn btn-danger mr-2" class="tolak">Reject</a>
+                                                <a href="<?= base_url('superadmin/master_data/validate/') . $surat_kp['id_formulir'] . '/' . $id_jenis_p . '/' .  $surat_kp['email']; ?>" type="button" class="btn btn-success" class="setuju">Validate</a>
+                                            <?php } elseif ($surat_kp['approval_admin'] == 1 && $surat_kp['status_surat'] == 0) { ?>
+                                                <a href="<?= base_url('superadmin/master_data/create_surat/') . $surat_kp['id_formulir'] . '/' . $id_jenis_p . "/" .  $surat_kp['email']; ?>" type="button" class="btn btn-success" class="setuju"><i class="fas fa-print mr-2"></i>Buat Surat</a>
+                                            <?php } elseif ($surat_kp['approval_admin'] == 1 && $surat_kp['status_surat'] == 1) { ?>
+                                                <a href="<?= base_url('admin-data-surat'); ?>" type="button" class="btn btn-success" class="setuju"><i class="fas fa-search mr-2"></i>Lihat Surat</a>
                                             <?php } ?>
-
                                         </div>
                                     </form>
                                 </div>

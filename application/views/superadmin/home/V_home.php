@@ -29,7 +29,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-uppercase mb-1">Pengajuan Formulir</div>
 
-                                            <div class="h5 mb-0 my-3  text-gray-800"><b><?= $jumlah_formulir; ?></b> Pengajuan</div>
+                                            <div class="h5 mb-0 my-3  text-gray-800"><b><?= $data['all_form']; ?></b> Pengajuan</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-copy fa-2x text-primary"></i>
@@ -45,7 +45,7 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-uppercase mb-1">Form Pengantar Riset</div>
-                                            <div class="h5 mb-0 my-3  text-gray-800"><b><?= $form_riset; ?></b> Pengajuan</div>
+                                            <div class="h5 mb-0 my-3  text-gray-800"><b><?= $data['form_riset']; ?></b> Pengajuan</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-file-alt fa-2x text-info"></i>
@@ -61,7 +61,7 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-uppercase mb-1">Form Pengantar KP</div>
-                                            <div class="h5 mb-0 mr-3 my-3 text-gray-800"><b><?= $form_kp; ?></b> Pengajuan</div>
+                                            <div class="h5 mb-0 mr-3 my-3 text-gray-800"><b><?= $data['form_kp']; ?></b> Pengajuan</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-file-alt fa-2x text-info"></i>
@@ -77,7 +77,7 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-uppercase mb-1">Pengajuan Tertunda</div>
-                                            <div class="h5 mb-0 my-3  text-gray-800"><b><?= $form_tertunda; ?></b> Pengajuan</div>
+                                            <div class="h5 mb-0 my-3  text-gray-800"><b><?= $data['form_tertunda']; ?></b> Pengajuan</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-clock fa-2x text-warning"></i>
@@ -93,12 +93,12 @@
                                 <div class="card-body">
                                     <div class="row align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-uppercase mb-1">Formulir Duplikasi</div>
+                                            <div class="text-xs font-weight-bold text-uppercase mb-1">Formulir Ditolak</div>
 
-                                            <div class="h5 mb-0 my-3  text-gray-800"><b><?= $form_duplikasi; ?></b> Pengajuan</div>
+                                            <div class="h5 mb-0 my-3  text-gray-800"><b><?= $data['form_reject']; ?></b> Pengajuan</div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-clone fa-2x text-danger"></i>
+                                            <i class="fas fa-times-circle fa-2x text-danger"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -110,11 +110,11 @@
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-uppercase mb-1">Formulir Ditolak</div>
-                                            <div class="h5 mb-0 my-3  text-gray-800"><b><?= $form_tolak; ?></b> Pengajuan</div>
+                                            <div class="text-xs font-weight-bold text-uppercase mb-1">Total Surat</div>
+                                            <div class="h5 mb-0 my-3  text-gray-800"><b><?= $data['all_surat']; ?></b> Pengajuan</div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-times-circle fa-2x text-danger"></i>
+                                            <i class="fas fa-envelope fa-2x text-success"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -127,7 +127,7 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-uppercase mb-1">Surat Pengantar Riset</div>
-                                            <div class="h5 mb-0 mr-3 my-3 text-gray-800"><b><?= $surat_riset; ?></b> Pengajuan</div>
+                                            <div class="h5 mb-0 mr-3 my-3 text-gray-800"><b><?= $data['surat_riset']; ?></b> Pengajuan</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-file-pdf fa-2x text-success"></i>
@@ -143,7 +143,7 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-uppercase mb-1">Surat Pengantar KP</div>
-                                            <div class="h5 mb-0 my-3  text-gray-800"><b><?= $surat_kp; ?></b> Pengajuan</div>
+                                            <div class="h5 mb-0 my-3  text-gray-800"><b><?= $data['surat_kp']; ?></b> Pengajuan</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-file-pdf fa-2x text-success"></i>
@@ -170,7 +170,6 @@
                                                 <th>Jenis Permohonan</th>
                                                 <th>Mahasiswa Pengaju</th>
                                                 <th>Status</th>
-                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -185,7 +184,7 @@
                                                     $stats = "Approval";
                                                     $tag = 'badge badge-success';
                                                 } elseif ($a['approval_admin'] == 2) {
-                                                    $stats = "Duplicate";
+                                                    $stats = "Reject";
                                                     $tag = 'badge badge-danger';
                                                 }
                                             ?>
@@ -196,7 +195,7 @@
                                                     <td><?= $a['jenis_permohonan']; ?></td>
                                                     <td><?= $a['nama']; ?></td>
                                                     <td><span class="<?= $tag; ?>"><?= $stats; ?></span></td>
-                                                    <td><a href="#" class="btn btn-sm btn-primary">Detail</a></td>
+
                                                 </tr>
                                             <?php } ?>
                                         </tbody>

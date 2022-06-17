@@ -31,10 +31,10 @@
                                                 <th>No</th>
                                                 <th>No Form</th>
                                                 <th>Jenis Permohonan</th>
-                                                <th>Program Studi</th>
-                                                <th>Persetujuan Admin</th>
-                                                <th>Persetujuan Dosen</th>
+                                                <th>Nama Mahasiswa/Program Studi</th>
+                                                <th>Status Formulir</th>
                                                 <th>Status Surat</th>
+                                                <th>Tanggal Pengajuan</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -43,29 +43,18 @@
                                             $no = 0;
                                             foreach ($data_formulir as $a) {
                                                 $no++;
-                                                $status = $a['approval'];
-                                                if ($status == 0) {
-                                                    $stats = 'Not Approval';
-                                                    $warning = 'badge badge-warning';
-                                                } elseif ($status == 1) {
-                                                    $stats = 'Approval';
-                                                    $warning = 'badge badge-success';
-                                                } elseif ($status == 2) {
-                                                    $stats = 'Rejected';
-                                                    $warning = 'badge badge-danger';
-                                                }
                                                 if ($a['approval_admin'] == 0) {
-                                                    $admin_approve = 'Not Validate';
+                                                    $admin_approve = 'Not approve yet';
                                                     $tag = 'badge badge-warning';
                                                 } elseif ($a['approval_admin'] == 1) {
-                                                    $admin_approve = 'Validate';
+                                                    $admin_approve = 'Approve';
                                                     $tag = 'badge badge-success';
                                                 } elseif ($a['approval_admin'] == 2) {
-                                                    $admin_approve = 'Duplicate';
+                                                    $admin_approve = 'Ditolak';
                                                     $tag = 'badge badge-danger';
                                                 }
                                                 if ($a['status_surat'] == 0) {
-                                                    $approve_surat = 'Not Ready';
+                                                    $approve_surat = 'Not ready';
                                                     $color = 'badge badge-warning';
                                                 } elseif ($a['status_surat'] == 1) {
                                                     $approve_surat = 'Ready';
@@ -77,10 +66,10 @@
                                                     <td><?= $no; ?></td>
                                                     <td><?= $a['no_form']; ?></td>
                                                     <td><?= $a['jenis_permohonan']; ?></td>
-                                                    <td><?= $a['nama_prodi']; ?></td>
+                                                    <td><?= $a['nama_mahasiswa'] . '<b>(' . $a['nama_prodi'] . ')</b>'; ?></td>
                                                     <td><span class="<?= $tag; ?>"><?= $admin_approve; ?></span></td>
-                                                    <td><span class="<?= $warning; ?>"><?= $stats; ?></span></td>
                                                     <td><span class="<?= $color; ?>"><?= $approve_surat; ?></span></td>
+                                                    <td><span class=""><?= date('d F Y', strtotime($a['created_at'])); ?></span></td>
                                                     <td><a href="<?= base_url('superadmin/master_data/detail/') . $a['id_jenis_p'] . '/' . $a['id_formulir']; ?>"><i class="fas fa-info-circle"></i></a></td>
                                                 </tr>
 
@@ -139,3 +128,8 @@
         <i class="fas fa-angle-up"></i>
     </a>
     <?php $this->load->view('superadmin/components/V_footer') ?>
+    <script>
+        $(document).ready(() => {
+            $(".drop-data").click();
+        })
+    </script>

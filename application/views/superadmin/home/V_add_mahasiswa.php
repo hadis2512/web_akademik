@@ -17,9 +17,8 @@
                         <h1 class="h3 mb-0 text-gray-800">Add Mahasiswa</h1>
 
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="./">Home</a></li>
-                            <li class="breadcrumb-item">Forms</li>
-                            <li class="breadcrumb-item active" aria-current="page">Form Basics</li>
+                            <li class="breadcrumb-item"><a href="<?= base_url("admin-data-mahasiswa"); ?>">Data Mahasiswa</a></li>
+                            <li class="breadcrumb-item active">Add Mahasiswa</li>
                         </ol>
                     </div>
                     <?= $this->session->flashdata('msg'); ?>
@@ -30,7 +29,7 @@
                                     <h6 class="m-0 font-weight-bold text-primary"></h6>
                                 </div> -->
                                 <div class="card-body">
-                                    <form action="<?= base_url('superadmin/Master_data/save_mahasiswa'); ?>" method="post" enctype="multipart/form-data" accept-charset="utf-8">
+                                    <form action="<?= base_url('superadmin/Master_data/save_mahasiswa'); ?>" id="form_add-mhs" method="post" enctype="multipart/form-data" accept-charset="utf-8">
                                         <div class="form-group row">
                                             <label for="nim" class="col-sm-2 col-form-label">NIM </label>
                                             <div class="col-sm-3">
@@ -99,7 +98,7 @@
                                         <div class="form-group row">
                                             <label for="tempat" class="col-sm-2 col-form-label">Tempat/Tanggal lahir</label>
                                             <div class="col-sm-5">
-                                                <input type="text" class="form-control" id="nama_lengkap" name="tempat" placeholder="Tempat">
+                                                <input type="text" class="form-control" id="tempat" name="tempat" placeholder="Tempat">
                                             </div>
                                             <div class="my-auto ml-4">/</div>
                                             <div class="col-sm-3 ml-4">
@@ -119,10 +118,16 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="foto" class="col-sm-2  col-form-label">Foto</label>
-                                            <div class="custom-file col-sm-9">
-                                                <input type="file" name="foto" class="custom-file-input" id="customFile">
-                                                <label class="custom-file-label" for="customFile"></label>
+                                            <img src="<?= base_url('assets/user/images/user.jpg'); ?>" alt="" style="width:150px;height:150px;border:1px solid;" class="poto_add mr-5">
+                                            <div class="custom-file col-sm-6">
+                                                <input type="file" name="foto" class="custom-file-input" id="upload_foto">
+                                                <label class="custom-file-label " for="customFile"></label>
                                             </div>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="foto" class="col-sm-2  col-form-label"></label>
+
                                         </div>
                                         <hr>
                                         <div class="form-group d-flex justify-content-center ">
@@ -140,13 +145,6 @@
                     <!--Row-->
 
                     <!-- Documentation Link -->
-                    <div class="row">
-                        <div class="col-lg-12 text-center">
-                            <p>For more documentations you can visit<a href="https://getbootstrap.com/docs/4.3/components/forms/" target="_blank">
-                                    bootstrap forms documentations.</a> and <a href="https://getbootstrap.com/docs/4.3/components/input-group/" target="_blank">bootstrap input
-                                    groups documentations</a></p>
-                        </div>
-                    </div>
 
                     <!-- Modal Logout -->
                     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelLogout" aria-hidden="true">
@@ -176,10 +174,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>copyright &copy; <script>
-                                document.write(new Date().getFullYear());
-                            </script> - developed by
-                            <b><a href="https://indrijunanda.gitlab.io/" target="_blank">indrijunanda</a></b>
+                        <span>copyright Kalbis Institute &copy; 2022
                         </span>
                     </div>
                 </div>
@@ -193,3 +188,8 @@
         <i class="fas fa-angle-up"></i>
     </a>
     <?php $this->load->view('superadmin/components/V_footer') ?>
+    <script>
+        $(document).ready(() => {
+            $(".drop-add").click();
+        })
+    </script>

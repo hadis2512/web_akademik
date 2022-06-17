@@ -46,13 +46,7 @@ class User extends CI_Controller
         $data['User'] = $this;
         $data['riset'] = $this->master_data->get_detail_riset($id_pengguna);
         $data['kp'] = $this->master_data->get_detail_kp($id_pengguna);
-        // die();
         $data['form'] = $this->master_data->get_form($id_pengguna);
-        // $data['form'] = $this->master_data->get_form_by_id($id_pengguna);
-        // print_r($data['kp']);
-        // print_r($data['riset']);
-        // print_r($data['form']);
-        // die();
         $this->load->view('user/form/V_pengajuan_form', $data);
     }
 
@@ -66,15 +60,11 @@ class User extends CI_Controller
     public function data_surat()
     {
         $data['id_pengguna'] = $this->session->userdata('idadmin');
+        $data['pageTitle'] = "Data Surat";
         $id_pengguna = $data['id_pengguna'];
         $data['form'] = $this->master_data->get_surat_by_id_pengguna($id_pengguna);
         $id_pengguna = $data['id_pengguna'];
-        $data['pageTitle'] = "Data Surat";
         $data['User'] = $this;
-        // print_r($data['kp']);
-        // print_r($data['riset']);
-        // print_r($data['form']);
-        // die();
         $this->load->view('user/form/V_data_surat', $data);
     }
 
@@ -146,15 +136,10 @@ class User extends CI_Controller
     }
     public function download_surat($id_jenis_p, $id_surat)
     {
-
         if ($id_jenis_p == 1) {
             $pdf_surat_riset = $this->master_data->get_pdf_surat_riset($id_surat);
             $surat_riset = $this->master_data->get_surat($id_surat);
-            // print_r($pdf_surat_riset);
-            // print_r($surat_riset);
-            // die();
             $path_file = $_SERVER['DOCUMENT_ROOT'] . '/web_akademik' . $pdf_surat_riset['file_pdf'];
-            // $surat_riset = $this->master_data->get_surat($id_surat);
 
             header("Cache-Control:  maxage=1");
             header("Pragma: public");
@@ -163,7 +148,6 @@ class User extends CI_Controller
             header("Content-length: " . filesize($path_file));
             header("Content-disposition: attachment; filename=\"" . basename($path_file) . "\"");
             readfile($path_file);
-            // force_download($surat_riset['nama_file'], $path_file);
         } elseif ($id_jenis_p == 2) {
             $pdf_surat_riset = $this->master_data->get_pdf_surat_riset($id_surat);
             $surat_riset = $this->master_data->get_surat($id_surat);
@@ -185,7 +169,6 @@ class User extends CI_Controller
         if ($jenis_permohonan == 1) {
             $detail_form = $this->master_data->get_detail_surat_riset($id_formulir, $jenis_permohonan);
             echo json_encode($detail_form);
-            // die();
         } elseif ($jenis_permohonan == 2) {
             $detail_form = $this->master_data->get_detail_surat_kp($id_formulir, $jenis_permohonan);
             echo json_encode($detail_form);
@@ -203,16 +186,8 @@ class User extends CI_Controller
 
     public function cetak_surat_kp($id_jenis_p, $id_formulir)
     {
-        // $bukti_laporan = $this->bukti->get_bukti_by_laporan_id($laporan_id);
         $laporan = $this->master_data->get_surat_for_print_kp($id_formulir, $id_jenis_p);
-        // print_r($laporan);
-        // die();
         $tgl_lahir = date("d F Y", strtotime($laporan['tgl_lahir']));
-
-        // $count = count($gambar);
-        // $data = [];
-        // $no = 0;
-
 
         error_reporting(0); // AGAR ERROR MASALAH VERSI PHP TIDAK MUNCUL
         $pdf = new FPDF('P', 'mm', 'Legal');
@@ -298,17 +273,8 @@ class User extends CI_Controller
     }
     public function cetak_surat_riset($id_jenis_p, $id_formulir)
     {
-        // $bukti_laporan = $this->bukti->get_bukti_by_laporan_id($laporan_id);
         $laporan = $this->master_data->get_surat_for_print_riset($id_formulir, $id_jenis_p);
-        // print_r($laporan);
-        // die();
         $tgl_lahir = date("d F Y", strtotime($laporan['tgl_lahir']));
-
-        // $count = count($gambar);
-        // $data = [];
-        // $no = 0;
-
-
         error_reporting(0); // AGAR ERROR MASALAH VERSI PHP TIDAK MUNCUL
         $pdf = new FPDF('P', 'mm', 'Legal');
         $pdf->AddPage();
@@ -395,9 +361,8 @@ class User extends CI_Controller
         $pdf->Output('D', $nama);
     }
 
-    public function Create_surat($id)
+    public function buat_pengajuan($id)
     {
-
         $data['jenis_permohonan'] = $id;
         if ($id == 1) {
             $data['pageTitle'] = "Surat Pengantar Riset";
@@ -417,8 +382,6 @@ class User extends CI_Controller
         $data['pageTitle'] = "Home Mahasiswa";
         $data['User'] = $this;
         $data['form'] = $this->master_data->get_form($id_pengguna);
-        // print_r($data['form']);
-        // die();
         if (count($data['form']) > 0) {
             $data['view_more'] = '<div class="my-4 d-flex flex-row-reverse">
             <a href="' . base_url('Pengajuan-Form') . '" class="btn btn-inverse-info btn-sm "><i class="icon-grid mr-3"></i>View More</a>
@@ -458,8 +421,6 @@ class User extends CI_Controller
     {
         $profil = $this->master_data->get_my_profile($id);
         $oldpass = $profil[0]['password'];
-        // print_r($oldpass[0]['password']);
-        // die();
         $nim = str_replace("'", "", $this->security->xss_clean($this->input->post('nim')));
         $nmfile = $nim . "_" . date("H-i-s"); //nama file saya beri nama langsung dan diikuti fungsi time
         $config['upload_path'] = $_SERVER['DOCUMENT_ROOT'] . '/web_akademik/assets/data/mahasiswa/foto_profilM/'; //path folder
@@ -477,7 +438,6 @@ class User extends CI_Controller
             $pw = (str_replace("'", "", $this->security->xss_clean($pw_lama)));
             $pw1 = (str_replace("'", "", $this->security->xss_clean($pw_baru)));
         }
-
         $this->upload->initialize($config);
         $this->load->library('upload', $config);
         if (!empty($_FILES['foto']['name'])) {
@@ -644,18 +604,11 @@ class User extends CI_Controller
     {
         $data['pageTitle'] = "My Profile";
         $data['profile'] = $this->master_data->get_my_profile($id);
-        // print_r($data['profile']);
-        // die();
         $data['program'] = $this->master_data->get_all_program();
-
-
         $propil = $data['profile'];
         $program = $data['program'];
         $prodi = $this->master_data->get_prodi_id1($propil[0]['id_prodi']);
         $data['prodi1'] = $this->master_data->get_prodi_id($propil[0]['id_program']);
-        // print_r($propil);
-        // die();
-
         if ($propil[0]['jenis_kelamin'] == "Pria") {
             $data['jenis_kelamin'] = "<option selected>Pria</option>
             <option>Wanita</option>";
@@ -663,14 +616,12 @@ class User extends CI_Controller
             $data['jenis_kelamin'] = "<option>Pria</option>            
             <option selected>Wanita</option>";
         }
-
         $foto = $propil[0]['foto'];
         if ($foto == null) {
             $data['foto'] = '<img class=" pp_v" style="position: relative; width:150px;height:150px;border-radius:50%;" id="pp" src="' . base_url('assets/user/images/user.jpg') . '" alt="asd"/>';
         } elseif ($foto != null) {
             $data['foto'] = '<img class="pp_v" style="position: relative; width:150px;height:150px;border-radius:50%;" id="pp" src="' . base_url($foto) . '" alt="profile" />';
         }
-
         $data['form'] = $this->master_data->get_form($id);
         $this->load->view('user/home/V_profileM', $data);
     }
@@ -691,11 +642,11 @@ class User extends CI_Controller
         // 24 * 60 * 60 = 86400 seconds
         return ceil(abs($diff / 86400));
     }
+
     public function Buat_surat($jenis_permohonan)
     {
         $nama_surat = $this->master_data->get_jenis_permohonan_by($jenis_permohonan);
-        // print_r($nama_surat);
-        // die();
+
         $no_form = 'FR-KALBIS-OPR-' . rand(10000, 99999) . "/V1/R0";
         $data = [
             'no_form' => $no_form,
@@ -705,16 +656,13 @@ class User extends CI_Controller
         ];
         $data1 = $this->security->xss_clean($data);
         $insert = $this->master_data->save_formulir($data1);
-
         if ($insert) {
             $jenis_permohonan = $this->master_data->get_new_formulir($insert);
-
-
             if ($jenis_permohonan['id_jenis_permohonan'] == 1) {
                 $data_surat = [
                     'id_formulir' => $insert,
                     'jenis_tugas' => str_replace("'", "", $this->security->xss_clean($this->input->post('jenis_tugas'))),
-                    'judul' => str_replace("'", "", $this->security->xss_clean($this->input->post('judul'))),
+                    'judul' => str_replace("'", "", $this->security->xss_clean($this->input->post('judul_tugas'))),
                     'alamat_surat' => str_replace("'", "", $this->security->xss_clean($this->input->post('alamat_perusahaan'))),
                     'nama_perusahaan' => str_replace("'", "", $this->security->xss_clean($this->input->post('nama_perusahaan'))),
                     'perwakilan_perusahaan' => str_replace("'", "", $this->security->xss_clean($this->input->post('perwakilan'))),
@@ -735,10 +683,10 @@ class User extends CI_Controller
                 $data2 = $this->security->xss_clean($data_surat);
                 $insert1 = $this->master_data->save_surat_kp($data2);
             }
-            echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Formulir pengajuan  <b>' . $nama_surat . '</b> Successfully added to database.</div>');
+            echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button"
+             class="close" data-dismiss="alert">&times;</button>Formulir pengajuan  <b>' . $nama_surat .
+                '</b> Successfully added to database.</div>');
             redirect('Pengajuan-Form');
         }
-        // print_r($data);
-        // die();
     }
 }

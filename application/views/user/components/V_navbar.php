@@ -9,16 +9,6 @@
             <span class="icon-menu"></span>
         </button>
         <ul class="navbar-nav mr-lg-2">
-            <li class="nav-item nav-search d-none d-lg-block">
-                <div class="input-group">
-                    <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
-                        <span class="input-group-text" id="search">
-                            <i class="icon-search"></i>
-                        </span>
-                    </div>
-                    <input type="text" class="form-control" id="navbar-search-input" placeholder="Search now" aria-label="search" aria-describedby="search">
-                </div>
-            </li>
         </ul>
         <ul class="navbar-nav navbar-nav-right">
             <li class="nav-item nav-profile dropdown">
@@ -32,7 +22,8 @@
                         <i class="ti-user text-primary"></i>
                         My Profile
                     </a>
-                    <a class="dropdown-item" href="<?= base_url('user/U_auth/logout'); ?>">
+
+                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#mhs_logout">
                         <i class="ti-power-off text-primary"></i>
                         Logout
                     </a>
@@ -44,3 +35,22 @@
         </button>
     </div>
 </nav>
+<div class="modal fade" id="mhs_logout" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelLogout" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabelLogout">Ohh No!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to logout <b><?= $this->session->userdata("nama") ?></b>?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Cancel</button>
+                <a href="<?= base_url('user/U_auth/logout'); ?>" class="btn btn-primary">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>

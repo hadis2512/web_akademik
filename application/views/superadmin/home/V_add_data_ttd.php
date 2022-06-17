@@ -14,12 +14,11 @@
                 <!-- Container Fluid-->
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Add Mahasiswa</h1>
+                        <h1 class="h3 mb-0 text-gray-800">Add Tanda Tangan</h1>
 
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="./">Home</a></li>
-                            <li class="breadcrumb-item">Forms</li>
-                            <li class="breadcrumb-item active" aria-current="page">Form Basics</li>
+                            <li class="breadcrumb-item"><a href="<?= base_url("admin-add-ttd") ?>">Data Tanda Tangan</a></li>
+                            <li class="breadcrumb-item active">Add Tanda Tangan</li>
                         </ol>
                     </div>
                     <?= $this->session->flashdata('msg'); ?>
@@ -44,26 +43,14 @@
                                                 <input type="text" class="form-control" id="email" name="jabatan" placeholder="Enter the jabatan">
                                             </div>
                                         </div>
-                                        <fieldset class="form-group">
-                                            <div class="row">
-                                                <legend class="col-form-label col-sm-2 pt-0">Jenis Permohonan</legend>
-                                                <?php
-                                                foreach ($jenis_permohonan as $a) { ?>
-                                                    <div class="col-sm-3">
-                                                        <div class="custom-control custom-radio">
-                                                            <input type="radio" id="pilihan<?= $a['id'] ?>" name="jenis_permohonan" value="<?= $a['id'] ?>" class="custom-control-input">
-                                                            <label class="custom-control-label" for="pilihan<?= $a['id'] ?>"><?= $a['nama'] ?></label>
-                                                        </div>
-                                                    </div>
-                                                <?php }
-                                                ?>
+                                        <div class="form-group row">
+                                            <label for="foto" class="col-sm-2 col-form-label ">Tanda Tangan</label>
+                                            <div class="col-sm-2">
+                                                <img class="poto_add_ttd" style="width:150px;height:150px;border: 1px solid black;" id="poto_ttd" src="<?= base_url('assets/user/images/user.jpg'); ?>" alt="asd" />
                                             </div>
-                                        </fieldset>
-                                        <div class="form-group">
-                                            <label for="foto" class="col-sm-2  col-form-label">Tanda Tangan</label>
-                                            <div class="custom-file col-sm-9">
-                                                <input type="file" name="foto" class="custom-file-input" id="customFile">
-                                                <label class="custom-file-label" for="customFile">Choose File</label>
+                                            <div class="custom-file  col-sm-6 ">
+                                                <input type="file" name="foto" class="custom-file-input" id="add_foto">
+                                                <label class="custom-file-label nama_poto_add" for="customFile">Choose File</label>
                                             </div>
                                         </div>
                                         <hr>
@@ -111,10 +98,9 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>copyright &copy; <script>
+                        <span>copyright Kalbis Institute &copy; <script>
                                 document.write(new Date().getFullYear());
-                            </script> - developed by
-                            <b><a href="https://indrijunanda.gitlab.io/" target="_blank">indrijunanda</a></b>
+                            </script>
                         </span>
                     </div>
                 </div>
@@ -128,3 +114,22 @@
         <i class="fas fa-angle-up"></i>
     </a>
     <?php $this->load->view('superadmin/components/V_footer') ?>
+    <script>
+        $(document).ready(() => {
+            $(".drop-add").click();
+            $("#add_foto").change((e) => {
+                var input = $(e.currentTarget);
+                var file = input[0].files[0];
+                if (file) {
+                    let reader = new FileReader();
+                    let file_nama = file.name;
+                    let name_file = file_nama.substr(0, 22)
+                    reader.onload = function(event) {
+                        $('.poto_add_ttd').attr('src', event.target.result);
+                        $(".nama_poto_add").html(name_file)
+                    }
+                    reader.readAsDataURL(file);
+                }
+            })
+        })
+    </script>

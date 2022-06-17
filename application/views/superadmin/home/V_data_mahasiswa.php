@@ -17,9 +17,7 @@
                         <h1 class="h3 mb-0 text-gray-800">Data Mahasiswa</h1>
 
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="./">Home</a></li>
-                            <li class="breadcrumb-item">Forms</li>
-                            <li class="breadcrumb-item active" aria-current="page">Form Basics</li>
+                            <li class="breadcrumb-item active"><a href="<?= base_url('admin-data-mahasiswa'); ?>">Data Mahasiswa</a></li>
                         </ol>
                     </div>
                     <?= $this->session->flashdata('msg'); ?>
@@ -150,28 +148,33 @@
                                                                     <fieldset class="form-group">
                                                                         <div class="row">
                                                                             <legend class="col-form-label col-sm-3 pt-0">Jenis Kelamin</legend>
-                                                                            <?php if ($jenis_kelamin == "Pria") {
-                                                                                $a = "active";
-                                                                            } else if ($jenis_kelamin == "Wanita") {
-                                                                                $a = "active";
-                                                                            } ?>
-                                                                            <div class="col-sm-4">
-
-                                                                                <div class="custom-control custom-radio">
-                                                                                    <input type="radio" id="customRadio1" name="jenis_kelamin" value="Pria" class="custom-control-input" <?php if ($jenis_kelamin == "Pria") {
-                                                                                                                                                                                                echo "checked";
-                                                                                                                                                                                            } ?>>
-                                                                                    <label class="custom-control-label" for="customRadio1">Pria</label>
+                                                                            <?php if ($jenis_kelamin == "Pria") { ?>
+                                                                                <div class="col-sm-4">
+                                                                                    <div class="custom-control custom-radio">
+                                                                                        <input type="radio" id="customRadio1" name="jenis_kelamin" value="Pria" class="custom-control-input" checked>
+                                                                                        <label class="custom-control-label" for="customRadio1">Pria</label>
+                                                                                    </div>
                                                                                 </div>
-                                                                            </div>
-                                                                            <div class="col-sm-4">
-                                                                                <div class="custom-control custom-radio">
-                                                                                    <input type="radio" id="customRadio2" name="jenis_kelamin" value="Wanita" class="custom-control-input" <?php if ($jenis_kelamin == "Wanita") {
-                                                                                                                                                                                                echo "checked";
-                                                                                                                                                                                            } ?>>
-                                                                                    <label class="custom-control-label" for="customRadio2">Wanita</label>
+                                                                                <div class="col-sm-4">
+                                                                                    <div class="custom-control custom-radio">
+                                                                                        <input type="radio" id="customRadio2" name="jenis_kelamin" value="Wanita" class="custom-control-input">
+                                                                                        <label class="custom-control-label" for="customRadio2">Wanita</label>
+                                                                                    </div>
                                                                                 </div>
-                                                                            </div>
+                                                                            <?php } elseif ($jenis_kelamin == "Wanita") { ?>
+                                                                                <div class="col-sm-4">
+                                                                                    <div class="custom-control custom-radio">
+                                                                                        <input type="radio" id="customRadio1" name="jenis_kelamin" value="Pria" class="custom-control-input">
+                                                                                        <label class="custom-control-label" for="customRadio1">Pria</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-sm-4">
+                                                                                    <div class="custom-control custom-radio">
+                                                                                        <input type="radio" id="customRadio2" name="jenis_kelamin" value="Wanita" class="custom-control-input" checked>
+                                                                                        <label class="custom-control-label" for="customRadio2">Wanita</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                            <?php } ?>
 
                                                                         </div>
                                                                     </fieldset>
@@ -222,7 +225,7 @@
                                                                     <div class="form-group">
                                                                         <label for="foto" class="col-sm-3  col-form-label">Foto</label>
                                                                         <div class="custom-file col-sm-8">
-                                                                            <input type="file" name="foto" class="custom-file-input" id="customFile">
+                                                                            <input type="file" name="foto" class="custom-file-input" id="upload">
                                                                             <label class="custom-file-label" for="customFile"></label>
                                                                         </div>
                                                                     </div>
@@ -292,3 +295,8 @@
         <i class="fas fa-angle-up"></i>
     </a>
     <?php $this->load->view('superadmin/components/V_footer') ?>
+    <script>
+        $(document).ready(() => {
+            $(".drop-data").click();
+        })
+    </script>

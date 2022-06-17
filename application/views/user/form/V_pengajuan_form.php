@@ -35,18 +35,18 @@
 
                             <!-- Modal -->
                             <div class="modal fade" id="createF" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-lg" style="width: 1000px;" role="document">
+                                <div class="modal-dialog " style="width: 1000px;" role="document">
                                     <div class="modal-content">
-                                        <!-- <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Pengajuan Form</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div> -->
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Pilih Jenis Pengajuan :</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
                                         <div class="modal-body d-flex justify-content-around">
                                             <?php foreach ($jenis_p as $a) { ?>
-                                                <div class="card border">
-                                                    <a class="card btn btn-outline-info m-1" style="height: 250px;width:250px;" href="createSurat/<?= $a['id']; ?>">
+                                                <div class="card border mr-2">
+                                                    <a class="card btn btn-outline-info m-1" href="createSurat/<?= $a['id']; ?>">
                                                         <span class="my-auto"><?= $a['nama']; ?></span>
                                                     </a>
                                                 </div>

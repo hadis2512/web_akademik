@@ -34,7 +34,7 @@
 
 
                             </div>
-                            <div class="modal fade bd-example-modal-lg " id="modalLihatSurat" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                            <div class="modal fade bd-example-modal-lg modalLihatSurat" id="modalLihatSurat" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content" id="data_surat_ready">
 

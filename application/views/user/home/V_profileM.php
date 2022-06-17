@@ -125,7 +125,7 @@
                                                 </div>
                                             </div>
                                             <div class="d-flex justify-content-center">
-                                                <button class="btn btn-dark">Cancel</button>
+                                                <!-- <button class="btn btn-dark">Cancel</button> -->
                                                 <button type="submit" class="btn btn-inverse-primary ml-2">Save</button>
                                             </div>
                                         </form>

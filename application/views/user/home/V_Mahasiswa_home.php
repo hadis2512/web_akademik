@@ -33,18 +33,14 @@
                     <div class="row">
                         <?php
                         foreach ($form as $a) {
-                            if ($a['approval'] == 0 && $a['approval_admin'] == 0) {
-                                $status = '<div class="badge badge-success align-self-start">Terkirim</div>';
-                            } else if ($a['approval'] == 0 && $a['approval_admin'] == 1) {
+                            if ($a['approval_admin'] == 0) {
+                                $status = '<div class="badge badge-warning align-self-start"><i class="fas fa-check mr-2"></i>Terkirim</div>';
+                            } else if ($a['approval_admin'] == 1 && $a['status_surat'] == 0) {
                                 $status = '<div class="badge badge-success align-self-start"><i class="fas fa-check mr-2"></i>Admin</div>';
-                            } else if ($a['approval'] == 0 && $a['approval_admin'] == 2) {
-                                $status = '<div class="badge badge-danger align-self-start">Duplikasi</div>';
-                            } else if ($a['approval'] == 1 && $a['approval_admin'] == 1 && $a['status_surat']  == 0) {
-                                $status = '<div class="badge badge-success align-self-start"><i class="fas fa-check mr-2"></i>Kaprodi</div>';
-                            } else if ($a['approval'] == 1 && $a['approval_admin'] == 1) {
+                            } else if ($a['approval_admin'] == 2) {
+                                $status = '<div class="badge badge-danger align-self-start"><i class="fas fa-xmark mr-2"></i>Reject</div>';
+                            } else if ($a['approval_admin'] == 1 && $a['status_surat'] == 1) {
                                 $status = '<div class="badge badge-success align-self-start"><i class="fas fa-check mr-2"></i>Surat</div>';
-                            } else if ($a['approval'] == 2 && $a['approval_admin'] == 1) {
-                                $status = '<div class="badge badge-success align-self-start">Ditolak Kaprodi</div>';
                             }
                         ?>
                             <div class="col-md-4 mb-2 stretch-card transparent">

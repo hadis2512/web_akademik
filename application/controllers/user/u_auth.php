@@ -10,7 +10,6 @@ class u_auth extends CI_Controller
         $this->load->model('M_user', 'user');
     }
 
-
     public function index()
     {
         $data['pageTitle'] = "Sign In";
@@ -25,23 +24,16 @@ class u_auth extends CI_Controller
         $u = $this->security->xss_clean($u);
         $p = $this->security->xss_clean($p);
         $cadmin = $this->user->login($u, $p);
-        // print_r($cadmin->result_array());
-        // die();
         if ($cadmin == 'Password Salah!!') {
             echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-danger animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>' . $cadmin . '</b> </div>');
             redirect('login');
-        } elseif ($cadmin == 'Username atau Password Salah!!') {
-            echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-danger animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Username atau Password Tidak Ada!!!</b> </div>');
-            redirect('login');
-        } elseif ($cadmin == null) {
-            echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-danger animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Username atau Password Salah!!!</b> </div>');
+        } elseif ($cadmin == 'Data tidak ada!!') {
+            echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-danger animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>' . $cadmin . '</b> </div>');
             redirect('login');
         } else {
             $this->session->set_userdata('masuk', true);
             $this->session->set_userdata('user', $u);
             $xcadmin = $cadmin->row_array();
-            // print_r($xcadmin);
-            // die();
             $idadmin = $xcadmin['id'];
             $email = $xcadmin['email'];
             $user_nama = $xcadmin['nama_lengkap'];
@@ -56,25 +48,12 @@ class u_auth extends CI_Controller
             $this->session->set_userdata('foto', $foto);
             $this->session->set_userdata('jabatan', $jabatan);
             $this->session->set_userdata('prodi', $prodi);
-            if ($jabatan == "Dosen") {
-                redirect('Dosen-home');
-            } elseif ($jabatan == "Mahasiswa") {
+            if ($jabatan == "Mahasiswa") {
                 redirect('Mahasiswa-home');
+            } else {
+                echo "login gagal!";
             }
         }
-        // if ($this->session->userdata('masuk') == true) {
-        //     if ($jab == 'Mahasiswa') {
-        //         redirect('Mahasiswa-home');
-        //     } elseif ($jab == 'Dosen') {
-        //         redirect('Dosen-home');
-        //     } else {
-        //         echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button>Akun belum terdaftar!</div>');
-        //         redirect('user/u_auth/gagallogin');
-        //     }
-        // } else {
-        //     echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button>Akun belum terdaftar!</div>');
-        //     redirect('user/u_auth/gagallogin');
-        // }
     }
 
 

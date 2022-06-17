@@ -1,9 +1,16 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
+
 require "vendor/autoload.php";
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+use League\OAuth2\Client\Provider\Google;
 
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
+use PHPMailer\PHPMailer\OAuth;
 
 class Master_data extends CI_Controller
 {
@@ -53,8 +60,6 @@ class Master_data extends CI_Controller
             );
         }
         echo json_encode($result);
-        // print_r($data);
-        // die();
     }
     public function add_surat()
     {
@@ -79,7 +84,6 @@ class Master_data extends CI_Controller
     {
         $data['pageTitle'] = "Add Mahasiswa";
         $data['program'] = $this->master_data->get_all_program();
-
         $this->load->view('superadmin/home/V_add_mahasiswa', $data);
     }
     function get_prodi_by_id($id)
@@ -92,46 +96,13 @@ class Master_data extends CI_Controller
         }
         echo json_encode($result);
     }
+
     public function data_mahasiswa()
     {
         $data['pageTitle'] = "Data Mahasiswa";
         $data['data_mahasiswa'] = $this->master_data->get_all_mhs();
         $data['program'] = $this->master_data->get_all_program();
-        // print_r($data['data_mahasiswa']);
-        // die();
         $this->load->view('superadmin/home/V_data_mahasiswa', $data);
-    }
-    public function ttd_test()
-    {
-        $base64 = $this->input->post('signed');
-        $b64 = base64_decode($base64);
-        // $im = imageCreateFromString($b64);
-        $img_file = 'assets/data/img/' . date('Y-M-d,H-i-s') . '.png';
-        file_put_contents($img_file, $b64);
-        // echo gettype($im);
-        // die();
-        // $data = print_r($base64);
-        // imagepng($im, $img_file, 0);
-        // print_r($im);
-        redirect($img_file);
-        // print_r($img_file);
-        die();
-        // echo json_encode($base64);
-        // die();
-        // $folderPath = base_url('assets/data/img/');
-
-        // $image_parts = explode(";base64,", $_POST['signed']);
-
-        // $image_type_aux = explode("image/", $image_parts[0]);
-
-        // $image_type = $image_type_aux[1];
-
-        // $image_base64 = base64_decode($image_parts[1]);
-
-        // $file = $folderPath . uniqid() . '.' . $image_type;
-
-        // $a = file_put_contents($file, $image_base64);
-        // echo json_encode($a);
     }
     public function testing()
     {
@@ -150,8 +121,6 @@ class Master_data extends CI_Controller
     public function add_data_ttd()
     {
         $data['pageTitle'] = "Add Tanda Tangan";
-        $data['jenis_permohonan'] = $this->master_data->get_jenis_permohonan();
-        // $data['jabatan'] = $this->master_data->get_all_jbtn();
         $this->load->view('superadmin/home/V_add_data_ttd', $data);
     }
 
@@ -159,16 +128,13 @@ class Master_data extends CI_Controller
     {
         $data['pageTitle'] = "Data Tanda Tangan";
         $data['data_ttd'] = $this->master_data->get_all_data_ttd();
-        // print_r($data);
-        // die();
         $this->load->view('superadmin/home/V_data_ttd', $data);
     }
+
     public function data_surat()
     {
         $data['pageTitle'] = "Data Surat";
         $data['data_surat'] = $this->master_data->get_all_form_admin_by_surat();
-        // print_r($data['data_surat']);
-        // die();
         $this->load->view('superadmin/home/V_data_surat', $data);
     }
 
@@ -177,9 +143,6 @@ class Master_data extends CI_Controller
         $data['pageTitle'] = "Data Formulir";
         $data['jenis_p'] = $this->master_data->get_jenis_permohonan();
         $data['data_formulir'] = $this->master_data->get_all_form_by_admin();
-
-        // print_r($data['data_formulir']);
-        // die();
         $this->load->view('superadmin/home/V_data_formulir', $data);
     }
 
@@ -187,23 +150,25 @@ class Master_data extends CI_Controller
     {
         $data['pageTitle'] = "Data Karyawan";
         $data['data_karyawan'] = $this->master_data->get_all_karyawan();
-
-        // print_r($data['prodi']);
-        // die();
         $data['jabatan'] = $this->master_data->get_all_jbtn();
-        // print_r($data['data_karyawan']);
-        // die();
         $this->load->view('superadmin/home/V_data_karyawan', $data);
     }
     public function get_formulir_riset($id_jenis_p, $id_formulir)
     {
         $data['surat_riset'] = $this->master_data->get_formulir_riset($id_jenis_p, $id_formulir);
         $surat_riset = $data['surat_riset'];
+        // print_r($surat_riset);
+        // die();
         $data['pageTitle'] = "Detail Formulir " . $surat_riset['no_form'];
         $data['id_jenis_p'] = $id_jenis_p;
-        // echo json_encode($data['surat_riset']);
-        // die();        
         $this->load->view('superadmin/home/V_detail_formulir_riset', $data);
+    }
+    public function get_formulir_kp($id_jenis_p, $id_formulir)
+    {
+        $data['pageTitle'] = "Detail Formulir KP";
+        $data['surat_kp'] = $this->master_data->get_detail_surat_kp($id_formulir, $id_jenis_p);
+        $data['id_jenis_p'] = $id_jenis_p;
+        $this->load->view('superadmin/home/V_detail_formulir_kp', $data);
     }
     public function get_surat_riset($id_jenis_p, $id_formulir)
     {
@@ -211,20 +176,9 @@ class Master_data extends CI_Controller
         $surat_riset = $data['surat_riset'];
         $data['pageTitle'] = "Detail Surat Riset " . $surat_riset['no_form'];
         $data['id_jenis_p'] = $id_jenis_p;
-        // echo json_encode($data['surat_riset']);
-        // die();
         $this->load->view('superadmin/home/V_detail_surat_riset', $data);
     }
-    public function get_formulir_kp($id_jenis_p, $id_formulir)
-    {
-        $data['pageTitle'] = "Detail Formulir KP";
-        $data['surat_kp'] = $this->master_data->get_detail_surat_kp($id_formulir, $id_jenis_p);
-        // echo print_r($data['surat_kp']);
-        // die();
-        $data['id_jenis_p'] = $id_jenis_p;
 
-        $this->load->view('superadmin/home/V_detail_formulir_kp', $data);
-    }
     public function get_surat_kp($id_jenis_p, $id_formulir)
     {
         $data['pageTitle'] = "Detail Surat KP";
@@ -236,32 +190,90 @@ class Master_data extends CI_Controller
         $this->load->view('superadmin/home/V_detail_surat_kp', $data);
     }
 
-    public function validate($id_formulir, $id_jenis_p)
+    function test_mailer()
     {
-        if ($id_jenis_p == 1) {
-            $data = [
-                'id_formulir' => $id_formulir,
-                'approval' => 1,
-                'approval_admin' => 1,
-                'update_at' => date('Y-m-d')
-            ];
-            $this->master_data->validasi_admin1($data);
-            redirect('admin-data-formulir');
-        } elseif ($id_jenis_p == 2) {
-            $this->master_data->validasi_admin($id_formulir);
-            redirect('admin-data-formulir');
+        $mail = new PHPMailer(true);
+
+        try {
+            //Server settings            
+            $mail->isSMTP();                                            //Send using SMTP            
+            $mail->SMTPDebug = SMTP::DEBUG_SERVER;
+            $mail->Host     = 'smtp.gmail.com';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->SMTPAuth = true;
+            $mail->AuthType = 'XOAUTH2';
+            // $mail->Username = 'academicoperationskalbis@gmail.com';
+            // $mail->Password = 'Hadits123';
+            $mail->SMTPSecure = 'tls';
+            $mail->Port     = 587;
+            $email = 'academicoperationskalbis@gmail.com';
+            $clientId = '426965174563-q7ps5r823aau8dnq6cltlko0h96dju1m.apps.googleusercontent.com';
+            $clientSecret = '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';
+
+            //Obtained by configuring and running get_oauth_token.php
+            //after setting up an app in Google Developer Console.
+            $refreshToken = '1//0gf676lZoNfJCCgYIARAAGBASNwF-L9Irao8AUfBU_Jx43kQ53eoYGvF8cOEARtxISZDgXPJasvUHy_eTQKe-syOOuORCu0RpskE';
+            $provider = new Google(
+                [
+                    'clientId' => $clientId,
+                    'clientSecret' => $clientSecret,
+                ]
+            );
+            $mail->setOAuth(new OAuth([
+                'provider' => $provider,
+                'clientId' => $clientId,
+                'clientSecret' => $clientSecret,
+                'refreshToken' => $refreshToken,
+                'userName' => $email,
+            ]));
+
+            //Recipients
+            $mail->setFrom('academicoperationsKkalbis@gmail.com', 'Academic Operation Kalbis Institute');
+            $mail->addAddress('2018104030@student.kalbis.ac.id');               //Name is optional
+            // $mail->addAttachment($_SERVER['DOCUMENT_ROOT'] . '/web_akademik' . $path);
+
+            // $mail->addAttachment($path_surat);         //Add attachments
+            //Content
+            $mail->isHTML(true);                                  //Set email format to HTML
+            $mail->Subject = 'halo';
+            $mail->Body    = '<div class="container" style="width: 600px; height: 100%;">
+                                                 <div class="card" style="border:1px solid;width: 100%; height: 100%;">
+                                                     <div class="card-header " style="width: 100%; height: 100px; display: flex; justify-content: center; align-items: center; text-align: center; background: #007bff;">
+                                                         <h3 style="font-size: 18px; text-align: center; padding: 0 175px; " ></h3>
+                                                     </div>
+                                                     <div class="card-body" style=" padding: 50px;">
+                                                         <h2 class="card-text">Hello,</h2>
+                                                         <h4 class="card-text">Surat untuk formulir pengajuan  dengan nomor formulir <br> telah dibuat.</h4>
+                                                         <h5 class="card-text">Untuk melihat lebih detail silahkan kunjungi link berikut: <a href="http://localhost/web_akademik/Pengajuan-Form/" class="btn btn-link">Detail Formulir</a></h5>
+                                                     </div>
+                                                 
+                                                <div class="row">
+                                                <div class="col-12">										
+                                                    <p class="card-text">Jalan Pulomas Selatan Kav. 22 Jakarta Timur, Indonesia - 13210</p>										
+                                                    <p class="card-text">Telp     : 021 - 47883900 ext. 1119 - 1121</p>										
+                                                    <p class="card-text">Email  : academicoperationskalbis@gmail.com</p>										
+                                                </div>                                                
+                                            </div>
+                                            </div>
+                                             </div>';
+            // $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+            $mail->send();
+            echo "success sent";
+        } catch (Exception $e) {
+            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
         }
     }
 
-    public function create_surat($id_formulir, $id_jenis_p)
+    public function create_surat($id_formulir, $id_jenis_p, $gmail)
     {
-
+        ob_start();
         if ($id_jenis_p == 1) {
             $get_surat = $this->master_data->get_surat_riset($id_jenis_p);
             $tot_surat = count($get_surat);
-            // print_r($tot_surat);
-            // die();
             $year = date("Y");
+            $laporan = $this->master_data->get_surat_for_print_riset($id_formulir, $id_jenis_p);
+            // print_r($laporan['no_surat']);
+            // die();
             if ($tot_surat < 10) {
                 $jumlah_surat = "00";
             } elseif ($tot_surat > 9 && $tot_surat < 100) {
@@ -277,29 +289,11 @@ class Master_data extends CI_Controller
                 'created_at' => date("Y-m-d")
             ];
             $insert_surat_riset = $this->master_data->insert_surat_riset($data);
-            // print_r($insert_surat_riset);
-            // die();
             $this->master_data->admin_buat_surat($id_formulir);
             if ($insert_surat_riset) {
-                // $bukti_laporan = $this->bukti->get_bukti_by_laporan_id($laporan_id);
-                $laporan = $this->master_data->get_surat_for_print_riset($id_formulir, $id_jenis_p);
                 $ttd = $this->master_data->get_ttd();
-                // print_r($laporan);
-                // die();
                 $tgl_lahir = date("d F Y", strtotime($laporan['tgl_lahir']));
                 $tanda_tangan = base_url() . $ttd['tanda_tangan'];
-                // $tampilan = "<div class='card'>
-                // <div></div>
-                // </div>";
-                // $qr = QrCode::create($tanda_tangan);
-                // $writer = new PngWriter();
-                // $result = $writer->write($qr);
-                // $result->saveToFile("./assets/data/img/ttd.png");
-                // die();
-                // $count = count($gambar);
-                // $data = [];
-                // $no = 0;
-
 
                 error_reporting(0); // AGAR ERROR MASALAH VERSI PHP TIDAK MUNCUL
                 $pdf = new FPDF('P', 'mm', 'a4');
@@ -326,7 +320,7 @@ class Master_data extends CI_Controller
 
                 $pdf->Cell(10, 5, '', 0, 1);
                 $pdf->SetFont('Arial', '', 11.5);
-                $pdf->Cell(0, 1, '' . $laporan['alamat_surat'], 0, 1, $pdf->setX(25));
+                $pdf->MultiCell(0, 1, '' . $laporan['alamat_surat'], 0, 1, $pdf->setX(25));
 
                 $pdf->Cell(0, 15, '', 0, 1);
                 $pdf->SetFont('Arial', '', 11.5);
@@ -395,14 +389,87 @@ class Master_data extends CI_Controller
                 // echo $path;
                 // die();
                 $save_to_local = $pdf->Output(__DIR__ . "/../../../assets/data/" . $nama, "F");
-                $this->master_data->update_file_pdf($path, $nama, $insert_surat_riset);
-                echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-success animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Data Surat Berhasil Di Buat!</div>');
-                redirect('admin-data-formulir');
+                $update_path = $this->master_data->update_file_pdf($path, $nama, $insert_surat_riset);
+                if ($update_path) {
+                    $mhs = $this->master_data->get_mhs_by_email($gmail);
+                    $user = $this->master_data->get_form_by_id_formulir($id_formulir);
+                    $jenis = "Surat Pengantar Riset";
+                    $link = 'superadmin/master_data/get_formulir_riset/1/' . $user['id_formulir'];
+                    $mail = new PHPMailer(true);
+
+                    try {
+                        //Server settings            
+                        $mail->isSMTP();                                            //Send using SMTP            
+                        // $mail->SMTPDebug = SMTP::DEBUG_SERVER;
+                        $mail->Host     = 'smtp.gmail.com';
+                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                        $mail->SMTPAuth = true;
+                        $mail->AuthType = 'XOAUTH2';
+                        $mail->SMTPSecure = 'tls';
+                        $mail->Port     = 587;
+                        $email = 'academicoperationskalbis@gmail.com';
+                        $clientId = '426965174563-q7ps5r823aau8dnq6cltlko0h96dju1m.apps.googleusercontent.com';
+                        $clientSecret = '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';
+
+                        //Obtained by configuring and running get_oauth_token.php
+                        //after setting up an app in Google Developer Console.
+                        $refreshToken = '1//0gf676lZoNfJCCgYIARAAGBASNwF-L9Irao8AUfBU_Jx43kQ53eoYGvF8cOEARtxISZDgXPJasvUHy_eTQKe-syOOuORCu0RpskE';
+                        $provider = new Google(
+                            [
+                                'clientId' => $clientId,
+                                'clientSecret' => $clientSecret,
+                            ]
+                        );
+                        $mail->setOAuth(new OAuth([
+                            'provider' => $provider,
+                            'clientId' => $clientId,
+                            'clientSecret' => $clientSecret,
+                            'refreshToken' => $refreshToken,
+                            'userName' => $email,
+                        ]));
+
+                        //Recipients
+                        $mail->setFrom('academicoperationsKkalbis@gmail.com', 'Academic Operation Kalbis Institute');
+                        $mail->addAddress($gmail);               //Name is optional
+                        // $mail->addAttachment($_SERVER['DOCUMENT_ROOT'] . '/web_akademik' . $path);
+                        $path_surat = $_SERVER['DOCUMENT_ROOT'] . '/web_akademik' . $path;
+                        $mail->addAttachment($path_surat);         //Add attachments
+                        //Content
+                        $mail->isHTML(true);                                  //Set email format to HTML
+                        $mail->Subject = 'Formulir Pengajuan ' . $jenis . '(' . $user['no_form'] . ')';
+                        $mail->Body    = '<div class="container" style="width: 600px; height: 100%;">
+                                                 <div class="card" style="width: 100%; height: 100%;">
+                                                     <div class="card-header " style="background-color:#6777ef;color:#fff;width: 100%; height: 100px; display: flex; justify-content: center; align-items: center; text-align: center; background: #007bff;">
+                                                         <h3 style="font-size: 18px; text-align: center; padding: 0 175px; " >' . $jenis . '(' . $user['no_form'] . ')</h3>
+                                                     </div>
+                                                     <div class="card-body" style="background-color: rgb(240, 240, 240); padding: 50px;">
+                                                         <h2 class="card-text">Hello, ' . $mhs['nama_lengkap'] . '</h2>
+                                                         <h4 class="card-text">Surat untuk formulir pengajuan ' . $jenis . ' dengan nomor formulir <br> ' . $user['no_form'] . ' telah dibuat.</h4>
+                                                         <h5 class="card-text">Untuk melihat lebih detail silahkan kunjungi link berikut: <a href="http://localhost/web_akademik/Pengajuan-Form/" class="btn btn-link">Detail Formulir</a></h5>
+                                                     </div>
+                                                 </div>
+                                                 <div class="row">
+                                                <div class="col-12">										
+                                                    <p class="card-text">Jalan Pulomas Selatan Kav. 22 Jakarta Timur, Indonesia - 13210</p>										
+                                                    <p class="card-text">Telp     : 021 - 47883900 ext. 1119 - 1121</p>										
+                                                    <p class="card-text">Email  : academicoperationskalbis@gmail.com</p>										
+                                                </div>
+                                            </div>
+                                             </div>';
+                        // $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+                        $mail->send();
+                        echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-success animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Data Surat Berhasil Di Buat!</div>');
+                        redirect('superadmin/master_data/get_formulir_riset/1/' . $user['id_formulir']);
+                    } catch (Exception $e) {
+                        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+                    }
+                }
             } else {
                 echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-danger animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Data Surat Gagal Di Buat!</div>');
                 redirect('admin-data-formulir');
             }
         } elseif ($id_jenis_p == 2) {
+
             $get_surat = $this->master_data->get_surat_kp($id_jenis_p);
             $tot_surat = count($get_surat);
             // print_r($tot_surat);
@@ -415,14 +482,17 @@ class Master_data extends CI_Controller
             } elseif ($tot_surat > 99) {
                 $jumlah_surat = "";
             }
+            $user = $this->master_data->get_form_by_id_formulir($id_formulir);
+            print_r($user);
             $total_surat = $tot_surat + 1;
             $data = [
-                'no_surat' => $jumlah_surat . $total_surat . '/WRII-SRT/VI/' . $year,
+                'no_surat' => $jumlah_surat . $total_surat . '/AO-SRT/VI/' . $year,
                 'id_formulir' => $id_formulir,
                 'id_admin' => 1,
                 'created_at' => date("Y-m-d")
             ];
             $insert_surat_kp = $this->master_data->insert_surat_kp($data);
+
 
             $this->master_data->admin_buat_surat($id_formulir);
             if ($insert_surat_kp) {
@@ -457,10 +527,12 @@ class Master_data extends CI_Controller
                 $pdf->Image('./assets/data/img/kalbis_logo.png', 10, 10, 80);
 
                 $pdf->Cell(10, 20, '', 0, 1);
-                $pdf->SetFont('Arial', '', 10.5);
-                $pdf->Cell(0, 1, 'No Surat              : ' . $laporan['no_surat'], 0, 1, $pdf->setX(25));
-                $pdf->Cell(0, 10, 'Perihal                 : ' . 'Izin kerja praktik', 0, 1, $pdf->setX(25));
-                $pdf->Cell(0, 1, 'Lampiran             : ' . '-', 0, 1, $pdf->setX(25));
+                $pdf->SetFont('Arial', 'B', 12);
+                $pdf->Cell(0, 1, 'Surat Pengantar Kerja Praktik', 0, 1, 'C');
+
+                $pdf->Cell(10, 5, '', 0, 1);
+                $pdf->SetFont('Arial', '', 12);
+                $pdf->Cell(0, 1, $laporan['no_surat'], 0, 1, 'C');
 
                 $pdf->Cell(10, 20, '', 0, 1);
                 $pdf->SetFont('Arial', 'B', 10.5);
@@ -537,22 +609,287 @@ class Master_data extends CI_Controller
                 // die();
                 $save_to_local = $pdf->Output(__DIR__ . "/../../../assets/data/" . $nama, "F");
 
-                $this->master_data->update_file_pdfKP($path, $nama, $insert_surat_kp);
-                echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-success animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Data Surat Berhasil Di Buat!</div>');
-                redirect('admin-data-formulir');
+                $update_path = $this->master_data->update_file_pdfKP($path, $nama, $insert_surat_kp);
+                if ($update_path) {
+                    $mhs = $this->master_data->get_mhs_by_email($gmail);
+                    $user = $this->master_data->get_form_by_id_formulir($id_formulir);
+                    $jenis = "Surat Pengantar Riset";
+
+                    $mail = new PHPMailer(true);
+
+                    try {
+                        //Server settings            
+                        $mail->isSMTP();                                            //Send using SMTP            
+                        $mail->SMTPDebug = SMTP::DEBUG_SERVER;
+
+                        //Set the hostname of the mail server
+                        $mail->Host = 'smtp.gmail.com';
+
+                        //Set the SMTP port number - 587 for authenticated TLS, a.k.a. RFC4409 SMTP submission
+                        $mail->Port = 587;
+
+                        //Set the encryption mechanism to use - STARTTLS or SMTPS
+                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+
+                        //Whether to use SMTP authentication
+                        $mail->SMTPAuth = true;
+
+                        //Set AuthType to use XOAUTH2
+                        $mail->AuthType = 'XOAUTH2';
+
+                        $email = 'academicoperationskalbis@gmail.com';
+                        $clientId = '426965174563-q7ps5r823aau8dnq6cltlko0h96dju1m.apps.googleusercontent.com';
+                        $clientSecret = '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';
+
+                        //Obtained by configuring and running get_oauth_token.php
+                        //after setting up an app in Google Developer Console.
+                        $refreshToken = '1//0gf676lZoNfJCCgYIARAAGBASNwF-L9Irao8AUfBU_Jx43kQ53eoYGvF8cOEARtxISZDgXPJasvUHy_eTQKe-syOOuORCu0RpskE';
+                        $provider = new Google(
+                            [
+                                'clientId' => $clientId,
+                                'clientSecret' => $clientSecret,
+                            ]
+                        );
+                        $mail->setOAuth(new OAuth([
+                            'provider' => $provider,
+                            'clientId' => $clientId,
+                            'clientSecret' => $clientSecret,
+                            'refreshToken' => $refreshToken,
+                            'userName' => $email,
+                        ]));
+
+                        //Recipients
+                        $mail->setFrom('academicoperationsKkalbis@gmail.com', 'Academic Operation Kalbis Institute');
+                        $mail->addAddress($gmail);               //Name is optional
+                        // $mail->addAttachment($_SERVER['DOCUMENT_ROOT'] . '/web_akademik' . $path);
+                        $path_surat = $_SERVER['DOCUMENT_ROOT'] . '/web_akademik' . $path;
+                        $mail->addAttachment($path_surat);         //Add attachments
+                        //Content
+                        $mail->isHTML(true);                                  //Set email format to HTML
+                        $mail->Subject = 'Formulir Pengajuan ' . $jenis . '(' . $user['no_form'] . ')';
+                        $mail->Body    = '<div class="container" style="width: 600px; height: 100%;">
+                                                 <div class="card" style="width: 100%; height: 100%;">
+                                                     <div class="card-header " style="background-color:#6777ef;color:#fff;width: 100%; height: 100px; display: flex; justify-content: center; align-items: center; text-align: center; background: #007bff;">
+                                                         <h3 style="font-size: 18px; text-align: center; padding: 0 175px; " >' . $jenis . '(' . $user['no_form'] . ')</h3>
+                                                     </div>
+                                                     <div class="card-body" style="background-color: rgb(240, 240, 240); padding: 50px;">
+                                                         <h2 class="card-text">Hello, ' . $mhs['nama_lengkap'] . '</h2>
+                                                         <h4 class="card-text">Surat untuk formulir pengajuan ' . $jenis . ' dengan nomor formulir <br> ' . $user['no_form'] . ' telah dibuat.</h4>
+                                                         <h5 class="card-text">Untuk melihat lebih detail silahkan kunjungi link berikut: <a href="http://localhost/web_akademik/Pengajuan-Form/" class="btn btn-link">Detail Formulir</a></h5>
+                                                     </div>
+                                                 </div>
+                                                 <div class="row">
+                                                <div class="col-12">										
+                                                    <p class="card-text">Jalan Pulomas Selatan Kav. 22 Jakarta Timur, Indonesia - 13210</p>										
+                                                    <p class="card-text">Telp     : 021 - 47883900 ext. 1119 - 1121</p>										
+                                                    <p class="card-text">Email  : academicoperationskalbis@gmail.com</p>										
+                                                </div>
+                                            </div>
+                                             </div>';
+                        // $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+                        $mail->send();
+                        echo ($this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-success animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Data Surat Berhasil Di Buat!</div>'));
+                        redirect('superadmin/master_data/get_formulir_kp/2/' . $user['id_formulir']);
+                    } catch (Exception $e) {
+                        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+                    }
+                }
+                // echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-success animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Data Surat Berhasil Di Buat!</div>');
+                // redirect('admin-data-formulir');
             } else {
                 echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-danger animated fadeIn" role="alert"><i class="fa fa-times mr-2"></i>Data Surat Gagal Di Buat!</div>');
                 redirect('admin-data-formulir');
             }
         }
     }
-    public function duplicate($id_formulir, $id_jenis_p)
+    function test()
     {
-        $this->master_data->duplikasi_admin($id_formulir);
+        redirect('superadmin/master_data/data_formulir');
+    }
+
+    public function validate($id_formulir, $id_jenis_p, $emailMHS)
+    {
+        ob_start();
+        $data = [
+            'id_formulir' => $id_formulir,
+            'approval_admin' => 1,
+            'update_at' => date('Y-m-d')
+        ];
+        $validate = $this->master_data->validasi_admin1($data);
+        if ($validate) {
+            $mhs = $this->master_data->get_mhs_by_email($emailMHS);
+            $user = $this->master_data->get_form_by_id_formulir($id_formulir);
+            if ($id_jenis_p == 1) {
+                $jenis = "Surat Pengantar Riset";
+                $link = 'superadmin/master_data/get_formulir_riset/1/' . $user['id_formulir'];
+            } elseif ($id_jenis_p == 2) {
+                $jenis = "Surat Pengantar Kerja Praktik";
+                $link = 'superadmin/master_data/get_formulir_kp/2/' . $user['id_formulir'];
+            }
+            $mail = new PHPMailer(true);
+            try {
+                // Server Settings
+                $mail->isSMTP();                                            //Send using SMTP            
+                $mail->SMTPDebug = SMTP::DEBUG_SERVER;
+                $mail->Host     = 'smtp.gmail.com';
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->SMTPAuth = true;
+                $mail->AuthType = 'XOAUTH2';
+                // $mail->Username = 'academicoperationskalbis@gmail.com';
+                // $mail->Password = 'Hadits123';
+                $mail->SMTPSecure = 'tls';
+                $mail->Port     = 587;
+                $email = 'academicoperationskalbis@gmail.com';
+                $clientId = '426965174563-q7ps5r823aau8dnq6cltlko0h96dju1m.apps.googleusercontent.com';
+                $clientSecret = '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';
+
+                //Obtained by configuring and running get_oauth_token.php
+                //after setting up an app in Google Developer Console.
+                $refreshToken = '1//0gf676lZoNfJCCgYIARAAGBASNwF-L9Irao8AUfBU_Jx43kQ53eoYGvF8cOEARtxISZDgXPJasvUHy_eTQKe-syOOuORCu0RpskE';
+                $provider = new Google(
+                    [
+                        'clientId' => $clientId,
+                        'clientSecret' => $clientSecret,
+                    ]
+                );
+                $mail->setOAuth(new OAuth([
+                    'provider' => $provider,
+                    'clientId' => $clientId,
+                    'clientSecret' => $clientSecret,
+                    'refreshToken' => $refreshToken,
+                    'userName' => $email,
+                ]));
+
+                //Recipients
+                $mail->setFrom('academicoperationsKkalbis@gmail.com', 'Academic Operation Kalbis Institute');
+                $mail->addAddress($emailMHS);
+
+                //Content
+                $mail->isHTML(true);
+                $mail->Subject = 'Formulir Pengajuan ' . $jenis . '(' . $user['no_form'] . ')';
+                $mail->Body    = '<div class="container" style="width: 600px; height: 100%;">
+                                     <div class="card" style="width: 100%; height: 100%;">
+                                         <div class="card-header " style="background-color:#6777ef;color:#fff;width: 100%; height:
+                                          100px; display: flex; justify-content: center; align-items: center; text-align: center;
+                                           background: #007bff;">
+                                             <h3 style="font-size: 18px; text-align: center; padding: 0 175px; " >'
+                    . $jenis . '(' . $user['no_form'] . ')</h3>
+                                         </div>
+                                         <div class="card-body" style="background-color: rgb(240, 240, 240); padding: 50px;">
+                                             <h2 class="card-text">Hello, ' . $mhs['nama_lengkap'] . '</h2>
+                                             <h4 class="card-text">Formulir pengajuan ' . $jenis . ' dengan nomor formulir <br> '
+                    . $user['no_form'] . ' telah di Approve oleh admin.</h4>
+                                             <h5 class="card-text">Untuk melihat lebih detail silahkan kunjungi link berikut: 
+                                             <a href="http://localhost/web_akademik/Pengajuan-Form/" class="btn btn-link">
+                                             Detail Formulir</a></h5>
+                                         </div>
+                                     </div>
+                                     <div class="row">
+									<div class="col-12">										
+										<p class="card-text">Jalan Pulomas Selatan Kav. 22 Jakarta Timur, Indonesia - 13210</p>										
+										<p class="card-text">Telp     : 021 - 47883900 ext. 1119 - 1121</p>										
+										<p class="card-text">Email  : academicoperationskalbis@gmail.com</p>										
+									</div>
+								</div>
+                                 </div>';
+                $mail->send();
+                echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-success animated fadeIn" 
+                role="alert"><i class="fa fa-times mr-2"></i>Formulir sudah di <b>validasi<b>!</div>');
+                redirect($link);
+            } catch (Exception $e) {
+                echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+            }
+        }
+    }
+
+    public function duplicate($id_formulir, $id_jenis_p, $emailMhs)
+    {
+        ob_start();
         if ($id_jenis_p == 1) {
-            redirect('admin-data-formulir');
+            $jenis = "Surat Pengantar Riset";
+            $link = 'superadmin/master_data/get_formulir_riset/1/' . $id_formulir;
         } elseif ($id_jenis_p == 2) {
-            redirect('admin-data-formulir');
+            $jenis = "Surat Pengantar Kerja Praktik";
+            $link = 'superadmin/master_data/get_formulir_kp/2/' . $id_formulir;
+        }
+        $reject = $this->master_data->duplikasi_admin($id_formulir);
+
+        if ($reject) {
+            $mhs = $this->master_data->get_mhs_by_email($emailMhs);
+            $data_form = $this->master_data->get_form_by_id_formulir($id_formulir);
+            $mail = new PHPMailer(true);
+            try {
+                //Server settings            
+                $mail->isSMTP();                                            //Send using SMTP            
+                $mail->SMTPDebug = SMTP::DEBUG_SERVER;
+                $mail->Host     = 'smtp.gmail.com';
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->SMTPAuth = true;
+                $mail->AuthType = 'XOAUTH2';
+                // $mail->Username = 'academicoperationskalbis@gmail.com';
+                // $mail->Password = 'Hadits123';
+                // $mail->SMTPSecure = 'tls';
+                $mail->Port     = 587;
+                $email = 'academicoperationskalbis@gmail.com';
+                $clientId = '426965174563-q7ps5r823aau8dnq6cltlko0h96dju1m.apps.googleusercontent.com';
+                $clientSecret = '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';
+
+                //Obtained by configuring and running get_oauth_token.php
+                //after setting up an app in Google Developer Console.
+                $refreshToken = '1//0gf676lZoNfJCCgYIARAAGBASNwF-L9Irao8AUfBU_Jx43kQ53eoYGvF8cOEARtxISZDgXPJasvUHy_eTQKe-syOOuORCu0RpskE';
+                $provider = new Google(
+                    [
+                        'clientId' => $clientId,
+                        'clientSecret' => $clientSecret,
+                    ]
+                );
+                $mail->setOAuth(new OAuth([
+                    'provider' => $provider,
+                    'clientId' => $clientId,
+                    'clientSecret' => $clientSecret,
+                    'refreshToken' => $refreshToken,
+                    'userName' => $email,
+                ]));
+
+                //Recipients
+                $mail->setFrom('academicoperationsKkalbis@gmail.com', 'Academic Operation Kalbis Institute');
+                $mail->addAddress($emailMhs);
+
+                //Content
+                $mail->isHTML(true);
+                $mail->Subject = 'Formulir Pengajuan ' . $jenis . '(' . $data_form['no_form'] . ')';
+                $mail->Body    = '<div class="container" style="width: 600px; height: 100%;">
+                                     <div class="card" style="width: 100%; height: 100%;">
+                                         <div class="card-header " style="background-color:#6777ef;color:#fff;
+                                         width: 100%; height: 100px; display: flex; justify-content: center; 
+                                         align-items: center; text-align: center; background: #007bff;">
+                                             <h3 style="font-size: 18px; text-align: center; padding: 0 175px; " >'
+                    . $jenis . '(' . $data_form['no_form'] . ')</h3>
+                                         </div>
+                                         <div class="card-body" style="background-color: rgb(240, 240, 240); padding: 50px;">
+                                             <h2 class="card-text">Hello, ' . $mhs['nama_lengkap'] . '</h2>
+                                             <h4 class="card-text">Formulir pengajuan ' . $jenis . ' dengan nomor formulir 
+                                             <br> ' . $data_form['no_form'] . ' di reject oleh Admin.</h4>
+                                             <h5 class="card-text">Untuk melihat lebih detail silahkan kunjungi link berikut:
+                                              <a href="http://localhost/web_akademik/Pengajuan-Form/" class="btn btn-link">
+                                              Detail Formulir</a></h5>
+                                         </div>
+                                     </div>
+                                     <div class="row">
+									<div class="col-12">										
+										<p class="card-text">Jalan Pulomas Selatan Kav. 22 Jakarta Timur, Indonesia - 13210</p>										
+										<p class="card-text">Telp     : 021 - 47883900 ext. 1119 - 1121</p>										
+										<p class="card-text">Email  : academicoperationskalbis@gmail.com</p>										
+									</div>
+								</div>
+                                 </div>';
+                $mail->send();
+                echo $this->session->set_flashdata('msg', '<div id="lookatme"  class="alert alert-success animated fadeIn"
+                 role="alert"><i class="fa fa-times mr-2"></i>Formulir sudah di <b>reject<b>!</div>');
+                redirect($link);
+            } catch (Exception $e) {
+                echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+            }
         }
     }
 
@@ -575,12 +912,10 @@ class Master_data extends CI_Controller
 
     public function download_surat($id_jenis_p, $id_surat)
     {
-
         if ($id_jenis_p == 1) {
             $pdf_surat_riset = $this->master_data->get_pdf_surat_riset($id_surat);
             $surat_riset = $this->master_data->get_surat($id_surat);
             $path_file = $_SERVER['DOCUMENT_ROOT'] . '/web_akademik' . $pdf_surat_riset['file_pdf'];
-            // $surat_riset = $this->master_data->get_surat($id_surat);
 
             header("Cache-Control:  maxage=1");
             header("Pragma: public");
@@ -589,14 +924,11 @@ class Master_data extends CI_Controller
             header("Content-length: " . filesize($path_file));
             header("Content-disposition: attachment; filename=\"" . basename($path_file) . "\"");
             readfile($path_file);
-            // force_download($surat_riset['nama_file'], $path_file);
         } elseif ($id_jenis_p == 2) {
             $pdf_surat_riset = $this->master_data->get_pdf_surat_riset($id_surat);
             $surat_riset = $this->master_data->get_surat($id_surat);
             $path_file = $_SERVER['DOCUMENT_ROOT'] . '/web_akademik' . $pdf_surat_riset['file_pdf'];
-            // $surat_riset = $this->master_data->get_surat($id_surat);
-            print_r($surat_riset);
-            die();
+
             header("Cache-Control:  maxage=1");
             header("Pragma: public");
             header("Content-type: application/pdf");
@@ -609,16 +941,20 @@ class Master_data extends CI_Controller
 
     public function delete_mahasiswa($id)
     {
-        $delete_data = $this->master_data->delete_data_mahasiswa($id);
-
-        echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Data berhasil di hapus !</div>');
+        $this->master_data->delete_data_mahasiswa($id);
+        echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button"
+         class="close" data-dismiss="alert">&times;</button>Data berhasil di hapus !</div>');
         redirect('superadmin/Master_data/data_mahasiswa');
-        // if ($delete_data) {
-        //     $delete_mhs = $this->master_data->delete_mahasiswa($id);
-        //     if ($delete_mhs) {
-        //     }
-        // }
     }
+
+    public function delete_ttd($id)
+    {
+        $this->master_data->delete_data_ttd($id);
+        echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button"
+         class="close" data-dismiss="alert">&times;</button>Data berhasil di hapus !</div>');
+        redirect('superadmin/Master_data/data_ttd');
+    }
+
     public function delete_karyawan($id)
     {
         $this->master_data->delete_karyawan($id);
@@ -631,13 +967,13 @@ class Master_data extends CI_Controller
     {
         $nama = str_replace("'", "", $this->security->xss_clean($this->input->post('nama_lengkap')));
         $nmfile = "ttd_" . $nama; //nama file saya beri nama langsung dan diikuti fungsi time
-        $config['upload_path'] = $_SERVER['DOCUMENT_ROOT'] . '/web_akademik/assets/data/ttd/'; //path folder
+        $path = '/web_akademik/assets/data/ttd/';
+        $config['upload_path'] = $_SERVER['DOCUMENT_ROOT'] . $path; //path folder
         $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp'; //type yang dapat diakses bisa anda sesuaikan
         $config['max_size'] = '2048000000'; //maksimum besar file 2M
         $config['max_width']  = '0'; //lebar maksimum 1288 px
         $config['max_height']  = '0'; //tinggi maksimu 1000 px
         $config['file_name'] = $nmfile; //nama yang terupload nantinya
-
         $this->upload->initialize($config);
         $this->load->library('upload', $config);
         if (!empty($_FILES['foto']['name'])) {
@@ -654,21 +990,30 @@ class Master_data extends CI_Controller
                     'created_at' => date('Y-m-d H:i:S'),
                     'updated_at' => date('Y-m-d H:i:S')
                 ];
-                // print_r($data);
-                // die();
+
                 $data1 = $this->security->xss_clean($data);
                 $insert = $this->master_data->save_ttd($data1);
                 if ($insert == true) {
-                    echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Data tanda tangan <b>' . $nama . '</b>, berhasil ditambahkan.</div>');
+                    echo $this->session->set_flashdata('msg', '<div class="alert alert-success">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>Data tanda tangan <b>'
+                        . $nama . '</b>, berhasil ditambahkan.</div>');
                     redirect('admin-add-ttd');
                 } else {
-                    echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button>Data tanda tangan <b>' . $nama . '</b>, gagal ditambahkan.</div>');
+                    echo $this->session->set_flashdata('msg', '<div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>Data tanda tangan <b>'
+                        . $nama . '</b>, gagal ditambahkan.</div>');
                     redirect('admin-add-ttd');
                 }
             } else {
-                echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button>' . $this->upload->display_errors() . '</div>');
+                echo $this->session->set_flashdata('msg', '<div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>'
+                    . $this->upload->display_errors() . '</div>');
                 redirect('admin-add-ttd');
             }
+        } else {
+            echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" 
+                class="close" data-dismiss="alert">&times;</button>' . $this->upload->display_errors() . '</div>');
+            redirect('admin-add-ttd');
         }
     }
 
@@ -840,26 +1185,24 @@ class Master_data extends CI_Controller
 
     public function save_mahasiswa()
     {
-
         $nim = str_replace("'", "", $this->security->xss_clean($this->input->post('nim')));
-        $nmfile = $nim . "_" . date("H-i-s"); //nama file saya beri nama langsung dan diikuti fungsi time
-        $config['upload_path'] = $_SERVER['DOCUMENT_ROOT'] . '/web_akademik/assets/data/mahasiswa/foto_profilM'; //path folder
+        $path = '/web_akademik/assets/data/mahasiswa/foto_profilM';
+        $nmfile = $nim . "_" . date("H-i-s"); //nama file saya beri nama langsung dengan nim dan tgl
+        $config['upload_path'] = $_SERVER['DOCUMENT_ROOT'] . $path; //path folder
         $config['allowed_types'] = 'gif|jpg|PNG|jpeg|bmp'; //type yang dapat diakses bisa anda sesuaikan
         $config['max_size'] = '2048000000'; //maksimum besar file 2M
-        $config['max_width']  = '0'; //lebar maksimum 1288 px
-        $config['max_height']  = '0'; //tinggi maksimu 1000 px
+        $config['max_width']  = '0';
+        $config['max_height']  = '0';
         $config['file_name'] = $nmfile; //nama yang terupload nantinya
-        $pw = md5(str_replace("'", "", $this->security->xss_clean($this->input->post('password'))),);
+
         $this->upload->initialize($config);
         $this->load->library('upload', $config);
         if (!empty($_FILES['foto']['name'])) {
             if ($this->upload->do_upload('foto')) {
-
+                $pw = md5(str_replace("'", "", $this->security->xss_clean($this->input->post('password'))),);
                 $pic = $this->upload->data();
                 $foto = "/assets/data/mahasiswa/foto_profilM/" . $pic['file_name'];
-
                 $data = [
-
                     'email' => str_replace("'", "", $this->security->xss_clean($this->input->post('email'))),
                     'nama_lengkap' => str_replace("'", "", $this->security->xss_clean($this->input->post('nama_lengkap'))),
                     'password' => $pw,
@@ -873,12 +1216,8 @@ class Master_data extends CI_Controller
                     'created_at' => date('Y-m-d H:i:S'),
                     'updated_at' => date('Y-m-d H:i:S')
                 ];
-
-
-
                 $data1 = $this->security->xss_clean($data);
                 $insert = $this->master_data->save_mahasiswa($data1);
-
                 if ($insert) {
                     $data_prodi = [
                         'id_mahasiswa' => $insert,
@@ -887,15 +1226,18 @@ class Master_data extends CI_Controller
                     ];
                     $data2 = $this->security->xss_clean($data_prodi);
                     $insert_id = $this->master_data->save_data_kampus($data2);
-
-                    echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Data  <b>' . $data['nama_lengkap'] . '</b> Successfully added to database.</div>');
+                    echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" 
+                    class="close" data-dismiss="alert">&times;</button>Data  <b>' . $data['nama_lengkap'] .
+                        '</b> Successfully added to database.</div>');
                     redirect('superadmin/Master_data/add_mahasiswa');
                 } else {
-                    echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button></b> Failed added to database.</div>');
+                    echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" 
+                    class="close" data-dismiss="alert">&times;</button></b> Failed added to database.</div>');
                     redirect('superadmin/Master_data/add_mahasiswa');
                 }
             } else {
-                echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button>' . $this->upload->display_errors() . '</div>');
+                echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" 
+                class="close" data-dismiss="alert">&times;</button>' . $this->upload->display_errors() . '</div>');
                 redirect('superadmin/Master_data/add_mahasiswa');
             }
         } else {
@@ -912,16 +1254,8 @@ class Master_data extends CI_Controller
                 'created_at' => date('Y-m-d H:i:S'),
                 'updated_at' => date('Y-m-d H:i:S')
             ];
-
-
-
-
             $data1 = $this->security->xss_clean($data);
-
-
             $a = $this->master_data->save_mahasiswa1($data1);
-            // print_r($a);
-            // die();
             if ($a) {
                 $data_prodi = [
                     'id_mahasiswa' => $a,
@@ -931,36 +1265,37 @@ class Master_data extends CI_Controller
                 $data2 = $this->security->xss_clean($data_prodi);
                 $insert_id = $this->master_data->save_data_kampus($data2);
             }
-
-            echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Data <b>' . $data['nama_lengkap'] . '</b> Successfully added to database.</div>');
+            echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" 
+            class="close" data-dismiss="alert">&times;</button>Data <b>' . $data['nama_lengkap'] .
+                '</b> Successfully added to database.</div>');
             redirect('superadmin/Master_data/add_mahasiswa');
         }
     }
+
     public function update_mahasiswa($id)
     {
-
         $nim = str_replace("'", "", $this->security->xss_clean($this->input->post('nim')));
-        $nmfile = $nim . "_" . date("H-i-s"); //nama file saya beri nama langsung dan diikuti fungsi time
-        $config['upload_path'] = $_SERVER['DOCUMENT_ROOT'] . '/web_akademik/assets/data/mahasiswa/foto_profilM/'; //path folder
+        $path = '/web_akademik/assets/data/mahasiswa/foto_profilM/';
+        $nmfile = $nim . "_" . date("H-i-s"); //nama file saya beri nama nim dan tanggal
+        $config['upload_path'] = $_SERVER['DOCUMENT_ROOT'] . $path; //path folder
         $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp'; //type yang dapat diakses bisa anda sesuaikan
         $config['max_size'] = '2048000000'; //maksimum besar file 2M
         $config['max_width']  = '0'; //lebar maksimum 1288 px
         $config['max_height']  = '0'; //tinggi maksimu 1000 px
         $config['file_name'] = $nmfile; //nama yang terupload nantinya
-        $pw = md5(str_replace("'", "", $this->security->xss_clean($this->input->post('password'))),);
         $this->upload->initialize($config);
         $this->load->library('upload', $config);
         if (!empty($_FILES['foto']['name'])) {
             if ($this->upload->do_upload('foto')) {
-
+                $pw = str_replace("'", "", $this->security->xss_clean($this->input->post('password')));
                 $pic = $this->upload->data();
                 $foto = "/assets/data/mahasiswa/foto_profilM/" . $pic['file_name'];
 
-                $data = [
+                $data1 = [
 
                     'email' => str_replace("'", "", $this->security->xss_clean($this->input->post('email'))),
                     'nama_lengkap' => str_replace("'", "", $this->security->xss_clean($this->input->post('nama_lengkap'))),
-                    'password' => $pw,
+                    'password' => md5($pw),
                     'tempat' => str_replace("'", "", $this->security->xss_clean($this->input->post('tempat'))),
                     'tgl_lahir' => str_replace("'", "", $this->security->xss_clean($this->input->post('tgl_lahir'))),
                     'jenis_kelamin' => str_replace("'", "", $this->security->xss_clean($this->input->post('jenis_kelamin'))),
@@ -974,7 +1309,7 @@ class Master_data extends CI_Controller
                     'nim' => $nim,
                     'program_studi' => $this->input->post('prodi')
                 ];
-                if ($data['password'] == null) {
+                if ($pw == null) {
                     $data = [
                         'email' => str_replace("'", "", $this->security->xss_clean($this->input->post('email'))),
                         'nama_lengkap' => str_replace("'", "", $this->security->xss_clean($this->input->post('nama_lengkap'))),
@@ -989,28 +1324,33 @@ class Master_data extends CI_Controller
                     $data1 = $this->security->xss_clean($data);
                     $data2 = $this->security->xss_clean($data_kampus);
                 } else {
-                    $data1 = $this->security->xss_clean($data);
+                    $data1 = $this->security->xss_clean($data1);
                     $data2 = $this->security->xss_clean($data_kampus);
                 }
 
                 $insert = $this->master_data->update_mahasiswa($data1, $id);
                 if ($insert) {
                     $update = $this->master_data->update_data_kampus($data2, $id);
-                    echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Data  <b>' . $data['nama_lengkap'] . '</b> Successfully added to database.</div>');
+                    echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button"
+                     class="close" data-dismiss="alert">&times;</button>Data  <b>' . $data['nama_lengkap'] .
+                        '</b> Successfully added to database.</div>');
                     redirect('superadmin/Master_data/data_mahasiswa');
                 } else {
-                    echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button></b> Failed added to database.</div>');
+                    echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button"
+                     class="close" data-dismiss="alert">&times;</button></b> Failed added to database.</div>');
                     redirect('superadmin/Master_data/data_mahasiswa');
                 }
             } else {
-                echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button>' . $this->upload->display_errors() . '.</div>');
+                echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" 
+                class="close" data-dismiss="alert">&times;</button>' . $this->upload->display_errors() . '.</div>');
                 redirect('superadmin/Master_data/data_mahasiswa');
             }
         } else {
-            $data = [
+            $pw = str_replace("'", "", $this->security->xss_clean($this->input->post('password')));
+            $data1 = [
                 'email' => str_replace("'", "", $this->security->xss_clean($this->input->post('email'))),
                 'nama_lengkap' => str_replace("'", "", $this->security->xss_clean($this->input->post('nama_lengkap'))),
-                'password' => $pw,
+                'password' => md5($pw),
                 'tempat' => str_replace("'", "", $this->security->xss_clean($this->input->post('tempat'))),
                 'tgl_lahir' => str_replace("'", "", $this->security->xss_clean($this->input->post('tgl_lahir'))),
                 'jenis_kelamin' => str_replace("'", "", $this->security->xss_clean($this->input->post('jenis_kelamin'))),
@@ -1023,9 +1363,8 @@ class Master_data extends CI_Controller
                 'program_studi' => $this->input->post('prodi')
             ];
 
-            if ($data['password'] == null) {
+            if ($pw == null) {
                 $data = [
-
                     'email' => str_replace("'", "", $this->security->xss_clean($this->input->post('email'))),
                     'nama_lengkap' => str_replace("'", "", $this->security->xss_clean($this->input->post('nama_lengkap'))),
                     'tempat' => str_replace("'", "", $this->security->xss_clean($this->input->post('tempat'))),
@@ -1038,14 +1377,16 @@ class Master_data extends CI_Controller
                 $data1 = $this->security->xss_clean($data);
                 $data1 = $this->security->xss_clean($data_kampus);
             } else {
-                $data1 = $this->security->xss_clean($data);
+                $data1 = $this->security->xss_clean($data1);
                 $data2 = $this->security->xss_clean($data_kampus);
             }
 
             $update1 = $this->master_data->update_mahasiswa1($data1, $id);
             if ($update1) {
                 $this->master_data->update_data_kampus1($data2, $id);
-                echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>Data <b>' . $data['nama_lengkap'] . '</b> Successfully added to database.</div>');
+                echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" 
+                class="close" data-dismiss="alert">&times;</button>Data <b>' . $data['nama_lengkap'] .
+                    '</b> Successfully added to database.</div>');
                 redirect('superadmin/Master_data/data_mahasiswa');
             }
         }
@@ -1065,26 +1406,77 @@ class Master_data extends CI_Controller
     public function lihat_surat_kp($id_jenis_p, $id_surat)
     {
         $pdf_surat_kp = $this->master_data->get_pdf_surat_kp($id_surat);
-        // print_r($pdf_surat_kp);
-        // die();
         $filename = $pdf_surat_kp;
-        // print_r($filename);
-        // die();
         redirect($filename);
     }
 
+    public function update_ttd($id)
+    {
+        $nmfile = $this->input->post("foto"); //nama file saya beri nama langsung dan diikuti fungsi time
+        $path = '/web_akademik/assets/data/ttd/';
+        $config['upload_path'] = $_SERVER['DOCUMENT_ROOT'] . $path; //path folder
+        $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp'; //type yang dapat diakses bisa anda sesuaikan
+        $config['max_size'] = '2048000000'; //maksimum besar file 2M
+        $config['max_width']  = '0'; //lebar maksimum 1288 px
+        $config['max_height']  = '0'; //tinggi maksimu 1000 px
+        $config['file_name'] = $nmfile; //nama yang terupload nantinya        
+        $this->upload->initialize($config);
+        $this->load->library('upload', $config);
+        if (!empty($_FILES['foto']['name'])) {
+            if ($this->upload->do_upload('foto')) {
 
+                $pic = $this->upload->data();
+                $foto = "/assets/data/ttd/" . $pic['file_name'];
+
+                $data = [
+
+                    'nama' => str_replace("'", "", $this->security->xss_clean($this->input->post('nama'))),
+                    'jabatan' => str_replace("'", "", $this->security->xss_clean($this->input->post('jabatan'))),
+                    'tanda_tangan' => $foto,
+                    'updated_at' => date('Y-m-d H:i:S')
+                ];
+                $data1 = $this->security->xss_clean($data);
+                $insert = $this->master_data->update_ttd($data1, $id);
+                if ($insert) {
+                    echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button"
+                     class="close" data-dismiss="alert">&times;</button>Data  <b>' . $data['nama'] .
+                        '</b> Successfully update to database.</div>');
+                    redirect('superadmin/Master_data/data_ttd');
+                } else {
+                    echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button"
+                     class="close" data-dismiss="alert">&times;</button></b> Failed update to database.</div>');
+                    redirect('superadmin/Master_data/data_ttd');
+                }
+            } else {
+                echo $this->session->set_flashdata('msg', '<div class="alert alert-danger"><button type="button" 
+                class="close" data-dismiss="alert">&times;</button>' . $this->upload->display_errors() . '.</div>');
+                redirect('superadmin/Master_data/data_ttd');
+            }
+        } else {
+            $data = [
+
+                'nama' => str_replace("'", "", $this->security->xss_clean($this->input->post('nama'))),
+                'jabatan' => str_replace("'", "", $this->security->xss_clean($this->input->post('jabatan'))),
+                'updated_at' => date('Y-m-d H:i:S')
+            ];
+
+
+            $data1 = $this->security->xss_clean($data);
+            $update1 = $this->master_data->update_ttd($data1, $id);
+            if ($update1) {
+
+                echo $this->session->set_flashdata('msg', '<div class="alert alert-success"><button type="button" 
+                class="close" data-dismiss="alert">&times;</button>Data <b>' . $data['nama'] .
+                    '</b> Successfully update to database.</div>');
+                redirect('superadmin/Master_data/data_ttd');
+            }
+        }
+    }
 
     public function lihat_surat_riset($id_jenis_p, $id_surat)
     {
-
         $pdf_surat_riset = $this->master_data->get_pdf_surat_riset($id_surat);
-        // print_r($pdf_surat_riset);
-        // die();
         $filename = $pdf_surat_riset;
-
-        // print_r($filename);
-        // die();
         redirect($filename);
     }
 }

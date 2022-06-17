@@ -35,3 +35,27 @@
         </div>
     </div>
     <?php $this->load->view('superadmin/V_footer'); ?>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script>
+        $("#login").click(() => {
+            let username = $("#username").val();
+            let password = $("#password").val();
+            $.ajax({
+                type: 'POST',
+                url: `<?= base_url('superadmin/Login/LoginViaAjax/') ?>${username}/${password}`,
+                success: function(data) {
+                    let parsed = JSON.parse(data);
+                    console.log(parsed);
+                    swal({
+                        title: "Login Berhasil!",
+                        text: `Halo, ${username}`,
+                        icon: "success",
+                    }).then(() => {
+
+                        window.location = `<?= base_url("superadmin/Login/berhasilLoginAjax/") ?>`;
+                    })
+                },
+            })
+
+        })
+    </script>
