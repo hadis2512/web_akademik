@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 18, 2022 at 02:00 PM
+-- Generation Time: Jul 15, 2022 at 11:41 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 7.4.26
 
@@ -32,7 +32,6 @@ CREATE TABLE `data_formulir` (
   `no_form` varchar(100) NOT NULL,
   `id_mahasiswa` int(11) NOT NULL,
   `id_jenis_permohonan` int(11) NOT NULL,
-  `approval` int(11) NOT NULL DEFAULT 0 COMMENT '0= not approval, 1=approval,2=reject\r\n',
   `approval_admin` int(11) NOT NULL DEFAULT 0 COMMENT '0=admin not validate,1=admin validate,2=duplicate\r\n',
   `status_surat` int(11) NOT NULL COMMENT '0=not create,1=create surat',
   `updated_at` datetime NOT NULL DEFAULT current_timestamp(),
@@ -43,37 +42,20 @@ CREATE TABLE `data_formulir` (
 -- Dumping data for table `data_formulir`
 --
 
-INSERT INTO `data_formulir` (`id_formulir`, `no_form`, `id_mahasiswa`, `id_jenis_permohonan`, `approval`, `approval_admin`, `status_surat`, `updated_at`, `created_at`) VALUES
-(3, 'FR-KALBIS-OPR-99834/V1/R0', 29, 1, 1, 1, 1, '2022-04-30 00:00:00', '2022-04-01 18:56:00'),
-(4, 'FR-KALBIS-OPR-52042/V1/R0', 29, 1, 1, 1, 0, '2022-04-30 00:00:00', '2022-04-03 16:48:00'),
-(12, 'FR-KALBIS-OPR-46431/V1/R0', 29, 2, 1, 1, 1, '2022-04-30 00:00:00', '2022-04-03 17:36:00'),
-(13, 'FR-KALBIS-OPR-14176/V1/R0', 29, 1, 0, 0, 0, '2022-04-30 00:00:00', '2022-04-11 12:16:00'),
-(14, 'FR-KALBIS-OPR-25095/V1/R0', 30, 1, 0, 0, 0, '2022-04-30 00:00:00', '2022-04-15 13:26:00'),
-(15, 'FR-KALBIS-OPR-11882/V1/R0', 29, 1, 0, 0, 0, '2022-04-30 00:00:00', '2022-04-25 00:50:00'),
-(16, 'FR-KALBIS-OPR-70469/V1/R0', 29, 1, 1, 1, 0, '2022-04-30 00:00:00', '2022-04-25 02:32:00'),
-(17, 'FR-KALBIS-OPR-79137/V1/R0', 29, 2, 0, 1, 0, '2022-05-09 16:37:18', '2022-05-09 11:37:00'),
-(18, 'FR-KALBIS-OPR-30403/V1/R0', 29, 1, 1, 1, 1, '2022-05-17 13:28:07', '2022-05-17 08:28:07');
+INSERT INTO `data_formulir` (`id_formulir`, `no_form`, `id_mahasiswa`, `id_jenis_permohonan`, `approval_admin`, `status_surat`, `updated_at`, `created_at`) VALUES
+(24, 'FR-KALBIS-OPR-44519/V1/R0', 29, 1, 1, 1, '2022-06-11 01:17:07', '2022-06-10 20:17:07'),
+(25, 'FR-KALBIS-OPR-45195/V1/R0', 29, 2, 1, 1, '2022-06-11 02:29:32', '2022-06-10 21:29:32'),
+(26, 'FR-KALBIS-OPR-63046/V1/R0', 29, 1, 2, 0, '2022-06-14 16:33:21', '2022-06-14 11:33:21'),
+(30, 'FR-KALBIS-OPR-97790/V1/R0', 29, 1, 1, 0, '2022-06-14 21:30:05', '2022-06-14 16:30:05'),
+(31, 'FR-KALBIS-OPR-25634/V1/R0', 29, 1, 0, 0, '2022-06-16 02:20:23', '2022-06-15 21:20:23');
 
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `data_karyawan_kampus`
 --
-
-CREATE TABLE `data_karyawan_kampus` (
-  `id` int(11) NOT NULL,
-  `id_karyawan` int(11) NOT NULL,
-  `nip` char(15) NOT NULL,
-  `program_studi` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `data_karyawan_kampus`
---
-
-INSERT INTO `data_karyawan_kampus` (`id`, `id_karyawan`, `nip`, `program_studi`) VALUES
-(2, 6, 'H96219041', 2),
-(3, 7, 'h123123', 5);
+-- Error reading structure for table web_akademik.data_karyawan_kampus: #1932 - Table 'web_akademik.data_karyawan_kampus' doesn't exist in engine
+-- Error reading data for table web_akademik.data_karyawan_kampus: #1064 - You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FROM `web_akademik`.`data_karyawan_kampus`' at line 1
 
 -- --------------------------------------------------------
 
@@ -120,9 +102,8 @@ CREATE TABLE `data_surat` (
 --
 
 INSERT INTO `data_surat` (`id_surat`, `no_surat`, `id_formulir`, `id_admin`, `nama_file`, `file_pdf`, `created_at`) VALUES
-(31, '001/AO-SRT/IV/2022', 3, 1, '001-AO-SRT-IV-2022_surat_pengantar_riset_Muhammad Hadits Alkhafidl.pdf', '/assets/data/001-AO-SRT-IV-2022_surat_pengantar_riset_Muhammad Hadits Alkhafidl.pdf', '2022-05-12 00:00:00'),
-(32, '001/WRII-SRT/VI/2022', 12, 1, '001-WRII-SRT-VI-2022_Surat Pengantar Kerja Praktik_Muhammad Hadits Alkhafidl.pdf', '/assets/data/001-WRII-SRT-VI-2022_Surat Pengantar Kerja Praktik_Muhammad Hadits Alkhafidl.pdf', '2022-05-16 00:00:00'),
-(33, '002/AO-SRT/IV/2022', 18, 1, '002-AO-SRT-IV-2022_surat_pengantar_riset_Muhammad Hadits Alkhafidl.pdf', '/assets/data/002-AO-SRT-IV-2022_surat_pengantar_riset_Muhammad Hadits Alkhafidl.pdf', '2022-05-17 00:00:00');
+(70, '001/AO-SRT/IV/2022', 24, 1, '001-AO-SRT-IV-2022_surat_pengantar_riset_Muhammad Hadits Alkhafidl.pdf', '/assets/data/001-AO-SRT-IV-2022_surat_pengantar_riset_Muhammad Hadits Alkhafidl.pdf', '2022-06-10 00:00:00'),
+(72, '001/AO-SRT/VI/2022', 25, 1, '001-AO-SRT-VI-2022_surat_magang_Muhammad Hadits Alkhafidl.pdf', '/assets/data/001-AO-SRT-VI-2022_surat_magang_Muhammad Hadits Alkhafidl.pdf', '2022-06-10 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -145,8 +126,7 @@ CREATE TABLE `data_surat_kp` (
 --
 
 INSERT INTO `data_surat_kp` (`id_surat_kp`, `id_formulir`, `alamat_surat`, `nama_perusahaan`, `perwakilan_perusahaan`, `jabatan`, `telp_perusahaan`) VALUES
-(2, 12, 'Jalan Pulomas Selatan Kav.22 Jakarta Timur Daerah Khusus Ibukota Jakarta', 'Kalbis Institute', 'Mamat', 'Head Academic Advisor', '0274786766'),
-(3, 17, 'jalanin aja', 'alpamaret', 'jalal', 'ceo', '12837');
+(7, 25, 'warakas 7', 'PT.ABC', 'Marsel', 'Human Resource', '09888732817');
 
 -- --------------------------------------------------------
 
@@ -171,13 +151,10 @@ CREATE TABLE `data_surat_pengantar_riset` (
 --
 
 INSERT INTO `data_surat_pengantar_riset` (`id_pengantar_riset`, `id_formulir`, `jenis_tugas`, `judul`, `alamat_surat`, `nama_perusahaan`, `perwakilan_perusahaan`, `jabatan`, `telp_perusahaan`) VALUES
-(2, 3, 'tugas akhir', 'Assalamualaikum', 'qweq', 'dddd', 'ddad', 'HR', '12323'),
-(3, 4, 'tugas kuliah', 'wiuwiu', 'ddsa', 'ssad', 'dsa', 'SUPERVISOR', '12323'),
-(5, 13, 'tugas akhir', 'asd', 'qwe', 'dsa', 'ssad', 'MANAGER', '12323'),
-(6, 14, 'tugas akhir', 'Test aja', 'ddsa', 'ddsa', 'asd', 'BOS', '12323'),
-(7, 15, 'tugas akhir', 'lol', 'asd', 'das', 'qwert', 'STAFF', '12323'),
-(8, 16, 'tugas akhir', 'wiwiw', 'Jalan Situmorang 10', 'Indomaret', 'Jalal', 'Manager', '9992381'),
-(9, 18, 'tugas akhir', 'Test', 'Jalan kebon kacang', 'PT.ABC', 'amad', 'manager', '123');
+(12, 24, 'tugas akhir', 'bla bala bla', 'sakaraw', 'jarang untung', 'jamal', 'rektor', '082125961874'),
+(13, 26, '', '', '', '', '', '', ''),
+(17, 30, 'tugas akhir', 'Test', 'asd', 'asd', 'asd', 'asd', '123123'),
+(18, 31, 'tugas kuliah', 'Perbandingan Metode Pengembangan Aplikasi Pada Perusahaan A', 'Jalan Kebon Asih', 'PT. A', 'Ramli Suseno', 'Human Resource', '0988832912318');
 
 -- --------------------------------------------------------
 
@@ -189,7 +166,6 @@ CREATE TABLE `data_ttd` (
   `id_ttd` int(11) NOT NULL,
   `nama` varchar(200) NOT NULL,
   `jabatan` char(30) NOT NULL,
-  `id_jenis_permohonan` int(11) NOT NULL,
   `tanda_tangan` varchar(250) NOT NULL,
   `updated_at` datetime NOT NULL,
   `created_at` datetime NOT NULL
@@ -199,8 +175,8 @@ CREATE TABLE `data_ttd` (
 -- Dumping data for table `data_ttd`
 --
 
-INSERT INTO `data_ttd` (`id_ttd`, `nama`, `jabatan`, `id_jenis_permohonan`, `tanda_tangan`, `updated_at`, `created_at`) VALUES
-(2, 'Muhammad Hadits Alkhafidl', 'Wakil  Rektor II', 1, '/assets/data/ttd/ttd_Muhammad_Hadits_Alkhafidl.png', '2022-04-26 17:42:00', '2022-04-26 17:42:00');
+INSERT INTO `data_ttd` (`id_ttd`, `nama`, `jabatan`, `tanda_tangan`, `updated_at`, `created_at`) VALUES
+(2, 'Muhammad Hadits Alkhafidl', 'Head of Student Academic', '/assets/data/ttd/ttd.png', '2022-06-05 20:39:00', '2022-04-26 17:42:00');
 
 -- --------------------------------------------------------
 
@@ -266,31 +242,8 @@ INSERT INTO `jenispermohonan` (`id`, `nama`) VALUES
 --
 -- Table structure for table `karyawan`
 --
-
-CREATE TABLE `karyawan` (
-  `id` int(11) NOT NULL,
-  `email` varchar(156) NOT NULL,
-  `password` varchar(156) NOT NULL,
-  `nama_lengkap` varchar(156) NOT NULL,
-  `tempat` varchar(156) NOT NULL,
-  `tgl_lahir` date NOT NULL,
-  `jenis_kelamin` char(10) NOT NULL,
-  `no_telp` char(15) NOT NULL,
-  `alamat` varchar(200) NOT NULL,
-  `foto` varchar(11) NOT NULL,
-  `jabatan` varchar(20) NOT NULL,
-  `is_active` int(11) NOT NULL,
-  `updated_at` datetime NOT NULL,
-  `created_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `karyawan`
---
-
-INSERT INTO `karyawan` (`id`, `email`, `password`, `nama_lengkap`, `tempat`, `tgl_lahir`, `jenis_kelamin`, `no_telp`, `alamat`, `foto`, `jabatan`, `is_active`, `updated_at`, `created_at`) VALUES
-(6, 'Jamal@gmail.com', '202cb962ac59075b964b07152d234b70', 'Abdul Jamal Billah', 'Jakarta', '1966-02-10', 'Pria', '1234441', 'jalan kebon bawang 11, RT.004, RW.01 Kebon Bawang, Tanjung Priok 14320', '', 'Dosen', 1, '2022-02-20 13:20:00', '2022-02-20 13:20:00'),
-(7, 'loli@gmail.com', '202cb962ac59075b964b07152d234b70', 'Lolita Agesta', 'Jakarta', '1966-08-15', 'Wanita', '128371283', 'JL. Bambu Apus 3', '', 'Dosen', 1, '2022-04-16 14:29:00', '2022-04-16 14:29:00');
+-- Error reading structure for table web_akademik.karyawan: #1932 - Table 'web_akademik.karyawan' doesn't exist in engine
+-- Error reading data for table web_akademik.karyawan: #1064 - You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'FROM `web_akademik`.`karyawan`' at line 1
 
 -- --------------------------------------------------------
 
@@ -403,14 +356,6 @@ ALTER TABLE `data_formulir`
   ADD KEY `id_dosen` (`approval_admin`);
 
 --
--- Indexes for table `data_karyawan_kampus`
---
-ALTER TABLE `data_karyawan_kampus`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id_karyawan` (`id_karyawan`),
-  ADD KEY `id_prodi` (`program_studi`);
-
---
 -- Indexes for table `data_mahasiswa_kampus`
 --
 ALTER TABLE `data_mahasiswa_kampus`
@@ -462,12 +407,6 @@ ALTER TABLE `jenispermohonan`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `karyawan`
---
-ALTER TABLE `karyawan`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `mahasiswa`
 --
 ALTER TABLE `mahasiswa`
@@ -501,37 +440,31 @@ ALTER TABLE `superadmin`
 -- AUTO_INCREMENT for table `data_formulir`
 --
 ALTER TABLE `data_formulir`
-  MODIFY `id_formulir` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
-
---
--- AUTO_INCREMENT for table `data_karyawan_kampus`
---
-ALTER TABLE `data_karyawan_kampus`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_formulir` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `data_mahasiswa_kampus`
 --
 ALTER TABLE `data_mahasiswa_kampus`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `data_surat`
 --
 ALTER TABLE `data_surat`
-  MODIFY `id_surat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id_surat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- AUTO_INCREMENT for table `data_surat_kp`
 --
 ALTER TABLE `data_surat_kp`
-  MODIFY `id_surat_kp` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_surat_kp` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `data_surat_pengantar_riset`
 --
 ALTER TABLE `data_surat_pengantar_riset`
-  MODIFY `id_pengantar_riset` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_pengantar_riset` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `data_ttd`
@@ -558,16 +491,10 @@ ALTER TABLE `jenispermohonan`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `karyawan`
---
-ALTER TABLE `karyawan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
 -- AUTO_INCREMENT for table `mahasiswa`
 --
 ALTER TABLE `mahasiswa`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `program`
@@ -590,13 +517,6 @@ ALTER TABLE `superadmin`
 --
 -- Constraints for dumped tables
 --
-
---
--- Constraints for table `data_karyawan_kampus`
---
-ALTER TABLE `data_karyawan_kampus`
-  ADD CONSTRAINT `id_karyawan` FOREIGN KEY (`id_karyawan`) REFERENCES `karyawan` (`id`),
-  ADD CONSTRAINT `id_prodi_karyawan` FOREIGN KEY (`program_studi`) REFERENCES `program_studi` (`id`);
 
 --
 -- Constraints for table `data_mahasiswa_kampus`
